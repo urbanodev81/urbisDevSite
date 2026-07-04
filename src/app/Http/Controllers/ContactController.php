@@ -14,8 +14,8 @@ class ContactController extends Controller
         $validated = $request->validate([
             'name'          => 'required|string|max:255',
             'email'         => 'required|email|max:255',
-            'phone'         => 'nullable|string|max:15',
-            'message'       => 'required|string|min:10|max:5000',
+            'phone'         => 'required|string|max:15',
+            'message'       => 'required|string|min:50|max:5000',
             'consent'       => 'required|accepted',
             'turnstile_token' => 'required|string',
         ]);
@@ -32,7 +32,7 @@ class ContactController extends Controller
         Mail::raw(
             "Nome: {$validated['name']}\n"
             . "E-mail: {$validated['email']}\n"
-            . "Telefone: " . ($validated['phone'] ?? 'Não informado') . "\n\n"
+            . "Telefone: " . $validated['phone'] . "\n\n"
             . "Mensagem:\n{$validated['message']}",
             function ($message) use ($validated) {
                 $message->to(config('mail.from.address'))

@@ -2,7 +2,7 @@ name: Deploy — UrbisDev Site
 
 on:
   push:
-    branches: [main]
+    branches: [pre-prod]
 
 jobs:
   deploy:

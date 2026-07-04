@@ -402,14 +402,14 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="phone">Telefone</label>
-                    <input type="tel" id="phone" name="phone" value="{{ old('phone') }}" placeholder="(11) 99999-9999" maxlength="15">
+                    <label for="phone">Telefone *</label>
+                    <input type="tel" id="phone" name="phone" value="{{ old('phone') }}" placeholder="(11) 99999-9999" required maxlength="15">
                     @error('phone') <span style="color:#fca5a5;font-size:0.8rem">{{ $message }}</span> @enderror
                 </div>
 
                 <div class="form-group">
                     <label for="message">Mensagem *</label>
-                    <textarea id="message" name="message" required minlength="10" maxlength="5000" placeholder="Conte-nos sobre seu projeto...">{{ old('message') }}</textarea>
+                    <textarea id="message" name="message" required minlength="50" maxlength="5000" placeholder="Conte-nos sobre seu projeto (mínimo 50 caracteres)...">{{ old('message') }}</textarea>
                     <div class="char-count"><span id="charCount">0</span>/5000</div>
                     @error('message') <span style="color:#fca5a5;font-size:0.8rem">{{ $message }}</span> @enderror
                 </div>

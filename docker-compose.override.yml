@@ -1,0 +1,11 @@
+# Desenvolvimento local — sobrepõe docker-compose.yml
+# Carregado automaticamente pelo docker compose
+
+services:
+  app:
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+
+  mailpit:
+    profiles: []

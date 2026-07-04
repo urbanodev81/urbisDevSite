@@ -1,0 +1,34 @@
+name: Deploy — UrbisDev Site
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy para VPS
+        uses: easingthemes/ssh-deploy@v5
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_KEY }}
+          ARGS: "-avz --delete --exclude '.git' --exclude '.github' --exclude 'src/.env' --exclude 'src/vendor' --exclude 'src/storage' --exclude 'src/node_modules' --exclude 'CONTEXTO.md' --exclude 'docker-compose.override.yml'"
+          SOURCE: "./"
+          REMOTE_HOST: ${{ secrets.VPS_HOST }}
+          REMOTE_USER: ${{ secrets.VPS_USER }}
+          TARGET: "/home/urbisdev/site/"
+
+      - name: Docker compose rebuild
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd /home/urbisdev/site
+            docker compose down
+            docker compose up -d --build
+            docker compose ps

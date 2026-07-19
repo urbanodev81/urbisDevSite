@@ -7,5 +7,13 @@ services:
       APP_ENV: local
       APP_DEBUG: "true"
 
+  nginx:
+    ports:
+      - "${NGINX_PORT:-8099}:80"
+    # Substitui a lista do compose base: HTTP puro, sem o volume de certificados.
+    volumes:
+      - ./src/public:/var/www/html/public:ro
+      - ./nginx.local.conf:/etc/nginx/conf.d/default.conf:ro
+
   mailpit:
     profiles: []

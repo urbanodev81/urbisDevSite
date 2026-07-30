@@ -1,0 +1,132 @@
+#!/usr/bin/env bash
+#
+# AFTSCD (+) — hook CANÔNICO, definido no Sócrates (o maestro). O MESMO
+# arquivo roda nos 5 repos (Sócrates + satélites) e se auto-adapta ao repo.
+# Para adotar num repo novo: copie este arquivo pra .githooks/commit-msg e
+# rode `git config core.hooksPath .githooks` (config local não vem no clone).
+#
+# Duas regras independentes:
+#
+#   1. CHECKPOINT — depois de CADA feat/fix, o checkpoint do "onde paramos"
+#      (socrates/docs/SESSAO_ATUAL.md) deve ser atualizado. Esse arquivo é
+#      ÚNICO e mora no Sócrates. Por isso o hook se adapta:
+#        • No Sócrates (docs/SESSAO_ATUAL.md existe aqui) → BLOQUEIA um feat/fix
+#          novo enquanto o anterior não tiver um commit `docs(sessao): ...`
+#          depois dele. Bypass consciente: [skip-checkpoint] no assunto.
+#        • Num satélite (o arquivo não existe local) → só LEMBRA, não bloqueia:
+#          o checkpoint é um commit no Sócrates, que um hook local não enxerga.
+#
+#   2. CHANGELOG (por GRUPO de ideias, NÃO por commit) — cada repo tem seu
+#      próprio CHANGELOG.md. Marque [changelog] no assunto do commit que FECHA
+#      o grupo e o hook exige CHANGELOG.md nesse mesmo commit. O marcador SÓ
+#      vale em feat/fix (tipos user-facing); num chore/docs/style/test/refactor
+#      é erro de categoria e o hook recusa. Igual em todos os repos.
+#
+# Fail-open: qualquer erro interno deixa o commit passar — o hook nunca deve
+# brickar o repo.
+
+msg_file="$1"
+[ -r "$msg_file" ] || exit 0
+subject=$(head -n1 "$msg_file" 2>/dev/null) || exit 0
+
+# feat, feat(scope), feat!:, fix: ... — mas NÃO "fixture".
+is_feat_fix() { printf '%s' "$1" | grep -qE '^(feat|fix)(\(|!|:)'; }
+
+# --- Regra 2: CHANGELOG no commit que fecha o grupo (idêntica em todo repo)
+case "$subject" in
+    *"[changelog]"*)
+        if ! is_feat_fix "$subject"; then
+            cat >&2 <<'EOF'
+──────────────────────────────────────────────────────────────
+ ✗ AFTSCD (+) bloqueou este commit.
+
+ [changelog] só vale em commits feat/fix — são eles que geram
+ mudança que o usuário vê. Um chore/docs/style/test/refactor não
+ entra no CHANGELOG.
+
+ Se isto MERECE changelog, é feat/fix: troque o tipo do commit.
+ Se não merece, remova [changelog] do assunto.
+──────────────────────────────────────────────────────────────
+EOF
+            exit 1
+        fi
+        staged=$(git diff --cached --name-only 2>/dev/null)
+        if ! printf '%s\n' "$staged" | grep -qx 'CHANGELOG.md'; then
+            cat >&2 <<'EOF'
+──────────────────────────────────────────────────────────────
+ ✗ AFTSCD (+) bloqueou este commit.
+
+ O assunto tem [changelog] (fecha um grupo de ideias), mas
+ CHANGELOG.md NÃO está neste commit.
+
+ Regra do CLAUDE.md: quando um commit fecha um grupo de ideias,
+ registre em CHANGELOG.md, seção "## [Não lançado]" (Adicionado /
+ Corrigido / Alterado / Removido). Conta o que MUDOU pra quem usa.
+
+ Saídas:
+   • adicione a entrada e `git add CHANGELOG.md` neste commit;
+   • ou remova [changelog] se este commit não fecha um grupo.
+──────────────────────────────────────────────────────────────
+EOF
+            exit 1
+        fi
+        ;;
+esac
+
+# --- Regra 1: checkpoint do SESSAO_ATUAL.md (adapta ao repo) --------------
+is_feat_fix "$subject" || exit 0
+
+case "$subject" in
+    *"[skip-checkpoint]"*) exit 0 ;;
+esac
+
+CHECKPOINT="docs/SESSAO_ATUAL.md"
+
+if [ ! -f "$CHECKPOINT" ]; then
+    # Satélite: o checkpoint mora no Sócrates. Só lembra, não bloqueia.
+    cat >&2 <<'EOF'
+──────────────────────────────────────────────────────────────
+ ⓘ AFTSCD (+): commit feat/fix feito.
+
+ Atualize o checkpoint do "onde paramos" em
+ ../socrates/docs/SESSAO_ATUAL.md (feito / em andamento / falta).
+
+ Não bloqueia — esse arquivo é do Sócrates e vive lá; um hook
+ local não tem como verificar. Mas o "+" continua valendo.
+──────────────────────────────────────────────────────────────
+EOF
+    exit 0
+fi
+
+# Sócrates: bloqueia se o feat/fix anterior ainda não tem checkpoint.
+last_ckpt=$(git log --pretty='%H %s' -100 2>/dev/null \
+    | awk '/^[0-9a-f]+ docs\(sessao\)/ {print $1; exit}')
+
+if [ -n "$last_ckpt" ]; then
+    pending=$(git log --pretty='%s' "$last_ckpt"..HEAD 2>/dev/null)
+else
+    pending=$(git log --pretty='%s' -100 2>/dev/null)
+fi
+
+if printf '%s\n' "$pending" | grep -qE '^(feat|fix)(\(|!|:)'; then
+    cat >&2 <<'EOF'
+──────────────────────────────────────────────────────────────
+ ✗ AFTSCD (+) bloqueou este commit.
+
+ O commit feat/fix anterior ainda NÃO tem checkpoint em
+ docs/SESSAO_ATUAL.md.
+
+ Regra do CLAUDE.md: depois de CADA feat/fix, um commit
+ docs(sessao): atualizando o checkpoint (feito / em andamento /
+ falta).
+
+ Saídas:
+   • faça o checkpoint agora  →  git commit docs(sessao): ...
+   • ou, se este commit não fecha uma feature / vai agrupar,
+     inclua [skip-checkpoint] no assunto.
+──────────────────────────────────────────────────────────────
+EOF
+    exit 1
+fi
+
+exit 0

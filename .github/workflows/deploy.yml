@@ -16,7 +16,7 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_KEY }}
           ARGS: "-avz --delete"
-          EXCLUDE: ".git, .github, src/.env, src/vendor, src/storage, src/node_modules, CONTEXTO.md, docker-compose.override.yml"
+          EXCLUDE: ".git, .github, .env*, storage, certbot, src/.env, src/vendor, src/storage, src/node_modules, CONTEXTO.md, docker-compose.override.yml"
           SOURCE: "./"
           REMOTE_HOST: ${{ secrets.VPS_HOST }}
           REMOTE_USER: ${{ secrets.VPS_USER }}

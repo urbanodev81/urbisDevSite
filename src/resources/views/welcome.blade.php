@@ -169,8 +169,14 @@
         .foot-links a { font-size: .9rem; text-decoration: none; color: var(--text-mid); }
         .foot-links a:hover { color: var(--text-hi); }
         .social-bar { display: flex; gap: 12px; }
-        .social-bar a { width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 50%; display: grid; place-items: center; color: var(--text-mid); transition: border-color .18s ease-out, color .18s ease-out; }
-        .social-bar a:hover { border-color: var(--amber-500); color: var(--amber-500); }
+        .social-bar a { width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 50%; display: grid; place-items: center; color: var(--text-mid); transition: border-color .18s ease-out, color .18s ease-out, transform .18s ease-out; }
+        .social-bar a:hover { transform: translateY(-2px); }
+
+        /* cores oficiais das marcas (hex fixo de propósito: são cores DELES, não nossas) */
+        .s-wa { background: #25d366 !important; border-color: #25d366 !important; color: #fff !important; }
+        .s-ig { background: radial-gradient(circle at 30% 110%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285aeb 90%) !important; border-color: transparent !important; color: #fff !important; }
+        .s-li { background: #0a66c2 !important; border-color: #0a66c2 !important; color: #fff !important; }
+        .s-mail { background: var(--amber-500) !important; border-color: var(--amber-500) !important; color: var(--ink-900) !important; }
 
         /* ---------- modal de feedback ---------- */
         .modal-overlay { position: fixed; inset: 0; z-index: 9999; background: rgba(6, 10, 20, .7); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .3s ease-out; }
@@ -191,8 +197,8 @@
         /* ---------- pilha social flutuante (some quando a do rodapé aparece) ---------- */
         .social-float { position: fixed; bottom: 84px; right: 24px; z-index: 999; display: flex; flex-direction: column; gap: 10px; opacity: 0; transform: translateY(10px); transition: opacity .3s ease-out, transform .3s ease-out; pointer-events: none; }
         .social-float.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
-        .social-float a { width: 44px; height: 44px; background: var(--ink-800); border: 1px solid var(--line); border-radius: 50%; display: grid; place-items: center; color: var(--text-mid); transition: border-color .18s ease-out, color .18s ease-out; }
-        .social-float a:hover { border-color: var(--amber-500); color: var(--amber-500); }
+        .social-float a { width: 44px; height: 44px; background: var(--ink-800); border: 1px solid var(--line); border-radius: 50%; display: grid; place-items: center; color: var(--text-mid); transition: transform .18s ease-out; box-shadow: 0 4px 14px rgba(0,0,0,.35); }
+        .social-float a:hover { transform: translateY(-2px); }
 
         /* ---------- acessibilidade (FAB + painel) ---------- */
         .a11y { position: fixed; bottom: 24px; left: 24px; z-index: 999; }
@@ -224,15 +230,16 @@
         html.a11y-spacing :is(p, li, a, span, label, h1, h2, h3, button, input, textarea, strong, b, em) { letter-spacing: .12em !important; word-spacing: .16em !important; line-height: 1.8 !important; }
         html.a11y-pause *, html.a11y-pause *::before, html.a11y-pause *::after { transition-duration: 0s !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
         html.a11y-pause .citygrid i.lit::after { animation: none !important; opacity: .35; }
-        html.a11y-pause { scroll-behavior: auto; }
 
         /* ---------- reveal + reduced motion ---------- */
+        /* Scroll de âncora/topo fica suave SEMPRE (regra da casa, como no
+           site original): reduced-motion e "pausar animações" desligam só
+           as animações decorativas, não a rolagem de navegação. */
         .reveal { opacity: 0; transform: translateY(12px); transition: opacity .5s ease-out, transform .5s ease-out; }
         .reveal.in { opacity: 1; transform: none; }
         @media (prefers-reduced-motion: reduce) {
             .reveal { opacity: 1; transform: none; transition: none; }
             .citygrid i.lit::after { animation: none; opacity: .35; }
-            html { scroll-behavior: auto; }
             .mobile-menu, .mobile-menu.open, .nav-toggle svg { transition: none; }
         }
     </style>
@@ -423,21 +430,18 @@
                 <li><a href="#contato">Contato</a></li>
             </ul>
             <div class="social-bar">
-                <a href="https://wa.me/5511976862551" target="_blank" rel="noopener" aria-label="WhatsApp">
+                <a class="s-wa" href="https://wa.me/5511976862551" target="_blank" rel="noopener" aria-label="WhatsApp">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.95A8.96 8.96 0 0 1 3 11a9 9 0 1 1 9 9 8.96 8.96 0 0 1-5.05-1.65L3 21z"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/></svg>
                 </a>
-                {{-- Instagram e LinkedIn ficam ocultos até os perfis existirem
-                     (decisão de 29/07: "ainda não temos") — link morto em site
-                     publicado é pior que não ter o ícone. Pra reativar, basta
-                     descomentar e preencher o href.
-                <a href="#" aria-label="Instagram">
+                {{-- Instagram/LinkedIn visíveis pra avaliação (31/07); trocar o
+                     href="#" pelas URLs reais quando os perfis existirem. --}}
+                <a class="s-ig" href="#" aria-label="Instagram">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
                 </a>
-                <a href="#" aria-label="LinkedIn">
+                <a class="s-li" href="#" aria-label="LinkedIn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
                 </a>
-                --}}
-                <a href="mailto:contato@urbisdev.tech" aria-label="E-mail">
+                <a class="s-mail" href="mailto:contato@urbisdev.tech" aria-label="E-mail">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                 </a>
             </div>
@@ -479,11 +483,16 @@
 
     {{-- Pilha social flutuante (espelho da barra do rodapé) --}}
     <div class="social-float" id="socialFloat" aria-label="Redes sociais">
-        <a href="https://wa.me/5511976862551" target="_blank" rel="noopener" aria-label="WhatsApp">
+        <a class="s-wa" href="https://wa.me/5511976862551" target="_blank" rel="noopener" aria-label="WhatsApp">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.95A8.96 8.96 0 0 1 3 11a9 9 0 1 1 9 9 8.96 8.96 0 0 1-5.05-1.65L3 21z"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/></svg>
         </a>
-        {{-- Instagram e LinkedIn: descomentar junto com os do rodapé quando os perfis existirem --}}
-        <a href="mailto:contato@urbisdev.tech" aria-label="E-mail">
+        <a class="s-ig" href="#" aria-label="Instagram">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a class="s-li" href="#" aria-label="LinkedIn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a class="s-mail" href="mailto:contato@urbisdev.tech" aria-label="E-mail">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
         </a>
     </div>
@@ -538,11 +547,10 @@
             document.querySelector('.nav-toggle').setAttribute('aria-expanded', 'false');
         }
 
-        // Voltar ao topo (respeita prefers-reduced-motion)
+        // Voltar ao topo — suave sempre, como no site original
         var backBtn = document.getElementById('backToTop');
         backBtn.addEventListener('click', function () {
-            var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
         window.addEventListener('scroll', function () {
             backBtn.classList.toggle('visible', window.scrollY > 400);

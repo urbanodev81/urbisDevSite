@@ -188,6 +188,12 @@
         .back-to-top.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
         .back-to-top:hover { border-color: var(--amber-500); }
 
+        /* ---------- pilha social flutuante (some quando a do rodapé aparece) ---------- */
+        .social-float { position: fixed; bottom: 84px; right: 24px; z-index: 999; display: flex; flex-direction: column; gap: 10px; opacity: 0; transform: translateY(10px); transition: opacity .3s ease-out, transform .3s ease-out; pointer-events: none; }
+        .social-float.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        .social-float a { width: 44px; height: 44px; background: var(--ink-800); border: 1px solid var(--line); border-radius: 50%; display: grid; place-items: center; color: var(--text-mid); transition: border-color .18s ease-out, color .18s ease-out; }
+        .social-float a:hover { border-color: var(--amber-500); color: var(--amber-500); }
+
         /* ---------- acessibilidade (FAB + painel) ---------- */
         .a11y { position: fixed; bottom: 24px; left: 24px; z-index: 999; }
         .a11y-fab { width: 44px; height: 44px; background: var(--ink-800); color: var(--amber-500); border: 1px solid var(--line); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: border-color .18s ease-out; }
@@ -471,6 +477,17 @@
         </button>
     </div>
 
+    {{-- Pilha social flutuante (espelho da barra do rodapé) --}}
+    <div class="social-float" id="socialFloat" aria-label="Redes sociais">
+        <a href="https://wa.me/5511976862551" target="_blank" rel="noopener" aria-label="WhatsApp">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.95A8.96 8.96 0 0 1 3 11a9 9 0 1 1 9 9 8.96 8.96 0 0 1-5.05-1.65L3 21z"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/></svg>
+        </a>
+        {{-- Instagram e LinkedIn: descomentar junto com os do rodapé quando os perfis existirem --}}
+        <a href="mailto:contato@urbisdev.tech" aria-label="E-mail">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        </a>
+    </div>
+
     {{-- Back to top --}}
     <button class="back-to-top" id="backToTop" aria-label="Voltar ao topo">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
@@ -530,6 +547,17 @@
         window.addEventListener('scroll', function () {
             backBtn.classList.toggle('visible', window.scrollY > 400);
         });
+
+        // Pilha social flutuante: visível enquanto a barra do rodapé está fora da tela
+        (function () {
+            var socialFloat = document.getElementById('socialFloat');
+            var footerBar = document.querySelector('footer .social-bar');
+            if (!socialFloat || !footerBar) return;
+            if (!('IntersectionObserver' in window)) { socialFloat.classList.add('visible'); return; }
+            new IntersectionObserver(function (entries) {
+                socialFloat.classList.toggle('visible', !entries[0].isIntersecting);
+            }).observe(footerBar);
+        })();
 
         // Widget de acessibilidade
         (function () {

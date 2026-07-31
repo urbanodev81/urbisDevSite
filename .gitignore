@@ -1,4 +1,6 @@
 /.env
+.env.bak*
+.env.*.bak
 /CONTEXTO.md
 .DS_Store
 *.log

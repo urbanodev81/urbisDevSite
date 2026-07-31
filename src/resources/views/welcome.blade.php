@@ -547,11 +547,38 @@
             document.querySelector('.nav-toggle').setAttribute('aria-expanded', 'false');
         }
 
-        // Voltar ao topo — suave sempre, como no site original
-        var backBtn = document.getElementById('backToTop');
-        backBtn.addEventListener('click', function () {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Rolagem suave por JS (rAF): o Chrome desliga o smooth nativo
+        // quando o SO pede "reduzir movimento", ignorando até o CSS — a
+        // navegação da casa flui sempre, então animamos por conta própria.
+        function urbisSmoothTo(targetY) {
+            var startY = window.scrollY;
+            var dist = targetY - startY;
+            if (!dist) return;
+            var dur = Math.min(900, Math.max(400, Math.abs(dist) * 0.45));
+            var t0 = null;
+            function ease(t) { return t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
+            function step(ts) {
+                if (t0 === null) t0 = ts;
+                var p = Math.min(1, (ts - t0) / dur);
+                window.scrollTo({ top: startY + dist * ease(p), behavior: 'instant' });
+                if (p < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+        document.addEventListener('click', function (e) {
+            var a = e.target.closest('a[href^="#"]');
+            if (!a) return;
+            var href = a.getAttribute('href');
+            e.preventDefault();
+            if (href === '#') return; // link morto (redes ainda sem perfil)
+            var el = document.getElementById(href.slice(1));
+            if (!el) return;
+            urbisSmoothTo(href === '#top' ? 0 : el.getBoundingClientRect().top + window.scrollY - 72);
+            history.pushState(null, '', href);
         });
+
+        var backBtn = document.getElementById('backToTop');
+        backBtn.addEventListener('click', function () { urbisSmoothTo(0); });
         window.addEventListener('scroll', function () {
             backBtn.classList.toggle('visible', window.scrollY > 400);
         });

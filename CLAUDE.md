@@ -31,9 +31,33 @@ compartilhada da 8040 — este projeto não usa a infra `urbanodev`).
 ## Deploy — leia ANTES de tocar em `.github/workflows/deploy.yml`
 
 `push` na branch **`pre-prod`** dispara: rsync (`easingthemes/ssh-deploy`)
-pra `/home/urbisdev/site/` na VPS, depois `docker compose up -d --build`
-por SSH. Note que **`pre-prod` está à frente da `main`** — a main não é a
-branch de produção aqui.
+pra `/home/urbisdev/site/` na VPS, depois `docker compose down` e
+`up -d --build` por SSH. **`pre-prod` é a branch de produção — a `main`
+não é.**
+
+### Qual branch está onde (corrigido em 15/08/2026)
+
+Isto está escrito porque a topologia daqui gerou **três alarmes falsos
+seguidos** nos checkpoints do Sócrates ("urbisdev parado fora da main
+desde 31/07"), e nenhum deles existia: o site está no ar, com o tema
+"cidade à noite", desde 31/07.
+
+- **`pre-prod`** = o que está publicado em <https://urbisdev.tech>. É a
+  única que deploya.
+- **`main`** = `pre-prod` + commits que **não mudam o site** (documentação,
+  `.gitignore`). Ela ficou 12 commits atrás entre 04/07 e 15/08, e era
+  essa defasagem que a auditoria cross-repo lia como "trabalho perdido".
+- Branch de trabalho (`feat/*`) sai da `main` e volta pra ela.
+
+**Commit que não muda o site não vai pra `pre-prod` sozinho.** O CD derruba
+o container (`docker compose down`) antes de reconstruir: publicar um
+`.gitignore` custaria ~2 min de site fora do ar pra entregar zero mudança
+visível. Esses commits pegam carona no próximo deploy de conteúdo — que é
+o motivo de a `main` poder estar legitimamente à frente aqui.
+
+Corolário pra quem audita: **comparar com a `main` não diz se o site está
+atualizado.** A pergunta certa é `git log origin/pre-prod..<branch>` — e,
+melhor ainda, `curl` no endereço real.
 
 ### Armadilhas do CD (todas custaram um incidente real em 31/07/2026)
 

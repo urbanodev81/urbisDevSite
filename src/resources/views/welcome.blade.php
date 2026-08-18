@@ -8,40 +8,8 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=bricolage-grotesque:400,700,800|instrument-sans:400,500,600|jetbrains-mono:400,500&display=swap" rel="stylesheet">
     <style>
-        :root {
-            /* Base — cidade à noite */
-            --ink-900: #0B1220;
-            --ink-800: #101A2D;
-            --ink-700: #16233C;
-            --line:    #22304B;
+        @include('partials.tokens')
 
-            /* Texto */
-            --text-hi:  #EAF0FA;
-            --text-mid: #A7B4C9;
-            --text-low: #6B7A93;
-
-            /* Acento da marca — âmbar "luz da cidade" */
-            --amber-400: #FFC24B;
-            --amber-500: #F5A524;
-            --amber-600: #D18A0F;
-            --amber-ink: #1A1204;
-
-            /* Distritos (cores dos produtos — usar SÓ nos cards) */
-            --d-synapse: #2DD4BF;
-            --d-urb:     #8B5CF6;
-            --d-ssb:     #E5484D;
-
-            /* Semânticas */
-            --ok:    #3DD68C;
-            --warn:  #F5A524;
-            --error: #E5484D;
-
-            --r-btn: 10px;
-            --r-card: 16px;
-            --font-display: "Bricolage Grotesque", system-ui, sans-serif;
-            --font-body: "Instrument Sans", system-ui, sans-serif;
-            --font-mono: "JetBrains Mono", ui-monospace, monospace;
-        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
         body { background: var(--ink-900); color: var(--text-mid); font-family: var(--font-body); font-size: 1.0625rem; line-height: 1.7; -webkit-font-smoothing: antialiased; }
@@ -257,6 +225,7 @@
             <ul class="nav-links">
                 <li><a href="#fazemos">O que fazemos</a></li>
                 <li><a href="#proximos">Próximos passos</a></li>
+                <li><a href="{{ url('/como-trabalhamos') }}">Como trabalhamos</a></li>
                 <li><a href="#contato">Contato</a></li>
             </ul>
             <a class="btn btn-primary nav-cta" href="#contato">Fale Conosco</a>
@@ -267,6 +236,7 @@
         <nav class="mobile-menu" id="mobileMenu">
             <a href="#fazemos" onclick="closeMenu()">O que fazemos</a>
             <a href="#proximos" onclick="closeMenu()">Próximos passos</a>
+            <a href="{{ url('/como-trabalhamos') }}">Como trabalhamos</a>
             <a href="#contato" onclick="closeMenu()">Contato</a>
             <a class="btn btn-primary" style="margin-top:10px;justify-content:center" href="#contato" onclick="closeMenu()">Fale Conosco</a>
         </nav>

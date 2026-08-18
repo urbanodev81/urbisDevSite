@@ -420,6 +420,8 @@
 
     @include('partials.acessibilidade')
 
+    @include('partials.progresso-navegacao')
+
     <script>
         function toggleMenu(btn) {
             var menu = document.getElementById('mobileMenu');

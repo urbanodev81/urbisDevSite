@@ -677,5 +677,7 @@
         modalText.textContent = '{{ session('error') }}';
         @endif
     </script>
+    @include('partials.progresso-navegacao')
+
 </body>
 </html>

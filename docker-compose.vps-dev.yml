@@ -1,0 +1,38 @@
+# Ambiente de TESTE do site institucional — VPS, 19/08/2026.
+#
+# Existe porque a página nova (/como-trabalhamos) não podia estrear direto no
+# site público: publicar no urbisdev.tech é `git push` na `pre-prod`, e aquilo
+# dispara o CD. Aqui a mesma branch roda num endereço próprio, atrás de senha,
+# para ser vista antes de decidir.
+#
+# Substitui o `docker-compose.override.yml` do repositório (que é para a
+# máquina do desenvolvedor e liga APP_DEBUG). Use sempre:
+#   docker compose -f docker-compose.yml -f docker-compose.vps-dev.yml ...
+#
+# Quem faz TLS é o nginx do HOST, como nos tiers dev dos seis sistemas; o
+# container serve HTTP puro numa porta local.
+services:
+  app:
+    container_name: urbisdev-site-dev
+    environment:
+      # `staging`, não `local`: debug ligado num endereço alcançável pela
+      # internet entrega stack trace com caminho de arquivo e configuração.
+      APP_ENV: staging
+      APP_DEBUG: "false"
+
+  nginx:
+    container_name: urbisdev-site-dev-nginx
+    # `!override` e não a mesclagem padrão: sem ele o Compose SOMA as portas do
+    # arquivo base (8100/8443, do site de produção) às daqui, e o container nem
+    # sobe -- "port is already allocated". Bind em 127.0.0.1 de propósito: quem
+    # fala com a internet é o nginx do host, que tem o TLS e o Basic Auth.
+    ports: !override
+      - "127.0.0.1:8125:80"
+    # Sem o volume de certificados do compose base: o TLS é do host.
+    volumes:
+      - ./src/public:/var/www/html/public:ro
+      - ./nginx.local.conf:/etc/nginx/conf.d/default.conf:ro
+
+  mailpit:
+    container_name: urbisdev-site-dev-mailpit
+    profiles: [nunca]

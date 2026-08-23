@@ -647,11 +647,43 @@
         msg.addEventListener('input', function () { counter.textContent = msg.value.length; });
         counter.textContent = msg.value.length;
 
-        // Turnstile: copia o token pro campo hidden no submit
-        document.querySelector('form[action="/contato"]').addEventListener('submit', function () {
+        // Turnstile: copia o token pro campo hidden no submit, e trava o botão.
+        //
+        // O envio é SÍNCRONO (o SMTP do Zoho acontece dentro da requisição), e
+        // enquanto ele acontece a página fica parada, sem sinal nenhum de que
+        // algo está em curso. A pessoa clica de novo — e o segundo POST manda
+        // um segundo e-mail, porque abortar a navegação não desfaz o que o
+        // servidor já fez. Reproduzido em 23/08/2026: dois cliques com 1,5 s
+        // de intervalo, duas mensagens na caixa.
+        //
+        // Isto aqui resolve o caso comum e, principalmente, DÁ RESPOSTA: o
+        // botão vira "Enviando…" e a pessoa para de clicar. O que garante que
+        // não sai duplicado é o servidor (ver ContactController) — este
+        // bloqueio não existe com JavaScript desligado.
+        var formContato = document.querySelector('form[action="/contato"]');
+        var btnEnviar = formContato.querySelector('button[type="submit"]');
+        var textoBotao = btnEnviar.textContent;
+
+        formContato.addEventListener('submit', function () {
             var token = document.querySelector('[name="cf-turnstile-response"]');
             if (token) {
                 document.getElementById('turnstile-token').value = token.value;
+            }
+
+            btnEnviar.disabled = true;
+            btnEnviar.textContent = 'Enviando…';
+            // Leitor de tela não anuncia troca de texto de botão sozinho.
+            btnEnviar.setAttribute('aria-busy', 'true');
+        });
+
+        // Voltar pelo histórico devolve a página do cache do navegador com o
+        // botão ainda travado — e aí ela não envia mais nada, sem dizer por
+        // quê. `pageshow` é o único evento que dispara nesse caminho.
+        window.addEventListener('pageshow', function (e) {
+            if (e.persisted) {
+                btnEnviar.disabled = false;
+                btnEnviar.textContent = textoBotao;
+                btnEnviar.removeAttribute('aria-busy');
             }
         });
 

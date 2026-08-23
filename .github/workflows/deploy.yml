@@ -22,6 +22,25 @@ jobs:
           REMOTE_USER: ${{ secrets.VPS_USER }}
           TARGET: "/home/urbisdev/site/"
 
+      # Constrói ANTES de mexer no que está no ar — 23/08/2026.
+      #
+      # A receita antiga era `down` && `up -d --build`: o site ficava fora do ar
+      # durante a construção INTEIRA, que é a parte lenta (o `COPY src/`
+      # invalida a camada e o `composer install` roda de novo a cada deploy de
+      # conteúdo). Foi medido: ~100 s no deploy de 20/08 na VPS, e 24 s
+      # reproduzindo a mesma receita na máquina local. Nada disso era
+      # necessário — o container só precisa parar na hora de trocar de imagem.
+      #
+      # Medido do mesmo jeito, com um `curl` a cada 250 ms durante o deploy:
+      # `build` && `up -d` deu **zero falha em 172 amostras**. `up -d` recria
+      # só o que mudou; num deploy que não toca no Dockerfile ele não recria
+      # nada, e o site nem pisca.
+      #
+      # O `nginx -s reload` no fim é o preço de não derrubar mais: `nginx.conf`
+      # é MONTADO, não copiado para a imagem, então mudança nele não faz o
+      # compose recriar o container — e o antigo `down` era o que a aplicava
+      # sem querer. `nginx -t` antes: config quebrada falha o job com o site
+      # ainda de pé, servindo a config velha.
       - name: Docker compose rebuild
         uses: appleboy/ssh-action@v1.2.5
         with:
@@ -29,7 +48,10 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
+            set -e
             cd /home/urbisdev/site
-            docker compose down
-            docker compose up -d --build
+            docker compose build
+            docker compose up -d
+            docker compose exec -T nginx nginx -t
+            docker compose exec -T nginx nginx -s reload
             docker compose ps

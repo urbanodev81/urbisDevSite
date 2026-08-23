@@ -31,9 +31,17 @@ compartilhada da 8040 — este projeto não usa a infra `urbanodev`).
 ## Deploy — leia ANTES de tocar em `.github/workflows/deploy.yml`
 
 `push` na branch **`pre-prod`** dispara: rsync (`easingthemes/ssh-deploy`)
-pra `/home/urbisdev/site/` na VPS, depois `docker compose down` e
-`up -d --build` por SSH. **`pre-prod` é a branch de produção — a `main`
-não é.**
+pra `/home/urbisdev/site/` na VPS, depois `docker compose build`,
+`up -d` e `nginx -s reload` por SSH. **`pre-prod` é a branch de produção —
+a `main` não é.**
+
+**Desde 23/08/2026 o deploy não derruba mais o site.** A receita antiga era
+`down` && `up -d --build`, que deixava o site fora do ar durante a construção
+inteira (~100 s no deploy de 20/08). Agora constrói primeiro, com o site no ar,
+e só então recria o que mudou. Medido com `curl` a cada 250 ms: **zero falha em
+172 amostras**. O `nginx -s reload` no fim existe porque `nginx.conf` é
+montado, não copiado — mudança nele não faz o compose recriar o container, e
+era o `down` que a aplicava sem querer.
 
 ### Qual branch está onde (corrigido em 15/08/2026)
 
@@ -49,11 +57,11 @@ desde 31/07"), e nenhum deles existia: o site está no ar, com o tema
   essa defasagem que a auditoria cross-repo lia como "trabalho perdido".
 - Branch de trabalho (`feat/*`) sai da `main` e volta pra ela.
 
-**Commit que não muda o site não vai pra `pre-prod` sozinho.** O CD derruba
-o container (`docker compose down`) antes de reconstruir: publicar um
-`.gitignore` custaria ~2 min de site fora do ar pra entregar zero mudança
-visível. Esses commits pegam carona no próximo deploy de conteúdo — que é
-o motivo de a `main` poder estar legitimamente à frente aqui.
+**Commit que não muda o site continua pegando carona no próximo deploy de
+conteúdo** — mas o motivo mudou. Antes de 23/08/2026 era caro de verdade
+(~2 min de site fora do ar para entregar zero mudança visível); hoje o deploy
+não derruba mais nada, então é só higiene: um deploy por assunto, e a `main`
+podendo estar legitimamente à frente da `pre-prod` aqui.
 
 Corolário pra quem audita: **comparar com a `main` não diz se o site está
 atualizado.** A pergunta certa é `git log origin/pre-prod..<branch>` — e,

@@ -8,8 +8,35 @@
 ## O que é (e o que NÃO é)
 
 Landing page da Urbano Dev — <https://urbisdev.tech>. Laravel 12 mínimo
-dentro de `src/`, servido por Nginx + PHP-FPM em Docker. Uma rota, um
-`ContactController`, um `welcome.blade.php`, Turnstile no formulário.
+dentro de `src/`, servido por Nginx + PHP-FPM em Docker. Duas rotas de
+página, um `ContactController`, Turnstile no formulário.
+
+**As views seguem um layout (desde 23/08/2026).** `layouts/site.blade.php`
+carrega o casco — head, header, rodapé, widget de acessibilidade, pilha
+social, voltar-ao-topo, rolagem suave e o script de tema — e cada página
+traz só o que é dela:
+
+```blade
+@extends('layouts.site')
+@section('titulo', '…')  @section('descricao', '…')
+@push('estilos') <style>…</style> @endpush
+@section('conteudo') … @endsection
+@push('scripts') <script>…</script> @endpush
+```
+
+Antes disso cada página carregava a sua CÓPIA do casco, e a duplicação já
+tinha cobrado: o widget de acessibilidade existia duas vezes, as correções
+de alvo de toque de 44px tinham sido feitas só na página nova, e o rodapé
+de uma tinha as redes sociais e o da outra não. **Página nova estende o
+layout — não copia a irmã.**
+
+**O site tem tema claro e escuro** (`config` nenhuma: classe `.claro` no
+`<html>`, gravada em `localStorage` sob `urbis-tema`, com o seletor no
+painel de acessibilidade). A marca continua nascendo escura — "cidade à
+noite" é identidade, não modo. Cor literal existe em **um** arquivo:
+`partials/tokens.blade.php`. Mudou token? Rode
+`python3 ../socrates/docs/urbis-design/contraste.py` — e leia o CORE antes
+(`../socrates/docs/urbis-design/CORE.md`).
 
 **Não tem** banco, migration, autenticação, painel, tenancy nem suíte de
 testes — e isso é decisão, não pendência. Não sugira módulo, model ou

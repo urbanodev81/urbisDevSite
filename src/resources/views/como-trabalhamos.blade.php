@@ -1,64 +1,25 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Como trabalhamos — UrbisDev</title>
-    <meta name="description" content="O método que usamos em todo projeto: ciclo obrigatório por mudança, testes automatizados, LGPD desde o desenho, acessibilidade de origem e monitoramento com alerta testado.">
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=bricolage-grotesque:400,700,800|instrument-sans:400,500,600|jetbrains-mono:400,500&display=swap" rel="stylesheet">
-    <style>
-        @include('partials.tokens')
+{{--
+    "Como trabalhamos" — o método vira argumento de venda.
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        body { background: var(--ink-900); color: var(--text-mid); font-family: var(--font-body); font-size: 1.0625rem; line-height: 1.7; -webkit-font-smoothing: antialiased; }
-        ::selection { background: var(--amber-500); color: var(--amber-ink); }
-        a { color: inherit; }
-        img, svg { display: block; }
-        .container { max-width: 1160px; margin-inline: auto; padding-inline: 24px; }
-        @media (min-width: 768px) { .container { padding-inline: 32px; } }
+    O casco saiu daqui em 23/08/2026 para `layouts/site.blade.php`; ficou o
+    que é desta página. Ela já tinha as correções de alvo de toque de 44px
+    que a home não tinha — foram elas que subiram para o layout, e é por isso
+    que a extração fechou a dívida da home sem uma linha de correção nova.
+--}}
+@extends('layouts.site')
+
+@section('titulo', 'Como trabalhamos — UrbisDev')
+@section('descricao', 'O método que usamos em todo projeto: ciclo obrigatório por mudança, testes automatizados, LGPD desde o desenho, acessibilidade de origem e monitoramento com alerta testado.')
+
+@push('estilos')
+<style>
+        /* Régua própria: o texto desta página é longo, e o título da home
+           (4,5rem) empurraria o conteúdo para baixo da dobra. Sobrescreve a
+           escala padrão do layout, de propósito. */
         section { padding-block: clamp(64px, 8vw, 104px); scroll-margin-top: 72px; }
-        h1, h2 { font-family: var(--font-display); color: var(--text-hi); line-height: 1.08; letter-spacing: -0.02em; }
         h1 { font-size: clamp(2.3rem, 5vw, 3.6rem); font-weight: 800; }
         h2 { font-size: clamp(1.7rem, 3.2vw, 2.3rem); font-weight: 700; }
-        h3 { font-family: var(--font-body); font-weight: 600; font-size: 1.1rem; color: var(--text-hi); }
-        :focus-visible { outline: 2px solid var(--amber-500); outline-offset: 3px; border-radius: 4px; }
-
-        .eyebrow { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: .75rem; letter-spacing: .14em; text-transform: uppercase; color: var(--text-low); }
-        .eyebrow::before { content: ""; width: 6px; height: 6px; background: var(--amber-500); flex: none; }
-
-        .btn { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 1rem; padding: 12px 22px; border-radius: var(--r-btn); text-decoration: none; border: 1px solid transparent; transition: background .18s ease-out, border-color .18s ease-out, color .18s ease-out; cursor: pointer; font-family: var(--font-body); }
-        .btn-primary { background: var(--amber-500); color: var(--amber-ink); }
-        .btn-primary:hover { background: var(--amber-400); }
-        .btn-primary:active { background: var(--amber-600); }
-        .btn-ghost { background: transparent; border-color: var(--line); color: var(--text-hi); }
-        .btn-ghost:hover { border-color: var(--amber-500); }
-
-        /* ---------- header ---------- */
-        header { position: sticky; top: 0; z-index: 50; background: rgba(11, 18, 32, .82); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
-        .nav { display: flex; align-items: center; justify-content: space-between; height: 68px; }
-        .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; min-height: 44px; }
-        .brand-mark { width: 34px; height: 34px; border: 1.5px solid var(--amber-500); border-radius: 8px; display: grid; place-items: center; font-family: var(--font-mono); font-size: .72rem; font-weight: 500; color: var(--amber-500); }
-        .brand-name { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; color: var(--text-hi); }
-        .brand-name span { color: var(--amber-500); }
-        .nav-links { display: none; align-items: center; gap: 28px; list-style: none; }
-        .nav-links a { text-decoration: none; font-size: .95rem; font-weight: 500; color: var(--text-mid); transition: color .16s ease-out; display: inline-flex; align-items: center; min-height: 44px; }
-        .nav-links a:hover { color: var(--text-hi); }
-        .nav-links a[aria-current="page"] { color: var(--amber-500); }
-        .nav-cta { display: none; }
-        .nav-toggle { background: none; border: 1px solid var(--line); border-radius: 8px; width: 44px; height: 44px; display: grid; place-items: center; color: var(--text-hi); cursor: pointer; }
-        @media (min-width: 880px) {
-            .nav-links, .nav-cta { display: inline-flex; }
-            .nav-toggle { display: none; }
-        }
-        .mobile-menu { display: flex; flex-direction: column; gap: 4px; padding: 0 24px; border-top: 1px solid transparent; max-height: 0; opacity: 0; visibility: hidden; overflow: hidden; transition: max-height .25s ease, opacity .25s ease, padding .25s ease, border-color .25s ease, visibility 0s linear .25s; }
-        .mobile-menu.open { max-height: 340px; opacity: 1; visibility: visible; padding: 16px 24px 24px; border-top-color: var(--line); transition: max-height .25s ease, opacity .25s ease, padding .25s ease, border-color .25s ease, visibility 0s; }
-        @media (min-width: 880px) { .mobile-menu { display: none; } }
-        .mobile-menu a { text-decoration: none; padding: 12px 4px; font-weight: 500; color: var(--text-mid); display: flex; align-items: center; min-height: 44px; }
-        .mobile-menu a:hover { color: var(--text-hi); }
-        .nav-toggle svg { transition: transform .25s ease; }
-        .nav-toggle[aria-expanded="true"] svg { transform: rotate(90deg); }
+        h3 { font-family: var(--font-body); font-weight: 600; font-size: 1.1rem; color: var(--fg); }
 
         /* ---------- capa ---------- */
         .capa { padding-block: clamp(56px, 8vw, 96px) clamp(40px, 5vw, 64px); border-bottom: 1px solid var(--line); }
@@ -111,44 +72,10 @@
         .fecho { border-top: 1px solid var(--line); }
         .fecho .container { display: flex; flex-wrap: wrap; gap: 24px; align-items: center; justify-content: space-between; }
         .fecho h2 { max-width: 22ch; }
+</style>
+@endpush
 
-        /* ---------- rodapé ---------- */
-        footer { border-top: 1px solid var(--line); padding-block: 44px; }
-        .foot-grid { display: flex; flex-wrap: wrap; align-items: center; gap: 20px 32px; justify-content: space-between; }
-        .foot-links { display: flex; flex-wrap: wrap; gap: 8px 24px; list-style: none; }
-        .foot-links a { text-decoration: none; font-size: .95rem; color: var(--text-mid); display: inline-flex; align-items: center; min-height: 44px; }
-        .foot-links a:hover { color: var(--text-hi); }
-        footer p { font-size: .88rem; color: var(--text-low); }
-    </style>
-</head>
-<body>
-
-    {{-- Header --}}
-    <header>
-        <div class="container nav">
-            <a class="brand" href="{{ url('/') }}" aria-label="UrbisDev — início">
-                <span class="brand-mark">UD</span>
-                <span class="brand-name">Urbis<span>Dev</span></span>
-            </a>
-            <ul class="nav-links">
-                <li><a href="{{ url('/') }}#fazemos">O que fazemos</a></li>
-                <li><a href="{{ url('/como-trabalhamos') }}" aria-current="page">Como trabalhamos</a></li>
-                <li><a href="{{ url('/') }}#contato">Contato</a></li>
-            </ul>
-            <a class="btn btn-primary nav-cta" href="{{ url('/') }}#contato">Fale Conosco</a>
-            <button class="nav-toggle" aria-label="Abrir menu" aria-expanded="false" onclick="toggleMenu(this)">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
-            </button>
-        </div>
-        <nav class="mobile-menu" id="mobileMenu">
-            <a href="{{ url('/') }}#fazemos" onclick="closeMenu()">O que fazemos</a>
-            <a href="{{ url('/como-trabalhamos') }}" onclick="closeMenu()">Como trabalhamos</a>
-            <a href="{{ url('/') }}#contato" onclick="closeMenu()">Contato</a>
-            <a class="btn btn-primary" style="margin-top:10px;justify-content:center" href="{{ url('/') }}#contato" onclick="closeMenu()">Fale Conosco</a>
-        </nav>
-    </header>
-
-    <main id="top">
+@section('conteudo')
 
         {{-- Capa --}}
         <section class="capa" aria-label="Apresentação">
@@ -399,44 +326,4 @@
                 </a>
             </div>
         </section>
-
-    </main>
-
-    {{-- Footer --}}
-    <footer>
-        <div class="container foot-grid">
-            <a class="brand" href="{{ url('/') }}" aria-label="UrbisDev">
-                <span class="brand-mark">UD</span>
-                <span class="brand-name">Urbis<span>Dev</span></span>
-            </a>
-            <ul class="foot-links">
-                <li><a href="{{ url('/') }}#fazemos">O que fazemos</a></li>
-                <li><a href="{{ url('/como-trabalhamos') }}">Como trabalhamos</a></li>
-                <li><a href="{{ url('/') }}#contato">Contato</a></li>
-            </ul>
-            <p>&copy; {{ date('Y') }} UrbisDev. Todos os direitos reservados.</p>
-        </div>
-    </footer>
-
-    @include('partials.acessibilidade')
-
-    @include('partials.progresso-navegacao')
-
-    <script>
-        function toggleMenu(btn) {
-            var menu = document.getElementById('mobileMenu');
-            var aberto = menu.classList.toggle('open');
-            btn.setAttribute('aria-expanded', String(aberto));
-            btn.setAttribute('aria-label', aberto ? 'Fechar menu' : 'Abrir menu');
-        }
-        function closeMenu() {
-            var menu = document.getElementById('mobileMenu');
-            menu.classList.remove('open');
-            var btn = document.querySelector('.nav-toggle');
-            btn.setAttribute('aria-expanded', 'false');
-            btn.setAttribute('aria-label', 'Abrir menu');
-        }
-    </script>
-
-</body>
-</html>
+@endsection

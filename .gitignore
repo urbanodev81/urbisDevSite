@@ -4,3 +4,21 @@
 /CONTEXTO.md
 .DS_Store
 *.log
+
+# Sobras de execução do Laravel dentro de src/ — 23/08/2026.
+#
+# Só os `.gitkeep` são versionados aqui. O que faltava era isto: rodar o site
+# local (ou qualquer coisa que use cache de arquivo, como a trava anti-recado
+# repetido do ContactController) suja o `git status` com diretórios de hash.
+# `src/vendor` já não aparecia por nunca ter sido adicionado — agora está
+# escrito, e não dependendo de ninguém lembrar.
+/src/vendor/
+/src/storage/framework/cache/data/*
+!/src/storage/framework/cache/data/.gitkeep
+/src/storage/framework/sessions/*
+!/src/storage/framework/sessions/.gitkeep
+/src/storage/framework/views/*
+!/src/storage/framework/views/.gitkeep
+/src/storage/logs/*
+!/src/storage/logs/.gitkeep
+/src/bootstrap/cache/*.php

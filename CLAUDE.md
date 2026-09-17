@@ -8,8 +8,35 @@
 ## O que é (e o que NÃO é)
 
 Landing page da Urbano Dev — <https://urbisdev.tech>. Laravel 12 mínimo
-dentro de `src/`, servido por Nginx + PHP-FPM em Docker. Uma rota, um
-`ContactController`, um `welcome.blade.php`, Turnstile no formulário.
+dentro de `src/`, servido por Nginx + PHP-FPM em Docker. Duas rotas de
+página, um `ContactController`, Turnstile no formulário.
+
+**As views seguem um layout (desde 23/08/2026).** `layouts/site.blade.php`
+carrega o casco — head, header, rodapé, widget de acessibilidade, pilha
+social, voltar-ao-topo, rolagem suave e o script de tema — e cada página
+traz só o que é dela:
+
+```blade
+@extends('layouts.site')
+@section('titulo', '…')  @section('descricao', '…')
+@push('estilos') <style>…</style> @endpush
+@section('conteudo') … @endsection
+@push('scripts') <script>…</script> @endpush
+```
+
+Antes disso cada página carregava a sua CÓPIA do casco, e a duplicação já
+tinha cobrado: o widget de acessibilidade existia duas vezes, as correções
+de alvo de toque de 44px tinham sido feitas só na página nova, e o rodapé
+de uma tinha as redes sociais e o da outra não. **Página nova estende o
+layout — não copia a irmã.**
+
+**O site tem tema claro e escuro** (`config` nenhuma: classe `.claro` no
+`<html>`, gravada em `localStorage` sob `urbis-tema`, com o seletor no
+painel de acessibilidade). A marca continua nascendo escura — "cidade à
+noite" é identidade, não modo. Cor literal existe em **um** arquivo:
+`partials/tokens.blade.php`. Mudou token? Rode
+`python3 ../socrates/docs/urbis-design/contraste.py` — e leia o CORE antes
+(`../socrates/docs/urbis-design/CORE.md`).
 
 **Não tem** banco, migration, autenticação, painel, tenancy nem suíte de
 testes — e isso é decisão, não pendência. Não sugira módulo, model ou
@@ -31,9 +58,17 @@ compartilhada da 8040 — este projeto não usa a infra `urbanodev`).
 ## Deploy — leia ANTES de tocar em `.github/workflows/deploy.yml`
 
 `push` na branch **`pre-prod`** dispara: rsync (`easingthemes/ssh-deploy`)
-pra `/home/urbisdev/site/` na VPS, depois `docker compose down` e
-`up -d --build` por SSH. **`pre-prod` é a branch de produção — a `main`
-não é.**
+pra `/home/urbisdev/site/` na VPS, depois `docker compose build`,
+`up -d` e `nginx -s reload` por SSH. **`pre-prod` é a branch de produção —
+a `main` não é.**
+
+**Desde 23/08/2026 o deploy não derruba mais o site.** A receita antiga era
+`down` && `up -d --build`, que deixava o site fora do ar durante a construção
+inteira (~100 s no deploy de 20/08). Agora constrói primeiro, com o site no ar,
+e só então recria o que mudou. Medido com `curl` a cada 250 ms: **zero falha em
+172 amostras**. O `nginx -s reload` no fim existe porque `nginx.conf` é
+montado, não copiado — mudança nele não faz o compose recriar o container, e
+era o `down` que a aplicava sem querer.
 
 ### Qual branch está onde (corrigido em 15/08/2026)
 
@@ -49,11 +84,11 @@ desde 31/07"), e nenhum deles existia: o site está no ar, com o tema
   essa defasagem que a auditoria cross-repo lia como "trabalho perdido".
 - Branch de trabalho (`feat/*`) sai da `main` e volta pra ela.
 
-**Commit que não muda o site não vai pra `pre-prod` sozinho.** O CD derruba
-o container (`docker compose down`) antes de reconstruir: publicar um
-`.gitignore` custaria ~2 min de site fora do ar pra entregar zero mudança
-visível. Esses commits pegam carona no próximo deploy de conteúdo — que é
-o motivo de a `main` poder estar legitimamente à frente aqui.
+**Commit que não muda o site continua pegando carona no próximo deploy de
+conteúdo** — mas o motivo mudou. Antes de 23/08/2026 era caro de verdade
+(~2 min de site fora do ar para entregar zero mudança visível); hoje o deploy
+não derruba mais nada, então é só higiene: um deploy por assunto, e a `main`
+podendo estar legitimamente à frente da `pre-prod` aqui.
 
 Corolário pra quem audita: **comparar com a `main` não diz se o site está
 atualizado.** A pergunta certa é `git log origin/pre-prod..<branch>` — e,

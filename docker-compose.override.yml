@@ -6,6 +6,24 @@ services:
     environment:
       APP_ENV: local
       APP_DEBUG: "true"
+      # Mailpit do repo (perfil `dev`), sem autenticação — 23/08/2026.
+      #
+      # Estava faltando, e o buraco só aparecia ao ENVIAR de verdade: o
+      # `src/.env` de desenvolvimento traz `MAIL_USERNAME=contato@urbisdev.tech`
+      # com senha vazia, o Symfony tenta AUTH LOGIN contra o Mailpit e leva
+      # `501 Could not decode user and password`. O formulário de contato
+      # respondia **500** em qualquer tentativa local — ou seja, a etapa T
+      # deste repo ("subir o container e conferir") não conseguia chegar no
+      # único POST que o site tem.
+      #
+      # Vazio de propósito: o Mailpit aceita qualquer coisa SEM autenticação, e
+      # credencial de verdade não tem o que fazer numa máquina de trabalho.
+      MAIL_MAILER: smtp
+      MAIL_HOST: mailpit
+      MAIL_PORT: "1025"
+      MAIL_ENCRYPTION: "null"
+      MAIL_USERNAME: ""
+      MAIL_PASSWORD: ""
 
   nginx:
     ports:

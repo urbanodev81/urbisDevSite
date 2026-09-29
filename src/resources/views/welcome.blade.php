@@ -18,7 +18,12 @@
 @section('descricao', 'Soluções digitais sob medida: SaaS, APIs, automações, dashboards e mobile. Sites e sistemas para imobiliárias, blogs e conteúdo.')
 
 @push('head')
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    {{-- Altcha auto-hospedado (29/09/2026; era o Turnstile da Cloudflare).
+         A tradução vem ANTES do widget: ela registra o pt-br no objeto global
+         que o widget lê ao montar. Os dois são módulos, que já executam em
+         ordem e depois do HTML — sem `defer` a acrescentar. --}}
+    <script type="module" src="/vendor/altcha/pt-br-3.2.2.js"></script>
+    <script type="module" src="/vendor/altcha/altcha-3.2.2.min.js"></script>
 @endpush
 
 @push('estilos')
@@ -93,6 +98,19 @@
         .field-row { display: grid; gap: 18px; }
         @media (min-width: 560px) { .field-row { grid-template-columns: 1fr 1fr; } }
         .field-error { color: var(--error); font-size: .82rem; }
+        /* O widget do captcha veste os tokens do site — no escuro e no claro,
+           porque as variáveis acompanham a classe `.claro` sozinhas. */
+        altcha-widget {
+            --altcha-color-base: var(--surface);
+            --altcha-color-base-content: var(--fg);
+            --altcha-border-color: var(--border-input);
+            --altcha-border-radius: var(--r-btn);
+            --altcha-color-primary: var(--accent);
+            --altcha-color-primary-content: var(--fg-on-accent);
+            --altcha-color-success: var(--ok);
+            --altcha-color-error: var(--error);
+            --altcha-max-width: 100%;
+        }
         .consent { display: flex; gap: 10px; align-items: center; min-height: 44px; justify-content: flex-start; font-size: .88rem; color: var(--text-low); text-align: left; }
         /* A caixinha desenhada tem 20px porque 44px de checkbox fica grotesco
            no meio do texto — mas a ÁREA que responde ao toque tem 44px, pelo
@@ -245,12 +263,21 @@
                         @error('consent') <span class="field-error">{{ $message }}</span> @enderror
                     </div>
 
-                    <div class="field" style="justify-items:center">
-                        <div class="cf-turnstile" data-sitekey="{{ config('services.turnstile.site_key') }}" data-theme="dark"></div>
-                        @error('turnstile_token') <span class="field-error" style="text-align:center">{{ $message }}</span> @enderror
+                    {{-- `name="captcha_token"`: o próprio widget mantém o campo
+                         oculto com a solução — nenhum JS de cola no envio.
+                         `auto="onload"` resolve o desafio sozinho ao abrir a
+                         página; quando a pessoa termina de escrever, já passou. --}}
+                    <div class="field captcha">
+                        <altcha-widget
+                            challenge="/captcha/desafio"
+                            name="captcha_token"
+                            language="pt-br"
+                            auto="onload"
+                            hidefooter
+                            hidelogo
+                        ></altcha-widget>
+                        @error('captcha_token') <span class="field-error">{{ $message }}</span> @enderror
                     </div>
-
-                    <input type="hidden" name="turnstile_token" id="turnstile-token">
 
                     <div>
                         <button type="submit" class="btn btn-primary">Enviar mensagem</button>
@@ -310,7 +337,7 @@
         msg.addEventListener('input', function () { counter.textContent = msg.value.length; });
         counter.textContent = msg.value.length;
 
-        // Turnstile: copia o token pro campo hidden no submit, e trava o botão.
+        // Trava o botão no envio.
         //
         // O envio é SÍNCRONO (o SMTP do Zoho acontece dentro da requisição), e
         // enquanto ele acontece a página fica parada, sem sinal nenhum de que
@@ -328,11 +355,6 @@
         var textoBotao = btnEnviar.textContent;
 
         formContato.addEventListener('submit', function () {
-            var token = document.querySelector('[name="cf-turnstile-response"]');
-            if (token) {
-                document.getElementById('turnstile-token').value = token.value;
-            }
-
             btnEnviar.disabled = true;
             btnEnviar.textContent = 'Enviando…';
             // Leitor de tela não anuncia troca de texto de botão sozinho.

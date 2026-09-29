@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Support\Alertas\EmailFormatado;
+use App\Support\Captcha\Altcha;
 
 class ContactController extends Controller
 {
@@ -19,7 +19,7 @@ class ContactController extends Controller
      */
     private const JANELA_REPETICAO = 300;
 
-    public function store(Request $request)
+    public function store(Request $request, Altcha $captcha)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -27,16 +27,15 @@ class ContactController extends Controller
             'phone' => 'required|string|max:15',
             'message' => 'required|string|min:50|max:5000',
             'consent' => 'required|accepted',
-            'turnstile_token' => 'required|string',
+            'captcha_token' => 'required|string',
+        ], [
+            'captcha_token.required' => 'Aguarde a verificação de segurança terminar e envie de novo.',
         ]);
 
-        $turnstileResponse = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
-            'secret' => config('services.turnstile.secret_key'),
-            'response' => $validated['turnstile_token'],
-        ]);
-
-        if (! $turnstileResponse->successful() || ! $turnstileResponse->json('success')) {
-            return back()->with('error', 'Verificação de segurança falhou. Tente novamente.')->withInput();
+        // Altcha auto-hospedado desde 29/09/2026 (era o Turnstile da
+        // Cloudflare) — ver App\Support\Captcha\Altcha.
+        if (! $captcha->verificar($validated['captcha_token'])) {
+            return back()->withErrors(['captcha_token' => 'Falha na verificação de segurança. Recarregue a página e tente novamente.'])->withInput();
         }
 
         /*

@@ -6,7 +6,7 @@ Landing page da **UrbisDev** — Software que resolve problemas reais.
 
 - **Laravel 12** — PHP 8.3
 - **Docker** — Nginx + PHP-FPM + Mailpit
-- **Turnstile** — Cloudflare (proteção anti-spam no formulário)
+- **Altcha** — captcha auto-hospedado no formulário (era o Turnstile da Cloudflare até 29/09/2026)
 
 ## Rodar localmente
 

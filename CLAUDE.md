@@ -9,7 +9,7 @@
 
 Landing page da Urbano Dev — <https://urbisdev.tech>. Laravel 12 mínimo
 dentro de `src/`, servido por Nginx + PHP-FPM em Docker. Duas rotas de
-página, um `ContactController`, Turnstile no formulário.
+página, um `ContactController`, Altcha auto-hospedado no formulário (era Turnstile até 29/09/2026).
 
 **As views seguem um layout (desde 23/08/2026).** `layouts/site.blade.php`
 carrega o casco — head, header, rodapé, widget de acessibilidade, pilha

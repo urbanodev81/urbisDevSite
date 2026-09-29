@@ -1,0 +1,12 @@
+Widget do Altcha (npm `altcha` 3.2.2, licença MIT, em LICENSE.txt).
+
+Copiado para cá, e não servido de CDN, porque o site não tem build de front
+(não há Vite nem npm neste repo) e porque captcha servido por terceiro é o
+que estamos tirando daqui. O número da versão está no nome do arquivo para o
+cache do navegador não segurar a versão velha quando ela for trocada.
+
+A versão é CASADA com o pacote PHP `altcha-org/altcha` 1.x (ver
+app/Support/Captcha/Altcha.php). Trocar um sem o outro trava o widget em
+"verificando" para sempre, sem erro em lugar nenhum.
+
+Origem: node_modules/altcha/dist/main/altcha.min.js e dist/i18n/pt-br.js.

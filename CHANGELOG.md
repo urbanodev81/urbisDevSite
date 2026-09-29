@@ -14,6 +14,11 @@ lançou. Não crie número de versão nem date release por conta própria.
 
 ## [Não lançado]
 
+### Segurança
+- **O site passa a mandar os cabeçalhos de segurança** que os produtos da casa
+  já mandavam (HTTPS obrigatório, proteção contra enquadramento e contra troca
+  de tipo de arquivo), e **erro interno passa a avisar a equipe** por e-mail.
+
 ### Adicionado
 
 - **O site tem tema claro, além do escuro.** A marca continua nascendo escura

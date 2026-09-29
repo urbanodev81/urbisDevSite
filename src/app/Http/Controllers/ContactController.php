@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
+use App\Support\Alertas\EmailFormatado;
 
 class ContactController extends Controller
 {
@@ -73,17 +73,18 @@ class ContactController extends Controller
             return back()->with('success', 'Mensagem enviada com sucesso! Entraremos em contato em breve.');
         }
 
-        Mail::raw(
-            "Nome: {$validated['name']}\n"
-            ."E-mail: {$validated['email']}\n"
-            .'Telefone: '.$validated['phone']."\n\n"
-            ."Mensagem:\n{$validated['message']}",
-            function ($message) use ($validated) {
-                $message->to(config('mail.from.address'))
-                    ->subject('Contato do site — '.$validated['name'])
-                    ->replyTo($validated['email'], $validated['name']);
-            }
-        );
+        EmailFormatado::para((string) config('mail.from.address'))
+            ->assunto('Contato do site — '.$validated['name'])
+            ->titulo('Novo contato pelo site')
+            ->campos([
+                'Nome' => $validated['name'],
+                'E-mail' => $validated['email'],
+                'Telefone' => $validated['phone'],
+            ])
+            ->paragrafo($validated['message'])
+            ->responderPara($validated['email'], $validated['name'])
+            ->assinatura('Formulário de contato — urbisdev.tech')
+            ->enviar();
 
         Log::info('Contato recebido', [
             'name' => $validated['name'],

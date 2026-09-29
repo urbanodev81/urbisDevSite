@@ -2,9 +2,9 @@
 
 namespace App\Support\Alertas;
 
+use App\Support\Alertas\EmailFormatado;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Throwable;
 
 /**
@@ -40,17 +40,19 @@ class AlertaDeErro
 
             $servico = (string) config('security_alerts.service', config('app.name'));
             $url = app()->runningInConsole() ? 'cli' : request()->fullUrl();
-            $corpo = implode("\n", [
-                "Erro não tratado em {$servico}",
-                '',
-                "URL: {$url}",
-                'Erro: '.$e::class.': '.$e->getMessage(),
-                'Onde: '.$e->getFile().':'.$e->getLine(),
-                '',
-                'Repetições do mesmo erro nos próximos '.self::FREIO_MINUTOS.' min não geram outro e-mail.',
-            ]);
-
-            Mail::raw($corpo, fn ($m) => $m->to($destino)->subject("[{$servico}] Erro 500: ".mb_strimwidth($e->getMessage(), 0, 80, '…')));
+            EmailFormatado::para($destino)
+                ->assunto("[{$servico}] Erro 500: ".mb_strimwidth($e->getMessage(), 0, 80, '…'))
+                ->titulo('Erro não tratado')
+                ->paragrafo("Um erro não tratado aconteceu em {$servico}.")
+                ->campos([
+                    'URL' => $url,
+                    'Erro' => $e::class.': '.$e->getMessage(),
+                    'Onde' => $e->getFile().':'.$e->getLine(),
+                ])
+                ->paragrafo('Repetições do mesmo erro nos próximos '.self::FREIO_MINUTOS.' min não geram outro e-mail.')
+                ->remetente($servico)
+                ->assinatura("Aviso automático — {$servico}")
+                ->enviar();
         } catch (Throwable $falha) {
             Log::error('[alerta-erro] falha ao avisar: '.$falha->getMessage());
         }

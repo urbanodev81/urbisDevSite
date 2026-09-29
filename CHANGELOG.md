@@ -4,6 +4,9 @@ Todas as mudanças relevantes deste projeto.
 
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 **Estamos pré-v1**: tudo vive em `## [Não lançado]` até o Ricardo dizer que
+
+### Corrigido
+- **E-mails no layout do sistema.** Alertas ao operador (segurança, erro 500), avisos automáticos e o e-mail de "defina sua senha" saíam em texto cru, sem a marca — e, dentro de um inquilino, com o nome dele no remetente. Agora usam o mesmo layout das notificações (`EmailFormatado`), com texto variável escapado.
 lançou. Não crie número de versão nem date release por conta própria.
 
 > Este arquivo nasceu em 21/09/2026, reconstruído a partir do histórico —

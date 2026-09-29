@@ -52,6 +52,13 @@ jobs:
             cd /home/urbisdev/site
             docker compose build
             docker compose up -d
+            # O `composer install` do Dockerfile NÃO vale em produção: o
+            # compose monta ./src por cima de /var/www/html, e o rsync acima
+            # exclui src/vendor — o vendor que roda é o da pasta da VPS, que
+            # nada atualizava. Invisível enquanto o composer.lock não mudava;
+            # com o Altcha (29/09/2026) entrou o primeiro pacote novo, e sem
+            # este passo o desafio do captcha dava 500 e o contato travava.
+            docker compose exec -T app composer install --no-dev --no-interaction --optimize-autoloader
             docker compose exec -T nginx nginx -t
             docker compose exec -T nginx nginx -s reload
             docker compose ps

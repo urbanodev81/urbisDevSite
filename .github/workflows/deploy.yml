@@ -59,6 +59,12 @@ jobs:
             # com o Altcha (29/09/2026) entrou o primeiro pacote novo, e sem
             # este passo o desafio do captcha dava 500 e o contato travava.
             docker compose exec -T app composer install --no-dev --no-interaction --optimize-autoloader
+            # O php-fpm roda como www-data, e src/storage também fica fora do
+            # rsync: nada garantia que ele pudesse escrever ali. A pasta
+            # cache/data era do urbisdev com 775 — o cache em arquivo não criava
+            # as subpastas e o desafio do Altcha (que mora no cache) dava 500,
+            # junto com o próprio e-mail de alerta do 500. Medido em 01/10/2026.
+            docker compose exec -T app sh -c 'mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache && chmod -R a+rwX storage bootstrap/cache'
             docker compose exec -T nginx nginx -t
             docker compose exec -T nginx nginx -s reload
             docker compose ps

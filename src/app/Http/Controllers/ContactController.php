@@ -21,11 +21,13 @@ class ContactController extends Controller
 
     public function store(Request $request, Altcha $captcha)
     {
+        $semLinks = $this->limparTextoLivre($request, 'message');
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'phone' => 'required|string|max:15',
-            'message' => 'required|string|min:50|max:5000',
+            'message' => ['required', 'string', 'min:50', 'max:5000', $semLinks],
             'consent' => 'required|accepted',
             'captcha_token' => 'required|string',
         ], [
@@ -91,5 +93,26 @@ class ContactController extends Controller
         ]);
 
         return back()->with('success', 'Mensagem enviada com sucesso! Entraremos em contato em breve.');
+    }
+
+    /**
+     * Texto livre de formulário público: sem tag e com no máximo dois links
+     * (pendência 92a, 02/10/2026). Não era XSS — a saída é escapada —, mas era
+     * recado inútil na fila de quem atende, e vira XSS no dia em que alguém
+     * renderizar o campo cru. Mesma régua do `Honeypot` dos repos irmãos.
+     */
+    private function limparTextoLivre(Request $request, string $campo): \Closure
+    {
+        $texto = $request->input($campo);
+
+        if (is_string($texto) && $texto !== '') {
+            $request->merge([$campo => trim(strip_tags($texto))]);
+        }
+
+        return function (string $atributo, mixed $valor, \Closure $falha): void {
+            if (is_string($valor) && preg_match_all('~(?:https?://|www\.)\S+~i', $valor) > 2) {
+                $falha('A mensagem tem links demais. Deixe no máximo 2 e envie de novo.');
+            }
+        };
     }
 }

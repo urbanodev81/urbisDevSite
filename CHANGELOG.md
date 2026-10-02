@@ -14,6 +14,10 @@ lançou. Não crie número de versão nem date release por conta própria.
 
 ## [Não lançado]
 
+### Corrigido
+- **Recado com mais de dois links é recusado**, com aviso claro, e código HTML
+  colado no texto é descartado — menos spam na fila de quem atende.
+
 ### Segurança
 - **O captcha do contato deixa a Cloudflare.** O formulário passa a usar o
   Altcha auto-hospedado, o mesmo dos sistemas da casa: o desafio sai do

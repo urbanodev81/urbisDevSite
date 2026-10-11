@@ -30,6 +30,8 @@ lançou. Não crie número de versão nem date release por conta própria.
 
 ### Adicionado
 
+- **Demonstração "Suba a sua planilha".** O visitante deixa nome, e-mail e telefone (com a verificação de segurança do site) e escolhe um Excel ou CSV: o painel se monta sozinho, com totais, um gráfico por grupo, a evolução mês a mês quando há coluna de data e a prévia do que foi lido. O arquivo é aberto no próprio navegador e não é enviado. Há também uma planilha de exemplo para quem não tem um arquivo à mão.
+
 - **Três demonstrações novas, que não são painel:** a galeria de sites (escolha
   oficina, banda, clínica ou imobiliária, ponha o nome, a cor e o logo do seu
   negócio e veja o site se vestir na hora; o logo não sai do seu aparelho), o

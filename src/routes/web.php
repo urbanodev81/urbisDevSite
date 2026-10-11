@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\DemoLeadController;
 use App\Support\Captcha\Altcha;
 
 Route::get('/', function () {
@@ -34,8 +35,20 @@ Route::get('/demonstracoes/{slug}', function (string $slug) {
 
     abort_unless(is_array($demo) && ($demo['pronta'] ?? false) && view()->exists('demonstracoes.'.$slug), 404);
 
-    return view('demonstracoes.'.$slug, ['slug' => $slug, 'demo' => $demo]);
+    return view('demonstracoes.'.$slug, [
+        'slug' => $slug,
+        'demo' => $demo,
+        // Demonstração atrás do formulário de lead: a sessão diz se este
+        // visitante já passou por ele (`DemoLeadController`).
+        'liberada' => ! ($demo['pede_contato'] ?? false) || in_array($slug, (array) session('demos_liberadas', []), true),
+    ]);
 })->where('slug', '[a-z0-9-]+');
+
+// O formulário que libera uma demonstração com `pede_contato`. Mesmo teto do
+// contato: é POST público que manda e-mail.
+Route::post('/demonstracoes/{slug}/liberar', [DemoLeadController::class, 'store'])
+    ->where('slug', '[a-z0-9-]+')
+    ->middleware('throttle:10,1');
 
 Route::post('/contato', [ContactController::class, 'store'])->middleware('throttle:10,1');
 

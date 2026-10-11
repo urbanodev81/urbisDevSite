@@ -10,6 +10,8 @@
  * `pronta => false` aparece na lista como "em construção", sem link.
  * `assunto` é a frase que o botão "quero com os meus dados" deixa pronta no
  * formulário de contato: sai DAQUI, pelo slug, nunca do endereço.
+ * `pede_contato => true` põe um formulário de lead (com captcha) na frente:
+ * decisão do Ricardo de 11/10/2026 para a planilha e para a IA.
  */
 
 return [
@@ -68,6 +70,20 @@ return [
         'resumo' => 'O resultado do mês escrito sozinho a partir das vendas, com gráfico, tabelas e o arquivo em PDF.',
         'assunto' => 'o relatório automático',
         'pronta' => true,
+    ],
+
+    /*
+     * `pede_contato => true`: a página só entrega a ferramenta depois do
+     * formulário com captcha (`DemoLeadController`), que vira lead. O arquivo
+     * do visitante é lido no navegador e nunca chega ao servidor.
+     */
+    'planilha' => [
+        'titulo' => 'Suba a sua planilha',
+        'tipo' => 'Ferramenta',
+        'resumo' => 'Escolha um Excel ou CSV seu e veja o painel se montar sozinho. O arquivo é lido no seu aparelho e não é enviado.',
+        'assunto' => 'o painel montado a partir da minha planilha',
+        'pronta' => true,
+        'pede_contato' => true,
     ],
 
 ];

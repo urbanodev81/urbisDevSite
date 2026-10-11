@@ -53,6 +53,15 @@ a própria página impressa, sempre com os tokens do tema claro). O ano de venda
 da oficina mora em `public/demos/dados-oficina.js`, lido pelo painel comercial e
 pelo relatório: mexer ali muda os dois.
 
+**Demonstração atrás de formulário (desde 11/10/2026, noite).** Entrada com
+`pede_contato => true` no config só entrega a ferramenta depois do formulário
+de lead com Altcha (`DemoLeadController`): o lead é um e-mail para a casa e a
+liberação é uma marca na sessão (`demos_liberadas`), sem banco. A primeira é a
+`planilha`: CSV e .xlsx lidos no navegador por `public/demos/planilha.js`, sem
+biblioteca (o .xlsx é aberto com `DecompressionStream`) e sem requisição
+nenhuma. Tudo o que vem do arquivo entra na página por `textContent`. O estilo
+de formulário saiu da home para `partials/formulario-estilos.blade.php`.
+
 **Não tem** banco, migration, autenticação, painel, tenancy nem suíte de
 testes — e isso é decisão, não pendência. Não sugira módulo, model ou
 `php artisan make:*` aqui sem o Ricardo pedir: o valor deste repo é ele

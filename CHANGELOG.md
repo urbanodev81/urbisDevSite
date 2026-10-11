@@ -30,6 +30,12 @@ lançou. Não crie número de versão nem date release por conta própria.
 
 ### Adicionado
 
+- **Três demonstrações novas, que não são painel:** a galeria de sites (escolha
+  oficina, banda, clínica ou imobiliária, ponha o nome, a cor e o logo do seu
+  negócio e veja o site se vestir na hora; o logo não sai do seu aparelho), o
+  agendamento online (serviço, dia e horário livre de um lado, a agenda de quem
+  atende do outro, recebendo a marcação) e o relatório automático (o resultado
+  do mês escrito sozinho a partir das vendas, com o arquivo em PDF).
 - **Demonstrações no site** (`/demonstracoes`): quatro painéis de exemplo para o
   visitante mexer, com dados inventados — campeonato de futebol, comercial de
   uma oficina, funil de uma imobiliária e atendimento com prazos. Filtros que

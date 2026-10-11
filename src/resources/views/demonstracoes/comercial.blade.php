@@ -37,5 +37,6 @@
 
 @push('scripts')
 <script src="/demos/graficos.js?v={{ filemtime(public_path('demos/graficos.js')) }}"></script>
+<script src="/demos/dados-oficina.js?v={{ filemtime(public_path('demos/dados-oficina.js')) }}"></script>
 <script src="/demos/comercial.js?v={{ filemtime(public_path('demos/comercial.js')) }}"></script>
 @endpush

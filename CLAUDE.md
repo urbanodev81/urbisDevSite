@@ -46,6 +46,12 @@ gráficos são SVG desenhado por `src/public/demos/graficos.js`, sem biblioteca
 e sem build. Cor de gráfico é token (`--serie-1..4`), validada para daltonismo
 nos dois temas; todo gráfico tem dica no mouse e tabela com os mesmos números.
 Continua sem banco: o dado é gerado no navegador, com semente fixa.
+Desde a segunda leva (11/10) há três que não são painel: `sites` (o visitante
+troca nome, cor e logo; o logo abre por `blob:` e não sai do aparelho),
+`agendamento` (a agenda parte de amanhã e nada é enviado) e `relatorio` (o PDF é
+a própria página impressa, sempre com os tokens do tema claro). O ano de vendas
+da oficina mora em `public/demos/dados-oficina.js`, lido pelo painel comercial e
+pelo relatório: mexer ali muda os dois.
 
 **Não tem** banco, migration, autenticação, painel, tenancy nem suíte de
 testes — e isso é decisão, não pendência. Não sugira módulo, model ou

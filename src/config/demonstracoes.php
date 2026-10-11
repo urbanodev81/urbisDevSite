@@ -46,4 +46,28 @@ return [
         'pronta' => true,
     ],
 
+    'sites' => [
+        'titulo' => 'Galeria de sites',
+        'tipo' => 'Página de exemplo',
+        'resumo' => 'Oficina, banda, clínica ou imobiliária: ponha o seu nome, a sua cor e o seu logo e veja o site se vestir na hora.',
+        'assunto' => 'a galeria de sites',
+        'pronta' => true,
+    ],
+
+    'agendamento' => [
+        'titulo' => 'Agendamento online',
+        'tipo' => 'Página de exemplo',
+        'resumo' => 'O cliente escolhe serviço, dia e horário livre; a agenda de quem atende recebe a marcação na hora.',
+        'assunto' => 'o agendamento online',
+        'pronta' => true,
+    ],
+
+    'relatorio' => [
+        'titulo' => 'Relatório automático',
+        'tipo' => 'Relatório',
+        'resumo' => 'O resultado do mês escrito sozinho a partir das vendas, com gráfico, tabelas e o arquivo em PDF.',
+        'assunto' => 'o relatório automático',
+        'pronta' => true,
+    ],
+
 ];

@@ -30,6 +30,12 @@ lançou. Não crie número de versão nem date release por conta própria.
 
 ### Adicionado
 
+- **Demonstrações no site** (`/demonstracoes`): quatro painéis de exemplo para o
+  visitante mexer, com dados inventados — campeonato de futebol, comercial de
+  uma oficina, funil de uma imobiliária e atendimento com prazos. Filtros que
+  mudam números e gráficos na hora, tema claro e escuro, tabela com os mesmos
+  números de cada gráfico e o botão "Quero com os meus dados", que leva ao
+  contato com o recado já começado. A home ganhou a seção e o menu, o link.
 - **O site tem tema claro, além do escuro.** A marca continua nascendo escura
   — "cidade à noite" é identidade, não modo —, mas quem prefere claro troca
   pelo painel de acessibilidade, e a escolha fica guardada no navegador para a

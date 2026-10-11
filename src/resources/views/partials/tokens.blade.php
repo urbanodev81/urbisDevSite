@@ -90,6 +90,17 @@
     --ok:    #3DD68C;
     --warn:  #F5A524;
     --error: #F26A6E;
+
+    /* ---- Séries dos gráficos das demonstrações (11/10/2026) ----
+       Ordem FIXA: a série 1 é sempre a 1, filtro nenhum repinta as outras.
+       Não são cores da marca nem dos distritos de propósito: gráfico pede
+       matizes que se distinguem entre si, inclusive para daltônicos. Os
+       quatro passos de cada tema foram conferidos contra o card deste tema
+       (faixa de luminosidade, croma, separação com e sem daltonismo). */
+    --serie-1: #3987E5;
+    --serie-2: #D95926;
+    --serie-3: #199E70;
+    --serie-4: #C98500;
 }
 
 html.claro {
@@ -130,6 +141,13 @@ html.claro {
     --ok:    #17784A;
     --warn:  #8A5A00;
     --error: #C0272C;
+
+    /* No claro, a 3 e a 4 ficam abaixo de 3:1 sobre o branco: por isso todo
+       gráfico leva valor escrito e a tabela com os mesmos números. */
+    --serie-1: #2A78D6;
+    --serie-2: #EB6834;
+    --serie-3: #1BAF7A;
+    --serie-4: #EDA100;
 
     --d-synapse: #0F766E;
     --d-urb:     #6D28D9;

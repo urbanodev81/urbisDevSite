@@ -1,0 +1,49 @@
+<?php
+
+/*
+ * As demonstrações do site — fonte única.
+ *
+ * Cada uma é uma página em `resources/views/demonstracoes/<slug>.blade.php`,
+ * com dado INVENTADO e gerado no navegador do visitante (semente fixa: todo
+ * mundo vê os mesmos números). Nada aqui tem banco nem login.
+ *
+ * `pronta => false` aparece na lista como "em construção", sem link.
+ * `assunto` é a frase que o botão "quero com os meus dados" deixa pronta no
+ * formulário de contato: sai DAQUI, pelo slug, nunca do endereço.
+ */
+
+return [
+
+    'futebol' => [
+        'titulo' => 'Campeonato de futebol',
+        'tipo' => 'Painel de dados',
+        'resumo' => 'Tabela que se reordena rodada a rodada, artilharia, comparador de times e mapa de finalizações.',
+        'assunto' => 'o painel do campeonato de futebol',
+        'pronta' => true,
+    ],
+
+    'comercial' => [
+        'titulo' => 'Comercial de uma oficina',
+        'tipo' => 'Painel de dados',
+        'resumo' => 'Faturamento contra a meta, ticket médio, serviços que mais vendem e os dias mais fortes.',
+        'assunto' => 'o painel comercial',
+        'pronta' => true,
+    ],
+
+    'imobiliaria' => [
+        'titulo' => 'Funil de uma imobiliária',
+        'tipo' => 'Painel de dados',
+        'resumo' => 'De onde vêm os leads, quanto tempo esperam pela resposta e quais anúncios são vistos e não convertem.',
+        'assunto' => 'o painel de funil da imobiliária',
+        'pronta' => true,
+    ],
+
+    'atendimento' => [
+        'titulo' => 'Atendimento e prazos',
+        'tipo' => 'Painel de dados',
+        'resumo' => 'Chamados por fila, quanto fica dentro do prazo combinado e em que hora do dia a fila aperta.',
+        'assunto' => 'o painel de atendimento e prazos',
+        'pronta' => true,
+    ],
+
+];

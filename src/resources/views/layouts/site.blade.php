@@ -227,7 +227,8 @@
             <ul class="nav-links">
                 <li><a href="{{ $base }}#fazemos">O que fazemos</a></li>
                 <li><a href="{{ $base }}#proximos">Próximos passos</a></li>
-                <li><a href="{{ url('/como-trabalhamos') }}" @if (! $naHome) aria-current="page" @endif>Como trabalhamos</a></li>
+                <li><a href="{{ url('/demonstracoes') }}" @if (request()->is('demonstracoes*')) aria-current="page" @endif>Demonstrações</a></li>
+                <li><a href="{{ url('/como-trabalhamos') }}" @if (request()->is('como-trabalhamos')) aria-current="page" @endif>Como trabalhamos</a></li>
                 <li><a href="{{ $base }}#contato">Contato</a></li>
             </ul>
             <a class="btn btn-primary nav-cta" href="{{ $base }}#contato">Fale Conosco</a>
@@ -238,6 +239,7 @@
         <nav class="mobile-menu" id="mobileMenu">
             <a href="{{ $base }}#fazemos" onclick="closeMenu()">O que fazemos</a>
             <a href="{{ $base }}#proximos" onclick="closeMenu()">Próximos passos</a>
+            <a href="{{ url('/demonstracoes') }}" onclick="closeMenu()">Demonstrações</a>
             <a href="{{ url('/como-trabalhamos') }}" onclick="closeMenu()">Como trabalhamos</a>
             <a href="{{ $base }}#contato" onclick="closeMenu()">Contato</a>
             <a class="btn btn-primary" style="margin-top:10px" href="{{ $base }}#contato" onclick="closeMenu()">Fale Conosco</a>
@@ -258,6 +260,7 @@
             <ul class="foot-links">
                 <li><a href="{{ $base }}#fazemos">O que fazemos</a></li>
                 <li><a href="{{ $base }}#proximos">Próximos passos</a></li>
+                <li><a href="{{ url('/demonstracoes') }}">Demonstrações</a></li>
                 <li><a href="{{ url('/como-trabalhamos') }}">Como trabalhamos</a></li>
                 <li><a href="{{ $base }}#contato">Contato</a></li>
             </ul>

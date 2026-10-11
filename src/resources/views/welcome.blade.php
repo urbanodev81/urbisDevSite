@@ -49,6 +49,16 @@
         .hero-meta span { display: inline-flex; align-items: center; gap: 8px; }
         .hero-meta svg { color: var(--amber-500); }
 
+        /* ---------- demonstrações ---------- */
+        .demos-home { display: grid; gap: 20px; }
+        @media (min-width: 880px) { .demos-home { grid-template-columns: repeat(3, 1fr); } }
+        .demo-home { display: flex; flex-direction: column; gap: 10px; padding: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-card); text-decoration: none; color: var(--fg-muted); transition: border-color .18s ease-out, transform .18s ease-out; }
+        .demo-home:hover { border-color: var(--accent); transform: translateY(-3px); }
+        .demo-home .tag { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--fg-subtle); }
+        .demo-home p { font-size: .98rem; line-height: 1.6; }
+        .demo-home .abrir { margin-top: auto; padding-top: 6px; font-weight: 600; color: var(--accent); }
+        @media (prefers-reduced-motion: reduce) { .demo-home { transition: none; } .demo-home:hover { transform: none; } }
+
         /* ---------- seções / cards ---------- */
         .section-head { max-width: 640px; margin-bottom: clamp(40px, 6vw, 64px); }
         .section-head h2 { margin: 16px 0 14px; }
@@ -175,6 +185,29 @@
             </div>
         </section>
 
+        {{-- Demonstrações: as três primeiras de `config/demonstracoes.php`.
+             A lista inteira mora em /demonstracoes. --}}
+        <section id="demonstracoes">
+            <div class="container">
+                <div class="section-head reveal">
+                    <span class="eyebrow">Demonstrações</span>
+                    <h2>Veja funcionando antes de pedir.</h2>
+                    <p>Painéis de verdade, com dados inventados. Clique, filtre e imagine com os números do seu negócio.</p>
+                </div>
+                <div class="demos-home reveal">
+                    @foreach (collect($demos ?? [])->where('pronta', true)->take(3) as $slug => $demo)
+                        <a class="demo-home" href="{{ url('/demonstracoes/'.$slug) }}">
+                            <span class="tag">{{ $demo['tipo'] }}</span>
+                            <h3>{{ $demo['titulo'] }}</h3>
+                            <p>{{ $demo['resumo'] }}</p>
+                            <span class="abrir">Abrir a demonstração &rarr;</span>
+                        </a>
+                    @endforeach
+                </div>
+                <p class="reveal" style="margin-top:28px"><a class="btn btn-ghost" href="{{ url('/demonstracoes') }}">Ver todas as demonstrações</a></p>
+            </div>
+        </section>
+
         {{-- Próximos passos --}}
         <section id="proximos">
             <div class="container">
@@ -250,7 +283,7 @@
 
                     <div class="field">
                         <label for="message">Mensagem *</label>
-                        <textarea id="message" name="message" required minlength="50" maxlength="5000" placeholder="Conte-nos sobre seu projeto (mínimo 50 caracteres)...">{{ old('message') }}</textarea>
+                        <textarea id="message" name="message" required minlength="50" maxlength="5000" placeholder="Conte-nos sobre seu projeto (mínimo 50 caracteres)...">{{ old('message', $recadoDaDemo ?? '') }}</textarea>
                         <div class="char-count"><span id="charCount">0</span>/5000</div>
                         @error('message') <span class="field-error">{{ $message }}</span> @enderror
                     </div>

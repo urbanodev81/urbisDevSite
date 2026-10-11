@@ -38,6 +38,15 @@ noite" é identidade, não modo. Cor literal existe em **um** arquivo:
 `python3 ../socrates/docs/urbis-design/contraste.py` — e leia o CORE antes
 (`../socrates/docs/urbis-design/CORE.md`).
 
+**Demonstrações (desde 11/10/2026).** `/demonstracoes` lista páginas de
+exemplo com dado INVENTADO, para o visitante mexer. A lista mora em
+`src/config/demonstracoes.php` (o slug do endereço só escolhe uma entrada de
+lá, nunca um arquivo), cada página é uma view em `views/demonstracoes/`, e os
+gráficos são SVG desenhado por `src/public/demos/graficos.js`, sem biblioteca
+e sem build. Cor de gráfico é token (`--serie-1..4`), validada para daltonismo
+nos dois temas; todo gráfico tem dica no mouse e tabela com os mesmos números.
+Continua sem banco: o dado é gerado no navegador, com semente fixa.
+
 **Não tem** banco, migration, autenticação, painel, tenancy nem suíte de
 testes — e isso é decisão, não pendência. Não sugira módulo, model ou
 `php artisan make:*` aqui sem o Ricardo pedir: o valor deste repo é ele
@@ -79,6 +88,9 @@ desde 31/07"), e nenhum deles existia: o site está no ar, com o tema
 
 - **`pre-prod`** = o que está publicado em <https://urbisdev.tech>. É a
   única que deploya.
+- ⚠️ **Medido em 11/10/2026: a `main` está 29 commits ATRÁS da `pre-prod`**, ao
+  contrário do que as linhas abaixo dizem (ela nem tem `layouts/site.blade.php`).
+  Até alguém alinhar as duas, branch de trabalho sai da `pre-prod`.
 - **`main`** = `pre-prod` + commits que **não mudam o site** (documentação,
   `.gitignore`). Ela ficou 12 commits atrás entre 04/07 e 15/08, e era
   essa defasagem que a auditoria cross-repo lia como "trabalho perdido".

@@ -34,6 +34,7 @@
     <div class="container">
         <ul class="demo-lista" style="list-style:none">
             @foreach ($demos as $slug => $demo)
+                @continue(! $demo['pronta'] && ($demo['oculta_se_nao_pronta'] ?? false))
                 <li>
                     @if ($demo['pronta'])
                         <a class="demo-item" href="{{ url('/demonstracoes/'.$slug) }}">

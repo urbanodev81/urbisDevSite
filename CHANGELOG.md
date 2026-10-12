@@ -15,6 +15,11 @@ lançou. Não crie número de versão nem date release por conta própria.
 ## [Não lançado]
 
 ### Adicionado
+- **Demonstração "Pergunte aos dados".** O visitante escreve a pergunta em
+  português e uma IA responde lendo a tabela de vendas da oficina de exemplo,
+  que fica à vista na página para conferir. Pede o contato antes de abrir e
+  tem limite de perguntas por pessoa e por dia. Só aparece no site depois de
+  ligada ao Sócrates.
 - **Demonstração "Ficha de lançamento".** O mesmo empreendimento (inventado)
   em cinco desenhos de página, do mais simples ao livro de vendas com
   capítulos: são as fichas de lançamento do nosso site de imobiliária, para

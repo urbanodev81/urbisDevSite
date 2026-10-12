@@ -14,6 +14,8 @@
     .demo-topo p { max-width: 62ch; }
     .demo-selo { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; padding: 6px 12px; border: 1px dashed var(--border-input); border-radius: 999px; font-family: var(--font-mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-muted); }
 
+    .demo-porta { max-width: 640px; }
+    .demo-porta > p { margin-bottom: 18px; color: var(--fg-muted); line-height: 1.6; }
     .demo-corpo { padding-block: 28px clamp(56px, 8vw, 96px); }
     .demo-filtros { display: flex; flex-wrap: wrap; align-items: end; gap: 12px 20px; padding: 14px 16px; margin-bottom: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-card); }
     .demo-filtros .campo { display: grid; gap: 4px; }

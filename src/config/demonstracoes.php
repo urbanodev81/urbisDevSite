@@ -100,4 +100,19 @@ return [
         'pede_contato' => true,
     ],
 
+    /*
+     * IA de verdade, com teto por pessoa e por dia. A IA, o lead e a contagem
+     * moram no Sócrates (`App\Support\PergunteAosDados`); sem `DEMO_IA_URL` e
+     * `DEMO_IA_TOKEN` no `.env` ela não existe: some da lista e responde 404.
+     */
+    'pergunte' => [
+        'titulo' => 'Pergunte aos dados',
+        'tipo' => 'Ferramenta com IA',
+        'resumo' => 'Escreva a pergunta em português e a IA responde lendo a tabela de vendas: qual o melhor mês, quem vendeu mais, o que caiu.',
+        'assunto' => 'perguntar aos dados com IA',
+        'pronta' => filled(env('DEMO_IA_URL')) && filled(env('DEMO_IA_TOKEN')),
+        'pede_contato' => true,
+        'oculta_se_nao_pronta' => true,
+    ],
+
 ];

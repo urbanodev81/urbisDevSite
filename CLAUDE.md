@@ -70,13 +70,25 @@ biblioteca (o .xlsx é aberto com `DecompressionStream`) e sem requisição
 nenhuma. Tudo o que vem do arquivo entra na página por `textContent`. O estilo
 de formulário saiu da home para `partials/formulario-estilos.blade.php`.
 
+**Pergunte aos dados (desde 12/10/2026)** é a única demonstração que fala com
+servidor: `POST /demonstracoes/pergunte/perguntar` (`DemoIaController`) leva a
+pergunta ao Sócrates por `App\Support\PergunteAosDados`, com o token de projeto
+do site (`DEMO_IA_URL` e `DEMO_IA_TOKEN`; sem os dois ela some da lista e dá
+404). A chave de IA, o lead e os tetos (por pessoa e por dia) moram LÁ. A tabela
+que a IA lê é fixa, `resources/demos/oficina-resumo.json`, e é a mesma que a
+página mostra: mudou `public/demos/dados-oficina.js`, rode
+`node resources/demos-fonte/pergunte/resumir.cjs`. A resposta entra na página
+por `textContent`. O formulário de contato das duas demonstrações com
+`pede_contato` é um só: `partials/demo-porta.blade.php`.
+
 **Não tem** banco, migration, autenticação, painel, tenancy nem suíte de
 testes — e isso é decisão, não pendência. Não sugira módulo, model ou
 `php artisan make:*` aqui sem o Ricardo pedir: o valor deste repo é ele
 continuar pequeno o bastante pra o deploy nunca ser assustador.
 
 Este é o único repo do ecossistema que **não** é satélite do Sócrates —
-não manda presença, não tem token de projeto, não aparece no kanban.
+não manda presença, não aparece no kanban. (Desde 12/10/2026 tem um token de
+projeto, usado só pela demonstração de IA.)
 
 **Mas desde 12/10/2026 ele LÊ o portfólio de lá** (pendência 203, decisão do
 Ricardo). A seção "Trabalhos" da home, a página `/trabalhos` e o link do menu

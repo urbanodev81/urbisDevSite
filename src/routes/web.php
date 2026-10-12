@@ -2,8 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\DemoIaController;
 use App\Http\Controllers\DemoLeadController;
 use App\Support\Captcha\Altcha;
+use App\Support\PergunteAosDados;
 use App\Support\Portfolio;
 use Illuminate\Support\Facades\Storage;
 
@@ -66,6 +68,8 @@ Route::get('/demonstracoes/{slug}', function (string $slug) {
         // Demonstração atrás do formulário de lead: a sessão diz se este
         // visitante já passou por ele (`DemoLeadController`).
         'liberada' => ! ($demo['pede_contato'] ?? false) || in_array($slug, (array) session('demos_liberadas', []), true),
+        // Só a demonstração de IA mostra a tabela que manda ao modelo.
+        'dados' => $slug === PergunteAosDados::DEMO ? PergunteAosDados::dados() : null,
     ]);
 })->where('slug', '[a-z0-9-]+');
 
@@ -73,6 +77,12 @@ Route::get('/demonstracoes/{slug}', function (string $slug) {
 // contato: é POST público que manda e-mail.
 Route::post('/demonstracoes/{slug}/liberar', [DemoLeadController::class, 'store'])
     ->where('slug', '[a-z0-9-]+')
+    ->middleware('throttle:10,1');
+
+// A pergunta da demonstração de IA. Cada uma vira chamada de modelo no
+// Sócrates, que tem os tetos de verdade (por pessoa e por dia); este aqui é só
+// contra o martelo.
+Route::post('/demonstracoes/pergunte/perguntar', [DemoIaController::class, 'perguntar'])
     ->middleware('throttle:10,1');
 
 Route::post('/contato', [ContactController::class, 'store'])->middleware('throttle:10,1');

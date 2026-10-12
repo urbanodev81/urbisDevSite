@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Support\Alertas\EmailFormatado;
 use App\Support\Captcha\Altcha;
+use App\Support\PergunteAosDados;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -15,14 +16,15 @@ use Illuminate\Support\Facades\Log;
  *
  * O site segue sem banco: o lead é o e-mail, e a liberação é uma marca na
  * sessão. Nada do que o visitante fizer depois (o arquivo que ele escolher)
- * passa por aqui.
+ * passa por aqui. A exceção é a demonstração de IA, que também registra o
+ * contato no Sócrates: é lá que as perguntas dela são contadas.
  */
 class DemoLeadController extends Controller
 {
     /** O mesmo lead não vira dois e-mails se a pessoa reenviar (ver ContactController). */
     private const JANELA_REPETICAO = 300;
 
-    public function store(Request $request, Altcha $captcha, string $slug)
+    public function store(Request $request, Altcha $captcha, PergunteAosDados $ponte, string $slug)
     {
         $demo = config('demonstracoes.'.$slug);
 
@@ -60,6 +62,19 @@ class DemoLeadController extends Controller
                 ->enviar();
 
             Log::info('Lead de demonstração', ['demo' => $slug, 'email' => $validated['email']]);
+        }
+
+        // A demonstração de IA conta as perguntas no Sócrates, por pessoa: o
+        // contato é registrado lá antes de abrir. O e-mail acima já saiu, então
+        // o lead não se perde se o Sócrates estiver fora; só a porta não abre.
+        if ($slug === PergunteAosDados::DEMO) {
+            $visitante = PergunteAosDados::visitante($validated['email'], $validated['phone']);
+
+            if (! $ponte->registrarLead($visitante, $validated['name'], $validated['email'], $validated['phone'])) {
+                return back()->withErrors(['captcha_token' => 'Recebemos o seu contato, mas a demonstração está fora do ar neste momento. Tente de novo em alguns minutos.'])->withInput();
+            }
+
+            $request->session()->put('demo_visitante', $visitante);
         }
 
         $liberadas = (array) $request->session()->get('demos_liberadas', []);

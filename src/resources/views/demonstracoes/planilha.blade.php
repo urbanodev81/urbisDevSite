@@ -14,8 +14,6 @@
 @include('partials.demo-estilos')
 <style>
     @include('partials.formulario-estilos')
-    .pl-porta { max-width: 640px; }
-    .pl-porta > p { margin-bottom: 18px; color: var(--fg-muted); line-height: 1.6; }
     .pl-soltar { display: grid; gap: 14px; justify-items: start; padding: 24px; background: var(--surface); border: 2px dashed var(--border-input); border-radius: var(--r-card); }
     .pl-soltar.sobre { border-color: var(--accent); }
     .pl-soltar p { color: var(--fg-muted); line-height: 1.6; max-width: 62ch; }
@@ -42,45 +40,10 @@
 
     <div class="container demo-corpo">
         @if (! $liberada)
-            <section class="demo-cartao pl-porta" aria-labelledby="pl-porta-h">
-                <h2 id="pl-porta-h">Antes de abrir, diga quem é você</h2>
-                <p>Esta demonstração trabalha com um arquivo seu, então pedimos o contato primeiro. A planilha não vem junto: ela é aberta só no seu navegador, e nós recebemos apenas o que você escrever aqui.</p>
-
-                <form action="{{ url('/demonstracoes/'.$slug.'/liberar') }}" method="POST">
-                    @csrf
-                    <div class="field-row">
-                        <div class="field">
-                            <label for="pl-nome">Nome *</label>
-                            <input type="text" id="pl-nome" name="name" value="{{ old('name') }}" required maxlength="255" autocomplete="name">
-                            @error('name') <span class="field-error">{{ $message }}</span> @enderror
-                        </div>
-                        <div class="field">
-                            <label for="pl-email">E-mail *</label>
-                            <input type="email" id="pl-email" name="email" value="{{ old('email') }}" required maxlength="255" autocomplete="email">
-                            @error('email') <span class="field-error">{{ $message }}</span> @enderror
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label for="pl-telefone">Telefone *</label>
-                        <input type="tel" id="pl-telefone" name="phone" value="{{ old('phone') }}" placeholder="(11) 99999-9999" required maxlength="15" autocomplete="tel">
-                        @error('phone') <span class="field-error">{{ $message }}</span> @enderror
-                    </div>
-                    <div class="field">
-                        <div class="consent">
-                            <input type="checkbox" id="pl-consent" name="consent" value="1" required>
-                            <label for="pl-consent">Autorizo o armazenamento dos meus dados para fins de contato, conforme a LGPD.</label>
-                        </div>
-                        @error('consent') <span class="field-error">{{ $message }}</span> @enderror
-                    </div>
-                    <div class="field captcha">
-                        <altcha-widget challenge="/captcha/desafio" name="captcha_token" language="pt-br" auto="onload" hidefooter hidelogo></altcha-widget>
-                        @error('captcha_token') <span class="field-error">{{ $message }}</span> @enderror
-                    </div>
-                    <div>
-                        <button type="submit" class="btn btn-primary">Abrir a demonstração</button>
-                    </div>
-                </form>
-            </section>
+            @include('partials.demo-porta', [
+                'portaTitulo' => 'Antes de abrir, diga quem é você',
+                'portaTexto' => 'Esta demonstração trabalha com um arquivo seu, então pedimos o contato primeiro. A planilha não vem junto: ela é aberta só no seu navegador, e nós recebemos apenas o que você escrever aqui.',
+            ])
         @else
             <section id="ferramenta" aria-labelledby="pl-soltar-h">
                 <div class="pl-soltar" id="pl-soltar">

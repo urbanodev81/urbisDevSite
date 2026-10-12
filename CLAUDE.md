@@ -53,6 +53,14 @@ a própria página impressa, sempre com os tokens do tema claro). O ano de venda
 da oficina mora em `public/demos/dados-oficina.js`, lido pelo painel comercial e
 pelo relatório: mexer ali muda os dois.
 
+**Ficha de lançamento (desde 12/10/2026)** é a única demonstração que não é
+view com script: `public/demos/lancamento/*.html` são CÓPIA ESTÁTICA das cinco
+fichas da base `imobiliaria`, com o CSS e o JS do build de lá, `noindex`, e uma
+faixa no topo que troca de desenho e volta ao site. Não se edita à mão: refaz-se
+pela receita de `src/resources/demos-fonte/lancamento/LEIA.md` (fora de
+`public/` porque tem um `seed.php`). O nginx serve esses arquivos direto, então
+o `SecurityHeaders` do Laravel não passa por eles.
+
 **Demonstração atrás de formulário (desde 11/10/2026, noite).** Entrada com
 `pede_contato => true` no config só entrega a ferramenta depois do formulário
 de lead com Altcha (`DemoLeadController`): o lead é um e-mail para a casa e a

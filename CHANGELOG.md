@@ -15,6 +15,10 @@ lançou. Não crie número de versão nem date release por conta própria.
 ## [Não lançado]
 
 ### Adicionado
+- **Demonstração "Ficha de lançamento".** O mesmo empreendimento (inventado)
+  em cinco desenhos de página, do mais simples ao livro de vendas com
+  capítulos: são as fichas de lançamento do nosso site de imobiliária, para
+  abrir, rolar e comparar. Nada é enviado e nenhum link sai da demonstração.
 - **Trabalhos da casa, por tipo.** A home ganha a seção "Trabalhos", com um
   exemplo de cada tipo de site, e a página `/trabalhos` lista todos, com
   captura de tela e a marca "no ar" ou "em construção". A lista vem do

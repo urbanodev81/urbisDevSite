@@ -73,6 +73,20 @@ return [
     ],
 
     /*
+     * Não é painel nem ferramenta: são cinco páginas prontas, cópia estática
+     * das fichas de lançamento da base dos sites de imobiliária, em
+     * `public/demos/lancamento/` (como refazer:
+     * `resources/demos-fonte/lancamento/LEIA.md`).
+     */
+    'lancamento' => [
+        'titulo' => 'Ficha de lançamento',
+        'tipo' => 'Página de exemplo',
+        'resumo' => 'O mesmo empreendimento em cinco desenhos de página, da galeria simples ao livro de vendas com capítulos.',
+        'assunto' => 'a ficha de lançamento imobiliário',
+        'pronta' => true,
+    ],
+
+    /*
      * `pede_contato => true`: a página só entrega a ferramenta depois do
      * formulário com captcha (`DemoLeadController`), que vira lead. O arquivo
      * do visitante é lido no navegador e nunca chega ao servidor.

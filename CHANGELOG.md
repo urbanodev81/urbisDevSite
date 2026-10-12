@@ -14,6 +14,14 @@ lançou. Não crie número de versão nem date release por conta própria.
 
 ## [Não lançado]
 
+### Adicionado
+- **Trabalhos da casa, por tipo.** A home ganha a seção "Trabalhos", com um
+  exemplo de cada tipo de site, e a página `/trabalhos` lista todos, com
+  captura de tela e a marca "no ar" ou "em construção". A lista vem do
+  Sócrates, onde se escolhe o que aparece; cliente que ainda não autorizou
+  aparece sem nome e sem link. Com o Sócrates fora do ar o site segue
+  mostrando a última lista que recebeu.
+
 ### Corrigido
 - **Recado com mais de dois links é recusado**, com aviso claro, e código HTML
   colado no texto é descartado — menos spam na fila de quem atende.

@@ -70,6 +70,17 @@ continuar pequeno o bastante pra o deploy nunca ser assustador.
 Este é o único repo do ecossistema que **não** é satélite do Sócrates —
 não manda presença, não tem token de projeto, não aparece no kanban.
 
+**Mas desde 12/10/2026 ele LÊ o portfólio de lá** (pendência 203, decisão do
+Ricardo). A seção "Trabalhos" da home, a página `/trabalhos` e o link do menu
+saem de `GET <Sócrates>/api/portfolio`, endereço público e sem token: é no
+Sócrates, na guia Portfólio de cada projeto, que se marca o que aparece, em que
+categoria e se o nome do cliente pode sair. Aqui mora só `App\Support\Portfolio`:
+lê com teto de 4 s, guarda no cache de arquivo (uma cópia que vence em 30 min e
+outra que não vence) e copia as capturas para `storage/app/private/portfolio`.
+Com o Sócrates fora, o site mostra a última cópia; sem cópia nenhuma, ou sem
+`PORTFOLIO_URL` no `.env`, a seção, a página e o link simplesmente não existem.
+Continua sem banco. Texto de trabalho não se edita aqui: edita-se lá.
+
 ## Rodar
 
 ```bash

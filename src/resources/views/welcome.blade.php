@@ -27,6 +27,7 @@
 @endpush
 
 @push('estilos')
+@include('partials.trabalho-estilos')
 <style>
         /* ---------- hero + grade de janelas ---------- */
         .hero { position: relative; overflow: hidden; padding-block: clamp(88px, 12vw, 150px); }
@@ -50,6 +51,11 @@
         .hero-meta svg { color: var(--amber-500); }
 
         /* ---------- demonstrações ---------- */
+        .trabalho-de-tipo { display: flex; flex-direction: column; gap: 10px; }
+        .trabalho-de-tipo .trabalho { flex: 1; }
+        .trabalho-de-tipo .tag { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--fg-subtle); }
+        .trabalho-de-tipo .ver-mais { align-self: flex-start; display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; color: var(--accent); text-decoration: none; }
+        .trabalho-de-tipo .ver-mais:hover { text-decoration: underline; }
         .demos-home { display: grid; gap: 20px; }
         @media (min-width: 880px) { .demos-home { grid-template-columns: repeat(3, 1fr); } }
         .demo-home { display: flex; flex-direction: column; gap: 10px; padding: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-card); text-decoration: none; color: var(--fg-muted); transition: border-color .18s ease-out, transform .18s ease-out; }
@@ -153,6 +159,33 @@
                 </div>
             </div>
         </section>
+
+        {{-- Tipos de site: um trabalho de cada categoria do portfólio, que vem do
+             Sócrates (App\Support\Portfolio). Sem nenhum marcado lá, a seção
+             não existe. A lista inteira mora em /trabalhos. --}}
+        @if (! empty($trabalhos))
+        <section id="trabalhos">
+            <div class="container">
+                <div class="section-head reveal">
+                    <span class="eyebrow">Trabalhos</span>
+                    <h2>Cada tipo de site, com um exemplo que já fizemos.</h2>
+                    <p>Um de cada tipo. Os outros estão na página de trabalhos.</p>
+                </div>
+                <div class="trabalhos reveal">
+                    @foreach ($trabalhos as $categoria)
+                        <div class="trabalho-de-tipo">
+                            <p class="tag">{{ $categoria['nome'] }}</p>
+                            @include('partials.trabalho-cartao', ['item' => $categoria['itens'][0], 'categoria' => $categoria, 'nivel' => 'h3'])
+                            @if (count($categoria['itens']) > 1)
+                                <a class="ver-mais" href="{{ url('/trabalhos#'.$categoria['chave']) }}">Ver mais<span class="sr-only"> em {{ $categoria['nome'] }}</span>&nbsp;&rarr;</a>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+                <p class="reveal" style="margin-top:28px"><a class="btn btn-ghost" href="{{ url('/trabalhos') }}">Ver outros sites</a></p>
+            </div>
+        </section>
+        @endif
 
         {{-- Demonstrações: as três primeiras de `config/demonstracoes.php`.
              A lista inteira mora em /demonstracoes. --}}

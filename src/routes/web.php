@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DemoLeadController;
 use App\Support\Captcha\Altcha;
+use App\Support\Portfolio;
+use Illuminate\Support\Facades\Storage;
 
 Route::get('/', function () {
     // Quem chega pelo botão "quero com os meus dados" de uma demonstração
@@ -13,11 +15,34 @@ Route::get('/', function () {
 
     return view('welcome', [
         'demos' => config('demonstracoes'),
+        'trabalhos' => app(Portfolio::class)->porCategoria(),
         'recadoDaDemo' => is_array($demo) ? 'Vi '.$demo['assunto'].' no site e quero algo parecido com os dados do meu negócio. ' : '',
     ]);
 });
 
 Route::get('/como-trabalhamos', fn () => view('como-trabalhamos'));
+
+/*
+ * Trabalhos: o que a casa já fez, por categoria. A lista vem do Sócrates
+ * (`App\Support\Portfolio`), que decide o que aparece e com que nome. Sem
+ * nenhum trabalho marcado lá — ou sem `PORTFOLIO_URL` — a página não existe.
+ */
+Route::get('/trabalhos', function (Portfolio $portfolio) {
+    abort_unless($portfolio->temItens(), 404);
+
+    return view('trabalhos', ['categorias' => $portfolio->porCategoria()]);
+});
+
+// A cópia local das capturas. O nome é o que o Sócrates gerou (20 caracteres
+// ao acaso) e muda a cada troca de imagem: pode ficar guardado para sempre.
+Route::get('/trabalhos/capturas/{arquivo}', function (string $arquivo) {
+    $caminho = Portfolio::caminhoDaCaptura($arquivo);
+    abort_unless($caminho !== null && Storage::disk('local')->exists($caminho), 404);
+
+    return Storage::disk('local')->response($caminho, null, [
+        'Cache-Control' => 'public, max-age=31536000, immutable',
+    ]);
+})->where('arquivo', '[a-z0-9]{20}\\.(png|jpg|jpeg|webp)');
 
 // `throttle` não é sobre o duplo clique (isso é assunto do
 // ContactController, que descarta recado idêntico): é o teto para quem

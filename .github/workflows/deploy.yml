@@ -1,70 +1,48 @@
 name: Deploy — UrbisDev Site
 
+# PLANO B, pelo botão "Run workflow" — NÃO é este arquivo que publica no push.
+#
+# Desde 15/10/2026 quem faz o push na `pre-prod` virar deploy é o vigia da VPS
+# (`~/publicar.sh --vigiar`, no cron a cada 2 min; versionado em
+# `socrates/scripts/publicar-vps.sh`, receita `site_prod`). Ele faz `git pull`
+# em `~/site` e roda os mesmos passos que este arquivo rodava: build antes de
+# trocar, `up -d`, `composer install`, permissões de `storage`, `nginx -t` e
+# reload. O rsync acabou — a pasta da VPS é um clone, sem o
+# `docker-compose.override.yml` (sparse checkout).
+#
+# O gatilho de push saiu porque a cota de Actions da conta acabou em 10/10/2026
+# (pendência 214). Este workflow fica para publicar pelo site do GitHub quando
+# houver cota — chama a mesma porta (`publicar urbisdev prod`), com a chave que
+# não tem shell (segredo `VPS_PUBLICAR_KEY`, o mesmo dos irmãos).
+#
+# Sem GitHub, de qualquer terminal seu:
+#   ssh urbisdev-vps '~/publicar.sh urbisdev prod'
+# Passo a passo: `socrates/docs/20-runbook-deploy.md`.
+
 on:
-  push:
-    branches: [pre-prod]
+  workflow_dispatch:
+
+concurrency:
+  group: publicar-site
+  cancel-in-progress: false
 
 jobs:
-  deploy:
+  publicar:
+    name: Publica na VPS
     runs-on: ubuntu-latest
-
+    timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Deploy para VPS
-        uses: easingthemes/ssh-deploy@v5.1.2
+      - name: Publica
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_KEY }}
-          ARGS: "-avz --delete"
-          EXCLUDE: ".git, .github, .env*, storage, certbot, src/.env, src/vendor, src/storage, src/node_modules, src/bootstrap/cache, CONTEXTO.md, docker-compose.override.yml"
-          SOURCE: "./"
-          REMOTE_HOST: ${{ secrets.VPS_HOST }}
-          REMOTE_USER: ${{ secrets.VPS_USER }}
-          TARGET: "/home/urbisdev/site/"
-
-      # Constrói ANTES de mexer no que está no ar — 23/08/2026.
-      #
-      # A receita antiga era `down` && `up -d --build`: o site ficava fora do ar
-      # durante a construção INTEIRA, que é a parte lenta (o `COPY src/`
-      # invalida a camada e o `composer install` roda de novo a cada deploy de
-      # conteúdo). Foi medido: ~100 s no deploy de 20/08 na VPS, e 24 s
-      # reproduzindo a mesma receita na máquina local. Nada disso era
-      # necessário — o container só precisa parar na hora de trocar de imagem.
-      #
-      # Medido do mesmo jeito, com um `curl` a cada 250 ms durante o deploy:
-      # `build` && `up -d` deu **zero falha em 172 amostras**. `up -d` recria
-      # só o que mudou; num deploy que não toca no Dockerfile ele não recria
-      # nada, e o site nem pisca.
-      #
-      # O `nginx -s reload` no fim é o preço de não derrubar mais: `nginx.conf`
-      # é MONTADO, não copiado para a imagem, então mudança nele não faz o
-      # compose recriar o container — e o antigo `down` era o que a aplicava
-      # sem querer. `nginx -t` antes: config quebrada falha o job com o site
-      # ainda de pé, servindo a config velha.
-      - name: Docker compose rebuild
-        uses: appleboy/ssh-action@v1.2.5
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          script: |
-            set -e
-            cd /home/urbisdev/site
-            docker compose build
-            docker compose up -d
-            # O `composer install` do Dockerfile NÃO vale em produção: o
-            # compose monta ./src por cima de /var/www/html, e o rsync acima
-            # exclui src/vendor — o vendor que roda é o da pasta da VPS, que
-            # nada atualizava. Invisível enquanto o composer.lock não mudava;
-            # com o Altcha (29/09/2026) entrou o primeiro pacote novo, e sem
-            # este passo o desafio do captcha dava 500 e o contato travava.
-            docker compose exec -T app composer install --no-dev --no-interaction --optimize-autoloader
-            # O php-fpm roda como www-data, e src/storage também fica fora do
-            # rsync: nada garantia que ele pudesse escrever ali. A pasta
-            # cache/data era do urbisdev com 775 — o cache em arquivo não criava
-            # as subpastas e o desafio do Altcha (que mora no cache) dava 500,
-            # junto com o próprio e-mail de alerta do 500. Medido em 01/10/2026.
-            docker compose exec -T app sh -c 'mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache && chmod -R a+rwX storage bootstrap/cache'
-            docker compose exec -T nginx nginx -t
-            docker compose exec -T nginx nginx -s reload
-            docker compose ps
+          VPS_PUBLICAR_KEY: ${{ secrets.VPS_PUBLICAR_KEY }}
+          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$VPS_PUBLICAR_KEY" > ~/.ssh/publicar && chmod 600 ~/.ssh/publicar
+          printf '%s\n' "$VPS_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          echo "Publicando urbisdev/prod em ${GITHUB_SHA::7}"
+          ssh -i ~/.ssh/publicar -o IdentitiesOnly=yes -o BatchMode=yes \
+              -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
+              "$VPS_USER@$VPS_HOST" "publicar urbisdev prod $GITHUB_SHA"

@@ -14,6 +14,13 @@ lançou. Não crie número de versão nem date release por conta própria.
 
 ## [Não lançado]
 
+### Corrigido
+- **Endereço que não existe mostra a página do site, não a tela crua do
+  servidor.** Arquivo protegido (`/.env`) e `.php` que não existe
+  (`/wp-login.php`) mostravam o "403 Forbidden" ou o "File not found." cru do
+  servidor, em branco e sem marca. Agora mostram a mesma página 404 do site que
+  as outras rotas já mostravam.
+
 ### Adicionado
 - **Demonstração "Pergunte aos dados".** O visitante escreve a pergunta em
   português e uma IA responde lendo a tabela de vendas da oficina de exemplo,

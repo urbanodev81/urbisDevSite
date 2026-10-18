@@ -24,9 +24,15 @@ services:
     image: nginx:alpine
     container_name: urbisdev-site-nginx
     restart: unless-stopped
+    # Só em 127.0.0.1 (18/10/2026, pendência 136). Quem fala com a internet é o
+    # nginx do HOST (`/etc/nginx/sites-available/urbisdev.conf`, proxy para
+    # `https://127.0.0.1:8443`). Publicada em 0.0.0.0, a porta furava o ufw —
+    # o Docker escreve a própria regra no iptables, por cima do firewall — e o
+    # site respondia direto em `IP:8443`, sem passar pelo nginx do host nem
+    # pelo `limit_req` dele. A 8100 (HTTP, só redireciona) ninguém usa no host.
     ports:
-      - "${NGINX_PORT:-8100}:80"
-      - "${NGINX_SSL_PORT:-8443}:443"
+      - "127.0.0.1:${NGINX_PORT:-8100}:80"
+      - "127.0.0.1:${NGINX_SSL_PORT:-8443}:443"
     volumes:
       - ./src/public:/var/www/html/public:ro
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro

@@ -48,6 +48,17 @@ lançou. Não crie número de versão nem date release por conta própria.
   servidor, em branco e sem marca. Agora mostram a mesma página 404 do site que
   as outras rotas já mostravam.
 
+### Segurança
+- **O site começa a medir a política de conteúdo (CSP) antes de ligá-la.** O
+  navegador de quem visita passa a contar ao site o que a política barraria —
+  sem barrar nada ainda — e o site guarda uma lista curta, sem endereço de
+  campanha nem dado de visitante. A primeira medição, em todas as páginas, achou
+  só os scripts do próprio site escritos dentro da página; nenhum serviço de
+  fora faltando.
+- **O site deixa de responder direto pela porta do contêiner.** Ele só é
+  alcançado pelo endereço oficial, que passa pelo servidor da frente; antes, as
+  portas 8100 e 8443 abriam para a internet por fora do firewall.
+
 ### Adicionado
 - **Demonstração "Pergunte aos dados".** O visitante escreve a pergunta em
   português e uma IA responde lendo a tabela de vendas da oficina de exemplo,

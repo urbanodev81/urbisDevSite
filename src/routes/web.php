@@ -1,7 +1,9 @@
 <?php
 
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\CspRelatoController;
 use App\Http\Controllers\DemoIaController;
 use App\Http\Controllers\DemoLeadController;
 use App\Support\Captcha\Altcha;
@@ -99,6 +101,14 @@ Route::post('/demonstracoes/pergunte/perguntar', [DemoIaController::class, 'perg
     ->middleware('throttle:10,1');
 
 Route::post('/contato', [ContactController::class, 'store'])->middleware('throttle:10,1');
+
+// Relatos da CSP em report-only (pendência 136). Quem manda é o navegador,
+// sem sessão nem token: daí sair do CSRF. O `csp` no fim do throttle dá a
+// esta rota um balde próprio — sem ele, uma página com cinco violações
+// gastaria o teto do formulário de contato (PADROES § piso, item 10).
+Route::post('/csp-relato', CspRelatoController::class)
+    ->withoutMiddleware(ValidateCsrfToken::class)
+    ->middleware('throttle:60,1,csp');
 
 // O desafio do captcha (Altcha auto-hospedado, 29/09/2026). Público e sem
 // sessão: é pedido pelo formulário antes de existir qualquer coisa. O

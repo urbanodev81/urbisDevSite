@@ -19,6 +19,7 @@ Aqui a branch de trabalho roda num endereço próprio, atrás de senha.
 |---|---|
 | `../docker-compose.vps-dev.yml` | `~/site-dev/docker-compose.vps-dev.yml` |
 | `nginx-site-dev.conf` | `/etc/nginx/sites-available/site-dev.conf` (com link em `sites-enabled/`) |
+| `nginx-host-urbisdev.conf` | `/etc/nginx/sites-available/urbisdev.conf` — o vhost do site de **produção** no host (TLS, proxy para `127.0.0.1:8443`, `limit_req`). Versionado desde 18/10/2026; as zonas do `limit_req` estão em `socrates/infra/nginx-host/conf.d/`. |
 
 O diretório na VPS é `~/site-dev`, um clone do repositório na branch que se
 quer ver. Trocar de branch é `git fetch && git checkout <branch>` lá dentro.

@@ -58,6 +58,10 @@ lançou. Não crie número de versão nem date release por conta própria.
 - **O site deixa de responder direto pela porta do contêiner.** Ele só é
   alcançado pelo endereço oficial, que passa pelo servidor da frente; antes, as
   portas 8100 e 8443 abriam para a internet por fora do firewall.
+- **Um robô no formulário de contato não trava mais o formulário de todo
+  mundo.** O site via todos os visitantes como se fossem um só, e o limite de
+  envios por minuto valia para a internet inteira junta. Agora cada visitante
+  tem o seu.
 
 ### Adicionado
 - **Demonstração "Pergunte aos dados".** O visitante escreve a pergunta em

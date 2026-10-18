@@ -122,8 +122,10 @@ nossos: cinco `<script>` embutidos (tema, acessibilidade, menu, barra de
 progresso, grade de janelas da home) e o `onclick` do menu. Tirados esses para
 arquivo, a política troca para `Content-Security-Policy`. O `limit_req` do site
 mora no nginx do HOST (cópia em `infra/nginx-host-urbisdev.conf`): é o único
-andar que vê o IP de quem visita — o contêiner vê todo mundo como o gateway do
-Docker, e por isso o `throttle` do Laravel aqui é um balde só.
+andar que vê o IP de quem visita. O Laravel confia no `X-Forwarded-For` e no
+`X-Forwarded-Proto` que ele manda (`trustProxies` em `bootstrap/app.php`, só
+esses dois); até 18/10 via todo mundo como o gateway do Docker, e cada
+`throttle` era um balde só para a internet inteira.
 
 ## Rodar
 

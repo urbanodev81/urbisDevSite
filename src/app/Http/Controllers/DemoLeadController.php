@@ -47,26 +47,13 @@ class DemoLeadController extends Controller
         $chave = 'lead-demo:'.$slug.':'.hash('sha256', mb_strtolower($validated['email']).'|'.$validated['phone']);
 
         if (Cache::add($chave, true, self::JANELA_REPETICAO)) {
-            EmailFormatado::para((string) config('mail.from.address'))
-                ->assunto('Lead da demonstração — '.$demo['titulo'])
-                ->titulo('Alguém abriu uma demonstração do site')
-                ->campos([
-                    'Demonstração' => $demo['titulo'],
-                    'Nome' => $validated['name'],
-                    'E-mail' => $validated['email'],
-                    'Telefone' => $validated['phone'],
-                ])
-                ->paragrafo('Deixou o contato para usar a demonstração. O que a pessoa fez lá dentro não chega ao servidor.')
-                ->responderPara($validated['email'], $validated['name'])
-                ->assinatura('Demonstrações — urbisdev.tech')
-                ->enviar();
-
-            Log::info('Lead de demonstração', ['demo' => $slug, 'email' => $validated['email']]);
+            $this->avisar($demo, $slug, $validated, $chave);
         }
 
         // A demonstração de IA conta as perguntas no Sócrates, por pessoa: o
-        // contato é registrado lá antes de abrir. O e-mail acima já saiu, então
-        // o lead não se perde se o Sócrates estiver fora; só a porta não abre.
+        // contato é registrado lá antes de abrir. O lead já foi para a caixa
+        // (ou para o log), então não se perde se o Sócrates estiver fora; só
+        // a porta não abre.
         if ($slug === PergunteAosDados::DEMO) {
             $visitante = PergunteAosDados::visitante($validated['email'], $validated['phone']);
 
@@ -81,5 +68,43 @@ class DemoLeadController extends Controller
         $request->session()->put('demos_liberadas', array_values(array_unique([...$liberadas, $slug])));
 
         return redirect('/demonstracoes/'.$slug.'#ferramenta');
+    }
+
+    /**
+     * Manda o lead para a caixa da casa. Se o SMTP falhar (18/10/2026: o Zoho
+     * recusou a senha e isto virava 500), o lead fica inteiro no log e a
+     * porta abre mesmo assim — o visitante fez a parte dele; a falha é nossa.
+     */
+    private function avisar(array $demo, string $slug, array $validated, string $chave): void
+    {
+        try {
+            EmailFormatado::para((string) config('mail.from.address'))
+                ->assunto('Lead da demonstração — '.$demo['titulo'])
+                ->titulo('Alguém abriu uma demonstração do site')
+                ->campos([
+                    'Demonstração' => $demo['titulo'],
+                    'Nome' => $validated['name'],
+                    'E-mail' => $validated['email'],
+                    'Telefone' => $validated['phone'],
+                ])
+                ->paragrafo('Deixou o contato para usar a demonstração. O que a pessoa fez lá dentro não chega ao servidor.')
+                ->responderPara($validated['email'], $validated['name'])
+                ->assinatura('Demonstrações — urbisdev.tech')
+                ->enviar();
+        } catch (\Throwable $e) {
+            Cache::forget($chave);
+
+            Log::error('Lead de demonstração NÃO enviado — lead guardado aqui', [
+                'erro' => $e->getMessage(),
+                'demo' => $slug,
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'phone' => $validated['phone'],
+            ]);
+
+            return;
+        }
+
+        Log::info('Lead de demonstração', ['demo' => $slug, 'email' => $validated['email']]);
     }
 }

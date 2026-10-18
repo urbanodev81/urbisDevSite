@@ -48,6 +48,8 @@ lançou. Não crie número de versão nem date release por conta própria.
   a senha, a pessoa preenchia tudo e caía numa tela de erro. Agora o recado
   fica guardado no log, o formulário volta com o que ela escreveu e um aviso
   para tentar de novo ou escrever direto para contato@urbisdev.tech.
+- **Formulário das demonstrações também não dá mais 500 sem e-mail.** O lead
+  fica no log e a demonstração abre mesmo assim: a pessoa fez a parte dela.
 - **O site ganha ícone na aba do navegador**, o mesmo selo "UD" do cabeçalho.
   Até aqui `/favicon.ico` não existia e era o único erro no console.
 - **Endereço que não existe mostra a página do site, não a tela crua do

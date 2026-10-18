@@ -74,6 +74,41 @@ class ContactController extends Controller
             return back()->with('success', 'Mensagem enviada com sucesso! Entraremos em contato em breve.');
         }
 
+        /*
+         * SE O E-MAIL NÃO SAI, O RECADO NÃO SOME — 18/10/2026
+         *
+         * Com a senha SMTP do Zoho recusada (535), a exceção subia crua e a
+         * pessoa via a 500 depois de preencher tudo. Agora: o recado inteiro
+         * vai para o log (é o único lugar onde ele sobrevive), a chave de
+         * repetição é liberada para a pessoa poder tentar de novo, e a tela
+         * volta com o que ela escreveu e um aviso honesto.
+         */
+        try {
+            $this->enviar($validated);
+        } catch (\Throwable $e) {
+            Cache::forget($chave);
+
+            Log::error('Contato NÃO enviado — recado guardado aqui', [
+                'erro' => $e->getMessage(),
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'phone' => $validated['phone'],
+                'message' => $validated['message'],
+            ]);
+
+            return back()->withErrors(['envio' => 'Não conseguimos enviar agora. Tente de novo em alguns minutos ou escreva para contato@urbisdev.tech.'])->withInput();
+        }
+
+        Log::info('Contato recebido', [
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+        ]);
+
+        return back()->with('success', 'Mensagem enviada com sucesso! Entraremos em contato em breve.');
+    }
+
+    private function enviar(array $validated): void
+    {
         EmailFormatado::para((string) config('mail.from.address'))
             ->assunto('Contato do site — '.$validated['name'])
             ->titulo('Novo contato pelo site')
@@ -86,13 +121,6 @@ class ContactController extends Controller
             ->responderPara($validated['email'], $validated['name'])
             ->assinatura('Formulário de contato — urbisdev.tech')
             ->enviar();
-
-        Log::info('Contato recebido', [
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-        ]);
-
-        return back()->with('success', 'Mensagem enviada com sucesso! Entraremos em contato em breve.');
     }
 
     /**

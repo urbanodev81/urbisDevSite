@@ -292,6 +292,7 @@
 
                     <div>
                         <button type="submit" class="btn btn-primary">Enviar mensagem</button>
+                        @error('envio') <span class="field-error" role="alert">{{ $message }}</span> @enderror
                     </div>
                 </form>
             </div>

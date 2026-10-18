@@ -15,6 +15,10 @@ lançou. Não crie número de versão nem date release por conta própria.
 ## [Não lançado]
 
 ### Adicionado
+- **Página de erro 500 com a cara do site.** Falha no servidor mostra "Algo
+  deu errado do nosso lado", com caminho para o início e o e-mail de contato,
+  em vez da tela "Server Error" crua. Não depende do layout, para não quebrar
+  junto com ele.
 - **Página 404 com a cara do site.** Endereço que não existe mostra "Esta
   página não existe" com caminho para o início, as demonstrações e o contato,
   em vez da tela "Not Found" em branco.
@@ -40,6 +44,10 @@ lançou. Não crie número de versão nem date release por conta própria.
   não levavam a lugar nenhum. Voltam quando houver perfil.
 
 ### Corrigido
+- **Contato não dá mais 500 quando o e-mail não sai.** Com o SMTP recusando
+  a senha, a pessoa preenchia tudo e caía numa tela de erro. Agora o recado
+  fica guardado no log, o formulário volta com o que ela escreveu e um aviso
+  para tentar de novo ou escrever direto para contato@urbisdev.tech.
 - **O site ganha ícone na aba do navegador**, o mesmo selo "UD" do cabeçalho.
   Até aqui `/favicon.ico` não existia e era o único erro no console.
 - **Endereço que não existe mostra a página do site, não a tela crua do

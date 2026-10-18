@@ -36,6 +36,8 @@ lançou. Não crie número de versão nem date release por conta própria.
 ### Removido
 - **"Próximos passos"** saiu da home e do menu: anunciava como planejadas as
   plataformas com a marca do cliente, que já estão no ar.
+- **Instagram e LinkedIn** saíram do rodapé e dos botões flutuantes: os dois
+  não levavam a lugar nenhum. Voltam quando houver perfil.
 
 ### Corrigido
 - **O site ganha ícone na aba do navegador**, o mesmo selo "UD" do cabeçalho.

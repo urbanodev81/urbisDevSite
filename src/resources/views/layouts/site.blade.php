@@ -72,6 +72,7 @@
 
     <title>@yield('titulo', 'UrbisDev — Software que resolve problemas reais')</title>
     <meta name="description" content="@yield('descricao')">
+    @include('partials.seo')
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=bricolage-grotesque:400,700,800|instrument-sans:400,500,600|jetbrains-mono:400,500&display=swap" rel="stylesheet">
 
@@ -229,7 +230,6 @@
             </a>
             <ul class="nav-links">
                 <li><a href="{{ $base }}#fazemos">O que fazemos</a></li>
-                <li><a href="{{ $base }}#proximos">Próximos passos</a></li>
                 @if ($temTrabalhos)
                     <li><a href="{{ url('/trabalhos') }}" @if (request()->is('trabalhos')) aria-current="page" @endif>Trabalhos</a></li>
                 @endif
@@ -244,7 +244,6 @@
         </div>
         <nav class="mobile-menu" id="mobileMenu">
             <a href="{{ $base }}#fazemos" onclick="closeMenu()">O que fazemos</a>
-            <a href="{{ $base }}#proximos" onclick="closeMenu()">Próximos passos</a>
             @if ($temTrabalhos)
                 <a href="{{ url('/trabalhos') }}" onclick="closeMenu()">Trabalhos</a>
             @endif
@@ -268,7 +267,6 @@
             </a>
             <ul class="foot-links">
                 <li><a href="{{ $base }}#fazemos">O que fazemos</a></li>
-                <li><a href="{{ $base }}#proximos">Próximos passos</a></li>
                 @if ($temTrabalhos)
                     <li><a href="{{ url('/trabalhos') }}">Trabalhos</a></li>
                 @endif

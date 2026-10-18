@@ -1,0 +1,20 @@
+# urbisdev.tech — tudo aberto a buscador e a assistente de IA (18/10/2026):
+# o site existe para ser encontrado e citado. Só o que não é página fica fora.
+User-agent: *
+Allow: /
+Disallow: /captcha/
+Disallow: /demonstracoes/*/liberar
+
+# Assistentes e buscadores de IA, nomeados para não restar dúvida.
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Google-Extended
+Allow: /
+Disallow: /captcha/
+
+Sitemap: https://urbisdev.tech/sitemap.xml

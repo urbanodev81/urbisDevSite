@@ -14,6 +14,29 @@ lançou. Não crie número de versão nem date release por conta própria.
 
 ## [Não lançado]
 
+### Adicionado
+- **Página 404 com a cara do site.** Endereço que não existe mostra "Esta
+  página não existe" com caminho para o início, as demonstrações e o contato,
+  em vez da tela "Not Found" em branco.
+- **O site se apresenta direito a buscador, rede social e assistente de IA.**
+  Cada página diz o seu endereço oficial e ganha o cartão de prévia que aparece
+  ao colar o link no WhatsApp ou no LinkedIn. A home descreve a empresa, o que
+  ela faz e como falar com ela num formato que o Google e as IAs leem sem
+  adivinhar. Há também o mapa do site (`/sitemap.xml`), o `robots.txt` (aberto,
+  inclusive para os robôs de IA) e um resumo em texto para assistentes de IA
+  (`/llms.txt`). Nenhum produto nem cliente aparece pelo nome.
+
+### Alterado
+- **A home diz para quem trabalhamos.** O topo troca "SaaS, APIs, automações"
+  por sites com painel e sistemas de gestão para imobiliárias, clínicas,
+  sindicatos, oficinas e artistas. "O que fazemos" passa de dois para quatro
+  cartões: imobiliárias e sites com painel (no ar), clínicas de terapia e
+  sindicatos (em construção); "Blogs & Conteúdo" saiu.
+
+### Removido
+- **"Próximos passos"** saiu da home e do menu: anunciava como planejadas as
+  plataformas com a marca do cliente, que já estão no ar.
+
 ### Corrigido
 - **O site ganha ícone na aba do navegador**, o mesmo selo "UD" do cabeçalho.
   Até aqui `/favicon.ico` não existia e era o único erro no console.

@@ -3,8 +3,9 @@
 
     O casco (head, header, rodapé, acessibilidade, flutuantes, rolagem suave)
     saiu daqui em 23/08/2026 para `layouts/site.blade.php`. Ficou o que é
-    DESTA página: a grade de janelas acesas, os distritos, os próximos passos
-    e o formulário de contato.
+    DESTA página: a grade de janelas acesas, os distritos (as frentes) e o
+    formulário de contato. "Próximos passos" saiu em 18/10/2026: anunciava como
+    planejado o white-label que já estava no ar.
 
     A extração pagou na hora: as correções de alvo de toque de 44px tinham
     sido feitas só na página "Como trabalhamos", e a home tinha ficado com
@@ -15,7 +16,7 @@
 @extends('layouts.site')
 
 @section('titulo', 'UrbisDev — Software que resolve problemas reais')
-@section('descricao', 'Soluções digitais sob medida: SaaS, APIs, automações, dashboards e mobile. Sites e sistemas para imobiliárias, blogs e conteúdo.')
+@section('descricao', 'Sites com painel próprio e sistemas de gestão para imobiliárias, clínicas, sindicatos, oficinas e artistas — do primeiro esboço ao app no celular.')
 
 @push('head')
     {{-- Altcha auto-hospedado (29/09/2026; era o Turnstile da Cloudflare).
@@ -77,20 +78,11 @@
         .district .tag b { color: var(--dc, var(--amber-500)); font-weight: 500; }
         .district h3 { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; }
         .district p { font-size: .98rem; flex: 1; }
+        .district .chip { align-self: flex-start; }
         .district .card-icon { color: var(--dc, var(--amber-500)); }
         .chip { display: inline-flex; align-items: center; gap: 7px; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; color: var(--text-mid); }
         .chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--ok); }
         .chip--dev::before { background: var(--warn); }
-        .chip--plan::before { background: var(--d-urb); }
-        .chip--dream::before { background: var(--text-low); }
-
-        /* ---------- roadmap (próximos passos) ---------- */
-        .roadmap { display: grid; gap: 20px; }
-        .roadmap-card { position: relative; border: 1px dashed var(--line); border-radius: var(--r-card); padding: clamp(28px, 4vw, 44px); display: flex; flex-wrap: wrap; gap: 24px; align-items: center; justify-content: space-between; overflow: hidden; }
-        .roadmap-card::before { content: ""; position: absolute; top: 0; left: 24px; right: 24px; height: 3px; border-radius: 0 0 3px 3px; background: var(--dc, var(--line)); opacity: .7; }
-        .roadmap-card h3 { font-family: var(--font-display); font-size: 1.4rem; display: flex; align-items: center; gap: 12px; margin-top: 12px; }
-        .roadmap-card h3 svg { color: var(--dc, var(--text-low)); flex: none; }
-        .roadmap-card p { max-width: 52ch; margin-top: 6px; font-size: .98rem; }
 
         /* ---------- contato ---------- */
         .contact { border-top: 1px solid var(--line); background: var(--ink-800); }
@@ -124,14 +116,14 @@
         <section class="hero" aria-label="Apresentação">
             <div class="citygrid" id="citygrid" aria-hidden="true"></div>
             <div class="container hero-inner">
-                <span class="eyebrow">SaaS · APIs · Automação · Dashboards · Mobile</span>
+                <span class="eyebrow">Sites · Sistemas · Aplicativos</span>
                 <h1>Software que resolve <em>problemas reais</em>.</h1>
-                <p>Desenvolvemos SaaS, APIs, automações, dashboards e aplicativos mobile sob medida para o seu negócio.</p>
+                <p>Sites com painel próprio e sistemas de gestão para imobiliárias, clínicas, sindicatos, oficinas e artistas — do primeiro esboço ao app no celular.</p>
                 <div class="hero-ctas">
-                    <a class="btn btn-primary" href="#contato">Fale Conosco
+                    <a class="btn btn-primary" href="#contato">Fale conosco
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                     </a>
-                    <a class="btn btn-ghost" href="#fazemos">O que fazemos</a>
+                    <a class="btn btn-ghost" href="#demonstracoes">Veja funcionando</a>
                 </div>
             </div>
         </section>
@@ -143,18 +135,36 @@
                     <span class="eyebrow">O que fazemos</span>
                     <h2>Soluções digitais sob medida para o seu negócio.</h2>
                 </div>
+                {{-- Quatro frentes: duas no ar, duas em construção. Sem nome de
+                     produto e sem dizer para quem é a obra (decisão de 18/10/2026). --}}
                 <div class="districts">
                     <div class="district reveal" style="--dc:var(--d-urb)">
                         <span class="tag">Frente · <b>Imobiliário</b></span>
                         <svg class="card-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-4h6v4"/><path d="M9 10h.01"/><path d="M15 10h.01"/><path d="M9 14h.01"/><path d="M15 14h.01"/></svg>
                         <h3>Imobiliárias</h3>
-                        <p>Sites institucionais e sistemas de gestão imobiliária. Portais de imóveis com busca avançada, integração com portais e CRM próprio.</p>
+                        <p>Site com busca de imóveis, fichas de lançamento e blog, e o sistema de gestão por trás: cadastro do acervo, contatos dos interessados e a sua marca em tudo.</p>
+                        <span class="chip">No ar</span>
                     </div>
                     <div class="district reveal" style="--dc:var(--amber-500)">
-                        <span class="tag">Frente · <b>Conteúdo</b></span>
-                        <svg class="card-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-                        <h3>Blogs &amp; Conteúdo</h3>
-                        <p>Blogs corporativos com SEO otimizado, gestão de conteúdo simplificada e design moderno para engajar seu público.</p>
+                        <span class="tag">Frente · <b>Sites com painel</b></span>
+                        <svg class="card-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/><path d="M8 14h4"/><path d="M8 17h8"/></svg>
+                        <h3>Sites que você mesmo atualiza</h3>
+                        <p>Para bandas, artistas, oficinas e profissionais: agenda, fotos, vídeos e textos trocados pelo painel, sem depender de ninguém, com o site rápido e acessível.</p>
+                        <span class="chip">No ar</span>
+                    </div>
+                    <div class="district reveal" style="--dc:var(--d-synapse)">
+                        <span class="tag">Frente · <b>Saúde</b></span>
+                        <svg class="card-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                        <h3>Clínicas de terapia</h3>
+                        <p>Gestão da clínica com agenda, evolução de cada paciente e cuidado com o dado de saúde desde o desenho.</p>
+                        <span class="chip chip--dev">Em construção</span>
+                    </div>
+                    <div class="district reveal" style="--dc:var(--d-ssb)">
+                        <span class="tag">Frente · <b>Associações</b></span>
+                        <svg class="card-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        <h3>Sindicatos e associações</h3>
+                        <p>Cadastro de associados, mensalidades, comunicação com a base e votações, num sistema só.</p>
+                        <span class="chip chip--dev">Em construção</span>
                     </div>
                 </div>
             </div>
@@ -207,40 +217,6 @@
                     @endforeach
                 </div>
                 <p class="reveal" style="margin-top:28px"><a class="btn btn-ghost" href="{{ url('/demonstracoes') }}">Ver todas as demonstrações</a></p>
-            </div>
-        </section>
-
-        {{-- Próximos passos --}}
-        <section id="proximos">
-            <div class="container">
-                <div class="section-head reveal">
-                    <span class="eyebrow">Próximos passos</span>
-                    <h2>O que está por vir na UrbisDev.</h2>
-                </div>
-                <div class="roadmap reveal">
-                    <div class="roadmap-card" style="--dc:var(--d-ssb)">
-                        <div>
-                            <span class="eyebrow">Próxima obra</span>
-                            <h3>
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-                                Plataformas white-label
-                            </h3>
-                            <p>Plataformas SaaS multi-tenant com a marca do cliente: cada operação com identidade própria e dados isolados, sobre uma base única — prontas para diferentes áreas de negócio.</p>
-                        </div>
-                        <span class="chip chip--plan" style="align-self:center">Em planejamento</span>
-                    </div>
-                    <div class="roadmap-card" style="--dc:var(--d-synapse)">
-                        <div>
-                            <span class="eyebrow">No horizonte</span>
-                            <h3>
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="11" x2="10" y2="11"/><line x1="8" y1="9" x2="8" y2="13"/><line x1="15" y1="12" x2="15.01" y2="12"/><line x1="18" y1="10" x2="18.01" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/></svg>
-                                Games
-                            </h3>
-                            <p>Jogos casuais e educativos para web e mobile. Experiências interativas que unem diversão e propósito.</p>
-                        </div>
-                        <span class="chip chip--dream" style="align-self:center">O sonho</span>
-                    </div>
-                </div>
             </div>
         </section>
 

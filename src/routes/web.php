@@ -5,6 +5,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DemoIaController;
 use App\Http\Controllers\DemoLeadController;
 use App\Support\Captcha\Altcha;
+use App\Support\PaginasPublicas;
 use App\Support\PergunteAosDados;
 use App\Support\Portfolio;
 use Illuminate\Support\Facades\Storage;
@@ -45,6 +46,18 @@ Route::get('/trabalhos/capturas/{arquivo}', function (string $arquivo) {
         'Cache-Control' => 'public, max-age=31536000, immutable',
     ]);
 })->where('arquivo', '[a-z0-9]{20}\\.(png|jpg|jpeg|webp)');
+
+// SEO e GEO (18/10/2026): a lista vem de `App\Support\PaginasPublicas`.
+Route::get('/sitemap.xml', fn (PaginasPublicas $paginas) => response()
+    ->view('seo.sitemap', ['paginas' => array_keys($paginas->todas())])
+    ->header('Content-Type', 'application/xml; charset=UTF-8'));
+
+// Para assistentes de IA (a convenção de llmstxt.org): quem é a casa, o que
+// faz e onde está cada coisa, em texto corrido. Mesmo conteúdo do JSON-LD do
+// `partials/seo`, sem nome de produto nem de cliente.
+Route::get('/llms.txt', fn (PaginasPublicas $paginas) => response()
+    ->view('seo.llms', ['paginas' => $paginas->todas()])
+    ->header('Content-Type', 'text/plain; charset=UTF-8'));
 
 // `throttle` não é sobre o duplo clique (isso é assunto do
 // ContactController, que descarta recado idêntico): é o teto para quem

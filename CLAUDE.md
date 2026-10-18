@@ -81,6 +81,18 @@ página mostra: mudou `public/demos/dados-oficina.js`, rode
 por `textContent`. O formulário de contato das duas demonstrações com
 `pede_contato` é um só: `partials/demo-porta.blade.php`.
 
+**SEO e GEO (desde 18/10/2026)** moram em `partials/seo.blade.php`, incluído
+pelo layout: canônico, Open Graph (imagem única `public/og-urbisdev.png`) e o
+JSON-LD da casa (o que ela faz, contato). Página nova não mexe nisso: só define
+`titulo` e `descricao`, e `@section('robots', 'noindex, follow')` quando não deve
+ir ao buscador. `/sitemap.xml` e `/llms.txt` saem de `App\Support\PaginasPublicas`,
+que lê `config/demonstracoes.php` e o portfólio; `public/robots.txt` deixa os
+robôs de IA entrarem de propósito. **Nenhum produto (USI, Synapse, SSB) nem
+cliente pelo nome** em texto da home ou nesses dados — decisão dele. Mudou uma
+frente da home? Mude junto o `OfferCatalog` do partial e o `seo/llms.blade.php`.
+Escrever `@context` dentro de `{!! !!}` vira a diretiva do Laravel 12: monte o
+JSON no `@php`. A 404 é `errors/404.blade.php`, que estende o layout.
+
 **Não tem** banco, migration, autenticação, painel, tenancy nem suíte de
 testes — e isso é decisão, não pendência. Não sugira módulo, model ou
 `php artisan make:*` aqui sem o Ricardo pedir: o valor deste repo é ele

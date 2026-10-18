@@ -15,6 +15,8 @@ lançou. Não crie número de versão nem date release por conta própria.
 ## [Não lançado]
 
 ### Corrigido
+- **O site ganha ícone na aba do navegador**, o mesmo selo "UD" do cabeçalho.
+  Até aqui `/favicon.ico` não existia e era o único erro no console.
 - **Endereço que não existe mostra a página do site, não a tela crua do
   servidor.** Arquivo protegido (`/.env`) e `.php` que não existe
   (`/wp-login.php`) mostravam o "403 Forbidden" ou o "File not found." cru do

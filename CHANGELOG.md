@@ -44,6 +44,7 @@ lançou. Não crie número de versão nem date release por conta própria.
   não levavam a lugar nenhum. Voltam quando houver perfil.
 
 ### Corrigido
+- **Demos de lançamento assinam "Urbis Dev"** no rodapé, no lugar de "Urbano Dev".
 - **Contato não dá mais 500 quando o e-mail não sai.** Com o SMTP recusando
   a senha, a pessoa preenchia tudo e caía numa tela de erro. Agora o recado
   fica guardado no log, o formulário volta com o que ela escreveu e um aviso

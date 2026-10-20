@@ -4,6 +4,7 @@ use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CspRelatoController;
+use App\Http\Controllers\DemoDadosController;
 use App\Http\Controllers\DemoIaController;
 use App\Http\Controllers\DemoLeadController;
 use App\Support\Captcha\Altcha;
@@ -87,6 +88,16 @@ Route::get('/demonstracoes/{slug}', function (string $slug) {
         'dados' => $slug === PergunteAosDados::DEMO ? PergunteAosDados::dados() : null,
     ]);
 })->where('slug', '[a-z0-9-]+');
+
+// Dado público para as demonstrações (20/10/2026): CEP, CNPJ e feriados, pelo
+// servidor e com cache (`App\Support\DadosPublicos`). Antes da rota `{slug}`
+// não precisa: o padrão dela não aceita barra. Balde próprio no throttle, para
+// quem digita CEP não gastar o teto do formulário de contato.
+Route::middleware('throttle:30,1,dados')->prefix('/demonstracoes/dados')->group(function () {
+    Route::get('/cep/{cep}', [DemoDadosController::class, 'cep'])->where('cep', '[0-9]{8}');
+    Route::get('/cnpj/{cnpj}', [DemoDadosController::class, 'cnpj'])->where('cnpj', '[0-9]{14}');
+    Route::get('/feriados', [DemoDadosController::class, 'feriados']);
+});
 
 // O formulário que libera uma demonstração com `pede_contato`. Mesmo teto do
 // contato: é POST público que manda e-mail.

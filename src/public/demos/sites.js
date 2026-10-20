@@ -35,7 +35,7 @@
     };
     const CORES = [['Laranja', '#c2410c'], ['Vermelho', '#b91c1c'], ['Verde', '#15803d'], ['Azul', '#1d4ed8'], ['Roxo', '#7e22ce'], ['Grafite', '#334155'], ['Amarelo', '#facc15']];
 
-    const estado = { tipo: 'oficina', cor: CORES[0][1], tema: 'claro', nomeDigitado: false };
+    const estado = { tipo: 'oficina', cor: CORES[0][1], tema: 'claro', nomeDigitado: false, cidade: '' };
     const site = document.getElementById('gs-site'), campoNome = document.getElementById('gs-nome');
     const logoImg = document.getElementById('gs-logo-img'), logoCampo = document.getElementById('gs-logo'), logoTirar = document.getElementById('gs-logo-tirar');
     let logoUrl = null;
@@ -59,7 +59,7 @@
         preencher('#gs-endereco', 'www.' + (nome.normalize('NFD').replace(/[^a-zA-Z0-9]/g, '').toLowerCase() || 'seunegocio') + '.com.br');
         preencher('#gs-chamada', t.chamada); preencher('#gs-frase', t.frase); preencher('#gs-texto', t.texto);
         preencher('#gs-acao', t.acao); preencher('#gs-acao2', t.acao2);
-        preencher('#gs-pe', nome + ' · site de exemplo');
+        preencher('#gs-pe', nome + (estado.cidade ? ' · ' + estado.cidade : '') + ' · site de exemplo');
 
         const menu = document.getElementById('gs-menu'); menu.replaceChildren();
         t.menu.forEach((m) => html('li', null, m, menu));
@@ -88,6 +88,40 @@
         cores.insertBefore(b, livre);
     });
     livre.addEventListener('input', () => { estado.cor = livre.value; desenhar(); });
+
+    /**
+     * CNPJ → nome, cidade e tipo de site, pelos dados públicos da Receita
+     * (BrasilAPI, consultada pelo servidor do site). Falhou, nada muda: o
+     * visitante segue digitando à mão.
+     */
+    const cnpjCampo = document.getElementById('gs-cnpj'), cnpjNota = document.getElementById('gs-cnpj-nota');
+    const NOTA_CNPJ = cnpjNota.textContent;
+    cnpjCampo.addEventListener('input', () => {
+        const d = cnpjCampo.value.replace(/\D/g, '').slice(0, 14);
+        cnpjCampo.value = d.replace(/^(\d{2})(\d)/, '$1.$2').replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3').replace(/\.(\d{3})(\d)/, '.$1/$2').replace(/(\d{4})(\d)/, '$1-$2');
+    });
+    document.getElementById('gs-cnpj-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const d = cnpjCampo.value.replace(/\D/g, '');
+        if (d.length !== 14) { cnpjNota.textContent = 'O CNPJ tem 14 números.'; return; }
+        cnpjNota.textContent = 'Consultando…';
+        try {
+            const r = await fetch('/demonstracoes/dados/cnpj/' + d, { headers: { Accept: 'application/json' } });
+            const j = await r.json();
+            if (!r.ok) { cnpjNota.textContent = j.erro || 'Não deu para consultar agora. Preencha à mão.'; return; }
+            if (j.nome) { campoNome.value = j.nome; estado.nomeDigitado = true; }
+            estado.cidade = j.cidade + (j.uf ? '/' + j.uf : '');
+            if (j.tipo && TIPOS[j.tipo]) {
+                estado.tipo = j.tipo;
+                tipos.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.valor === j.tipo)));
+            }
+            cnpjNota.textContent = (j.nome ? j.nome + ', ' : 'Sem nome fantasia (é de pessoa física, não mostramos). ') + estado.cidade + '.' + (j.tipo ? '' : ' Escolha o tipo de site acima.');
+            desenhar();
+        } catch (err) {
+            cnpjNota.textContent = 'Não deu para consultar agora. Preencha à mão.';
+        }
+    });
+    cnpjCampo.addEventListener('focus', () => { if (cnpjNota.textContent !== NOTA_CNPJ && !cnpjCampo.value) cnpjNota.textContent = NOTA_CNPJ; });
 
     campoNome.placeholder = TIPOS[estado.tipo].nome;
     campoNome.addEventListener('input', () => { estado.nomeDigitado = campoNome.value.trim() !== ''; desenhar(); });

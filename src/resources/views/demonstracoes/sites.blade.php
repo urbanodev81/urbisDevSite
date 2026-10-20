@@ -16,6 +16,9 @@
     .gs-cores input[type=color] { width: 44px; height: 44px; padding: 0; border: 2px solid var(--border-input); border-radius: 8px; background: none; cursor: pointer; }
     .gs-logo { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
     .gs-logo input[type=file] { max-width: 100%; min-height: 44px; font: inherit; font-size: .9rem; color: var(--fg-muted); }
+    .gs-cnpj { display: flex; gap: 8px; }
+    .gs-cnpj input { flex: 1; min-width: 0; }
+    .gs-cnpj-nota { display: block; margin-top: 6px; font-size: .8rem; color: var(--fg-muted); }
     .gs-nota { margin-top: 4px; font-size: .82rem; color: var(--fg-subtle); }
     .demo-botoes { flex-wrap: wrap; }
 
@@ -62,6 +65,11 @@
     <div class="container demo-corpo">
         <div class="demo-filtros gs-controles">
             <div class="campo"><span class="rotulo" id="gs-tipo-r">Tipo de site</span><div class="demo-botoes" id="gs-tipo" role="group" aria-labelledby="gs-tipo-r"></div></div>
+            <div class="campo">
+                <label for="gs-cnpj">CNPJ (opcional)</label>
+                <form class="gs-cnpj" id="gs-cnpj-form" novalidate><input type="text" id="gs-cnpj" inputmode="numeric" maxlength="18" autocomplete="off" placeholder="00.000.000/0000-00" aria-describedby="gs-cnpj-nota"><button type="submit" class="btn btn-ghost">Preencher</button></form>
+                <small class="gs-cnpj-nota" id="gs-cnpj-nota" aria-live="polite">Nome, cidade e ramo saem dos dados públicos da Receita. Nada fica guardado.</small>
+            </div>
             <div class="campo"><label for="gs-nome">Nome do negócio</label><input type="text" id="gs-nome" maxlength="32" autocomplete="off"></div>
             <div class="campo"><span class="rotulo" id="gs-cor-r">Cor da marca</span><div class="gs-cores" id="gs-cores" role="group" aria-labelledby="gs-cor-r"><input type="color" id="gs-cor-livre" aria-label="Outra cor" value="#c2410c"></div></div>
             <div class="campo">

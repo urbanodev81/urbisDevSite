@@ -29,6 +29,9 @@
     .ag-campos { display: grid; gap: 12px; }
     @media (min-width: 560px) { .ag-campos { grid-template-columns: repeat(2, 1fr); } }
     .ag-campos label { display: grid; gap: 4px; font-size: .82rem; font-weight: 600; color: var(--fg-subtle); }
+    .ag-endereco { align-self: end; min-height: 44px; display: flex; align-items: center; font-size: .88rem; color: var(--fg-muted); }
+    .ag-dia:disabled { cursor: not-allowed; border-style: dashed; }
+    .ag-dia:disabled b { color: var(--fg-subtle); text-decoration: line-through; }
     .ag-campos input { min-height: 44px; padding: 0 12px; background: var(--bg); color: var(--fg); border: 1px solid var(--border-input); border-radius: var(--r-btn); font: inherit; font-size: 1rem; font-weight: 400; }
     .ag-fim { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; margin-top: 20px; }
     .ag-fim p { font-size: .88rem; }
@@ -65,12 +68,14 @@
                     <div class="ag-campos">
                         <label>Nome<input type="text" id="ag-nome" autocomplete="off" maxlength="40" placeholder="Como chamamos você"></label>
                         <label>Carro<input type="text" id="ag-carro" autocomplete="off" maxlength="40" placeholder="Modelo e ano"></label>
+                        <label class="ag-cep">CEP para o leva e traz (opcional)<input type="text" id="ag-cep" inputmode="numeric" autocomplete="off" maxlength="9" placeholder="00000-000" aria-describedby="ag-endereco"></label>
+                        <p class="ag-endereco" id="ag-endereco" aria-live="polite"></p>
                     </div>
                 </div>
 
                 <div class="ag-fim">
                     <button type="button" class="btn btn-primary" id="ag-marcar" disabled>Escolha um horário</button>
-                    <p>Demonstração: nada é enviado nem guardado.</p>
+                    <p>Demonstração: nada é guardado. O CEP só é consultado para achar o endereço.</p>
                 </div>
 
                 <div class="ag-confirmado" id="ag-confirmado" role="status" hidden>

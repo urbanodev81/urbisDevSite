@@ -19,6 +19,13 @@ services:
       # internet entrega stack trace com caminho de arquivo e configuração.
       APP_ENV: staging
       APP_DEBUG: "false"
+      # O portfólio deste tier vem do Sócrates de DEV (20/10/2026), que fica
+      # atrás da senha do dev no endereço público: a leitura vai por dentro,
+      # pela rede `infra_shared`, direto no Nginx do contêiner. No `src/.env`:
+      # PORTFOLIO_URL=http://socrates-app-nginx/api/portfolio
+    networks:
+      - default
+      - infra_shared
 
   nginx:
     container_name: urbisdev-site-dev-nginx
@@ -36,3 +43,8 @@ services:
   mailpit:
     container_name: urbisdev-site-dev-mailpit
     profiles: [nunca]
+
+networks:
+  infra_shared:
+    external: true
+    name: infra_shared

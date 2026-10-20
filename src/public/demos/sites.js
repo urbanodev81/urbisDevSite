@@ -115,7 +115,7 @@
                 estado.tipo = j.tipo;
                 tipos.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.valor === j.tipo)));
             }
-            cnpjNota.textContent = (j.nome ? j.nome + ', ' : 'Sem nome fantasia (é de pessoa física, não mostramos). ') + estado.cidade + '.' + (j.tipo ? '' : ' Escolha o tipo de site acima.');
+            cnpjNota.textContent = (j.nome ? j.nome + ', ' : 'Sem nome fantasia (é de pessoa física, não mostramos). ') + estado.cidade + '.' + (j.tipo ? '' : ' Escolha o tipo de site.');
             desenhar();
         } catch (err) {
             cnpjNota.textContent = 'Não deu para consultar agora. Preencha à mão.';

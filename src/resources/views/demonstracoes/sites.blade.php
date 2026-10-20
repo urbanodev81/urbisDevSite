@@ -64,12 +64,12 @@
 
     <div class="container demo-corpo">
         <div class="demo-filtros gs-controles">
-            <div class="campo"><span class="rotulo" id="gs-tipo-r">Tipo de site</span><div class="demo-botoes" id="gs-tipo" role="group" aria-labelledby="gs-tipo-r"></div></div>
             <div class="campo">
                 <label for="gs-cnpj">CNPJ (opcional)</label>
                 <form class="gs-cnpj" id="gs-cnpj-form" novalidate><input type="text" id="gs-cnpj" inputmode="numeric" maxlength="18" autocomplete="off" placeholder="00.000.000/0000-00" aria-describedby="gs-cnpj-nota"><button type="submit" class="btn btn-ghost">Preencher</button></form>
                 <small class="gs-cnpj-nota" id="gs-cnpj-nota" aria-live="polite">Nome, cidade e ramo saem dos dados públicos da Receita. Nada fica guardado.</small>
             </div>
+            <div class="campo"><span class="rotulo" id="gs-tipo-r">Tipo de site</span><div class="demo-botoes" id="gs-tipo" role="group" aria-labelledby="gs-tipo-r"></div></div>
             <div class="campo"><label for="gs-nome">Nome do negócio</label><input type="text" id="gs-nome" maxlength="32" autocomplete="off"></div>
             <div class="campo"><span class="rotulo" id="gs-cor-r">Cor da marca</span><div class="gs-cores" id="gs-cores" role="group" aria-labelledby="gs-cor-r"><input type="color" id="gs-cor-livre" aria-label="Outra cor" value="#c2410c"></div></div>
             <div class="campo">

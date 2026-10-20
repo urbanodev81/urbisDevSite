@@ -17,7 +17,7 @@
     .ag-opcao { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; text-align: left; font-size: .95rem; }
     .ag-opcao small { flex: none; font-size: .8rem; color: var(--fg-muted); }
     .ag-dias { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    @media (min-width: 560px) { .ag-dias { grid-template-columns: repeat(6, 1fr); } }
+    @media (min-width: 560px) { .ag-dias { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); } }
     .ag-dia { display: grid; justify-items: center; gap: 2px; padding: 8px 4px; }
     .ag-dia b { font-family: var(--font-display); font-size: 1.2rem; line-height: 1.1; }
     .ag-dia span, .ag-dia small { font-size: .74rem; color: var(--fg-muted); }

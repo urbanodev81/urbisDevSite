@@ -80,6 +80,8 @@
         .district p { font-size: .98rem; flex: 1; }
         .district .chip { align-self: flex-start; }
         .district .card-icon { color: var(--dc, var(--amber-500)); }
+        .district-link { align-self: flex-start; display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; color: var(--accent); text-decoration: none; }
+        .district-link:hover { color: var(--accent-hover); text-decoration: underline; }
         .chip { display: inline-flex; align-items: center; gap: 7px; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; color: var(--text-mid); }
         .chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--ok); }
         .chip--dev::before { background: var(--warn); }
@@ -135,14 +137,16 @@
                     <span class="eyebrow">O que fazemos</span>
                     <h2>Soluções digitais sob medida para o seu negócio.</h2>
                 </div>
-                {{-- Quatro frentes: duas no ar, duas em construção. Sem nome de
-                     produto e sem dizer para quem é a obra (decisão de 18/10/2026). --}}
+                {{-- Quatro frentes: duas no ar, duas em construção. Sem nome de produto e
+                     sem dizer para quem é a obra (decisão de 18/10/2026). A exceção é
+                     o USI, que já foi lançado e tem endereço público (30/10/2026). --}}
                 <div class="districts">
                     <div class="district reveal" style="--dc:var(--d-urb)">
                         <span class="tag">Frente · <b>Imobiliário</b></span>
                         <svg class="card-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-4h6v4"/><path d="M9 10h.01"/><path d="M15 10h.01"/><path d="M9 14h.01"/><path d="M15 14h.01"/></svg>
                         <h3>Imobiliárias</h3>
-                        <p>Site com busca de imóveis, fichas de lançamento e blog, e o sistema de gestão por trás: cadastro do acervo, contatos dos interessados e a sua marca em tudo.</p>
+                        <p>O USI é o nosso sistema imobiliário: site com busca de imóveis, fichas de lançamento e blog, e a gestão por trás, com cadastro do acervo, contatos dos interessados e a sua marca em tudo.</p>
+                        <a class="district-link" href="https://usi.urbisdev.tech">Conhecer o USI&nbsp;&rarr;</a>
                         <span class="chip">No ar</span>
                     </div>
                     <div class="district reveal" style="--dc:var(--amber-500)">

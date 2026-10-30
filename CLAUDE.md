@@ -87,8 +87,10 @@ JSON-LD da casa (o que ela faz, contato). Página nova não mexe nisso: só defi
 `titulo` e `descricao`, e `@section('robots', 'noindex, follow')` quando não deve
 ir ao buscador. `/sitemap.xml` e `/llms.txt` saem de `App\Support\PaginasPublicas`,
 que lê `config/demonstracoes.php` e o portfólio; `public/robots.txt` deixa os
-robôs de IA entrarem de propósito. **Nenhum produto (USI, Synapse, SSB) nem
-cliente pelo nome** em texto da home ou nesses dados — decisão dele. Mudou uma
+robôs de IA entrarem de propósito. **Nenhum produto (Synapse, SSB) nem
+cliente pelo nome** em texto da home ou nesses dados — decisão dele. **A exceção é
+o USI (30/10/2026):** lançado, é citado com link para <https://usi.urbisdev.tech> no
+cartão de imobiliárias, no rodapé, no `OfferCatalog` e no `llms.txt`. Mudou uma
 frente da home? Mude junto o `OfferCatalog` do partial e o `seo/llms.blade.php`.
 Escrever `@context` dentro de `{!! !!}` vira a diretiva do Laravel 12: monte o
 JSON no `@php`. A 404 é `errors/404.blade.php`, que estende o layout.

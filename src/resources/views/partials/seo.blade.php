@@ -9,7 +9,8 @@
       ela faz (`OfferCatalog`, as frentes da home) e onde se está no site
       (`BreadcrumbList`). É o que buscador e assistente de IA leem para
       responder "quem faz site com painel para imobiliária" sem adivinhar.
-      Sem nome de produto e sem cliente: decisão de 18/10/2026.
+      Sem nome de produto e sem cliente (decisão de 18/10/2026), menos o USI,
+      lançado e com endereço público (30/10/2026).
 
     A versão em texto corrido para assistentes de IA mora em `/llms.txt`
     (routes/web.php), e a lista de páginas em `/sitemap.xml`.
@@ -47,11 +48,11 @@
             '@type' => 'OfferCatalog',
             'name' => 'O que fazemos',
             'itemListElement' => collect([
-                ['Sites e sistema de gestão para imobiliárias', 'Site com busca de imóveis, fichas de lançamento e blog, e o sistema de gestão do acervo e dos contatos, com a marca da imobiliária.'],
+                ['USI: site e sistema de gestão para imobiliárias', 'Site com busca de imóveis, fichas de lançamento e blog, e o sistema de gestão do acervo e dos contatos, com a marca da imobiliária.', 'https://usi.urbisdev.tech'],
                 ['Sites com painel próprio', 'Site para bandas, artistas, oficinas e profissionais, com painel para o próprio cliente trocar agenda, fotos, vídeos e textos.'],
                 ['Sistema de gestão para clínicas de terapia', 'Agenda, evolução de cada paciente e cuidado com o dado de saúde desde o desenho. Em construção.'],
                 ['Sistema para sindicatos e associações', 'Cadastro de associados, mensalidades, comunicação com a base e votações. Em construção.'],
-            ])->map(fn ($s) => ['@type' => 'Offer', 'itemOffered' => ['@type' => 'Service', 'name' => $s[0], 'description' => $s[1]]])->all(),
+            ])->map(fn ($s) => ['@type' => 'Offer', 'itemOffered' => array_filter(['@type' => 'Service', 'name' => $s[0], 'description' => $s[1], 'url' => $s[2] ?? null])])->all(),
         ],
     ];
 

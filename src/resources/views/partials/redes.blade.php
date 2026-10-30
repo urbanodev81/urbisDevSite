@@ -11,7 +11,7 @@
 @php
     $tamanho = $tamanho ?? 18;
     $redes = [
-        ['classe' => 's-wa', 'rotulo' => 'WhatsApp', 'href' => 'https://wa.me/5511976862551', 'externo' => true,
+        ['classe' => 's-wa', 'rotulo' => 'WhatsApp', 'href' => 'https://wa.me/5511976862551?text='.rawurlencode('Olá! Vim pelo site da UrbisDev e gostaria de saber mais.'), 'externo' => true,
          'svg' => '<path d="M3 21l1.65-4.95A8.96 8.96 0 0 1 3 11a9 9 0 1 1 9 9 8.96 8.96 0 0 1-5.05-1.65L3 21z"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/>'],
         // Instagram e LinkedIn saíram em 18/10/2026: estavam no ar desde 31/07
         // com href "#", sem perfil. Voltam com a URL real (classes `s-ig` e

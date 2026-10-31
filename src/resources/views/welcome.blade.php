@@ -51,6 +51,19 @@
         .hero-meta span { display: inline-flex; align-items: center; gap: 8px; }
         .hero-meta svg { color: var(--amber-500); }
 
+        /* ---------- USI em destaque ---------- */
+        .usi-destaque { position: relative; background: var(--ink-800); border-block: 1px solid var(--line); }
+        .usi-destaque::before { content: ""; position: absolute; top: -1px; left: 0; right: 0; height: 3px; background: var(--d-urb); }
+        .usi-grade { display: grid; gap: 40px; align-items: center; }
+        @media (min-width: 880px) { .usi-grade { grid-template-columns: 1fr 1.1fr; gap: 64px; } }
+        .usi-texto h2 { margin: 16px 0 14px; }
+        .usi-texto .hero-ctas { margin-top: 28px; }
+        .usi-nota { margin-top: 16px; font-size: .9rem; color: var(--text-low); }
+        .usi-tela { display: block; border: 1px solid var(--line); border-radius: var(--r-card); overflow: hidden; transition: transform .2s ease-out, border-color .2s ease-out; }
+        .usi-tela:hover { transform: translateY(-3px); border-color: var(--d-urb); }
+        .usi-tela img { display: block; width: 100%; height: auto; }
+        @media (prefers-reduced-motion: reduce) { .usi-tela { transition: none; } .usi-tela:hover { transform: none; } }
+
         /* ---------- demonstrações ---------- */
         .trabalho-de-tipo { display: flex; flex-direction: column; gap: 10px; }
         .trabalho-de-tipo .trabalho { flex: 1; }
@@ -127,6 +140,29 @@
                     </a>
                     <a class="btn btn-ghost" href="#demonstracoes">Veja funcionando</a>
                 </div>
+            </div>
+        </section>
+
+        {{-- USI em destaque, logo depois do hero (30/10/2026): é o produto da casa
+             que já está no ar e aberto a quem quiser testar. A imagem é uma captura
+             da home dele; trocou muito lá, refaça `public/usi-home.jpg`. --}}
+        <section id="usi" class="usi-destaque" aria-labelledby="usi-titulo">
+            <div class="container usi-grade">
+                <div class="usi-texto reveal">
+                    <span class="eyebrow">Nosso produto · No ar</span>
+                    <h2 id="usi-titulo">USI, a plataforma da UrbisDev para imobiliárias.</h2>
+                    <p>Site com busca de imóveis, fichas de lançamento e blog, e a gestão por trás, com o acervo, os contatos dos interessados e a marca da imobiliária em tudo.</p>
+                    <div class="hero-ctas">
+                        <a class="btn btn-primary" href="https://usi.urbisdev.tech">Conhecer o USI
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                        </a>
+                        <a class="btn btn-ghost" href="https://usi.urbisdev.tech/planos">Ver planos e preços</a>
+                    </div>
+                    <p class="usi-nota">30 dias grátis, sem cartão de crédito.</p>
+                </div>
+                <a class="usi-tela reveal" href="https://usi.urbisdev.tech" tabindex="-1" aria-hidden="true">
+                    <img src="/usi-home.jpg" alt="" width="1200" height="750" loading="lazy" decoding="async">
+                </a>
             </div>
         </section>
 

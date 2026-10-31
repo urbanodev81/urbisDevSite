@@ -48,7 +48,7 @@
     </button>
 </div>
 
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
     (function () {
         var KEY = 'urbis-a11y';
         var KEY_TEMA = 'urbis-tema';   // a MESMA chave do script do <head>

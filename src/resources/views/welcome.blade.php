@@ -380,14 +380,14 @@
             <div class="modal-icon" id="modalIcon"></div>
             <h3 id="modalTitle"></h3>
             <p id="modalText"></p>
-            <button class="btn btn-primary" onclick="document.getElementById('modalOverlay').classList.remove('active')">Fechar</button>
+            <button class="btn btn-primary" id="modalFechar">Fechar</button>
         </div>
     </div>
 @endsection
 
 @push('scripts')
 <script src="/lancamentos.js" defer></script>
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
         // Grade de janelas acesas (assinatura da marca)
         (function () {
             var grid = document.getElementById('citygrid');
@@ -464,6 +464,9 @@
         var icon = document.getElementById('modalIcon');
         var modalTitle = document.getElementById('modalTitle');
         var modalText = document.getElementById('modalText');
+        document.getElementById('modalFechar').addEventListener('click', function () {
+            overlay.classList.remove('active');
+        });
 
         @if (session('success'))
         overlay.classList.add('active');

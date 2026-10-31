@@ -26,7 +26,7 @@
         @section('descricao', 'Uma frase para o buscador.')
         @push('estilos') <style>…só o CSS DESTA página…</style> @endpush
         @section('conteudo') … @endsection
-        @push('scripts') <script>…só o JS DESTA página…</script> @endpush
+        @push('scripts') <script nonce="{{ $cspNonce ?? '' }}">…só o JS DESTA página…</script> @endpush
 
     O layout decide sozinho, pela rota, se os links do menu são âncoras da
     própria página (`#contato`) ou voltam para a home (`/#contato`).
@@ -60,7 +60,7 @@
         resolução do tema no site: o botão do painel de acessibilidade grava a
         mesma chave e não reimplementa a decisão.
     --}}
-    <script>
+    <script nonce="{{ $cspNonce ?? '' }}">
         (function () {
             var claro = false;
             try {
@@ -244,23 +244,23 @@
                 <li><a href="{{ $base }}#contato">Contato</a></li>
             </ul>
             <a class="btn btn-primary nav-cta" href="{{ $base }}#contato">Fale Conosco</a>
-            <button class="nav-toggle" onclick="toggleMenu(this)" aria-label="Abrir menu" aria-expanded="false" aria-controls="mobileMenu">
+            <button class="nav-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="mobileMenu">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
             </button>
         </div>
         <nav class="mobile-menu" id="mobileMenu">
-            <a href="https://usi.urbisdev.tech" onclick="closeMenu()">USI</a>
-            <a href="{{ $base }}#fazemos" onclick="closeMenu()">O que fazemos</a>
+            <a href="https://usi.urbisdev.tech">USI</a>
+            <a href="{{ $base }}#fazemos">O que fazemos</a>
             @if ($temTrabalhos)
-                <a href="{{ url('/trabalhos') }}" onclick="closeMenu()">Trabalhos</a>
+                <a href="{{ url('/trabalhos') }}">Trabalhos</a>
             @endif
             @if ($temGuias)
-                <a href="{{ url('/guias') }}" onclick="closeMenu()">Guias</a>
+                <a href="{{ url('/guias') }}">Guias</a>
             @endif
-            <a href="{{ url('/demonstracoes') }}" onclick="closeMenu()">Demonstrações</a>
-            <a href="{{ url('/como-trabalhamos') }}" onclick="closeMenu()">Como trabalhamos</a>
-            <a href="{{ $base }}#contato" onclick="closeMenu()">Contato</a>
-            <a class="btn btn-primary" style="margin-top:10px" href="{{ $base }}#contato" onclick="closeMenu()">Fale Conosco</a>
+            <a href="{{ url('/demonstracoes') }}">Demonstrações</a>
+            <a href="{{ url('/como-trabalhamos') }}">Como trabalhamos</a>
+            <a href="{{ $base }}#contato">Contato</a>
+            <a class="btn btn-primary" style="margin-top:10px" href="{{ $base }}#contato">Fale Conosco</a>
         </nav>
     </header>
 
@@ -306,7 +306,7 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
     </button>
 
-    <script>
+    <script nonce="{{ $cspNonce ?? '' }}">
         // Menu mobile
         function toggleMenu(btn) {
             var menu = document.getElementById('mobileMenu');
@@ -321,6 +321,9 @@
             btn.setAttribute('aria-expanded', 'false');
             btn.setAttribute('aria-label', 'Abrir menu');
         }
+        // Ouvinte, não `onclick=`: a CSP barra atributo de evento, e o nonce não vale para ele.
+        document.querySelector('.nav-toggle').addEventListener('click', function () { toggleMenu(this); });
+        document.querySelectorAll('#mobileMenu a').forEach(function (a) { a.addEventListener('click', closeMenu); });
 
         // Reveal on scroll
         (function () {

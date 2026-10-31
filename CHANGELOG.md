@@ -65,6 +65,10 @@ lançou. Não crie número de versão nem date release por conta própria.
   as outras rotas já mostravam.
 
 ### Segurança
+- **A política de conteúdo (CSP) passa a barrar.** Depois de duas semanas só
+  medindo, o navegador de quem visita recusa qualquer script que o site não
+  tenha marcado como seu. Os scripts escritos dentro da página ganharam essa
+  marca, e os cliques do menu e do modal saíram do HTML para o script.
 - **O site começa a medir a política de conteúdo (CSP) antes de ligá-la.** O
   navegador de quem visita passa a contar ao site o que a política barraria —
   sem barrar nada ainda — e o site guarda uma lista curta, sem endereço de

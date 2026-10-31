@@ -4,22 +4,26 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Cabeçalhos de segurança do site — até 29/09/2026 ele não mandava nenhum
  * (pendência 134), e os produtos da casa mandam todos.
  *
- * A CSP está em REPORT-ONLY desde 18/10/2026 (pendência 136): o navegador
- * não barra nada, só conta ao `POST /csp-relato` o que teria barrado, e o
- * `CspRelatoController` guarda a lista em `storage/logs/csp-*.log`. Uma
- * política escrita sem medir quebra a página em produção sem aviso.
+ * A CSP passou 18/10 a 31/10/2026 em REPORT-ONLY (pendência 136): o navegador
+ * só contava ao `POST /csp-relato` o que teria barrado, e o
+ * `CspRelatoController` guardava a lista em `storage/logs/csp-*.log`. A medição
+ * acusou só código nosso: os `<script>` embutidos (tema, menu, acessibilidade,
+ * progresso, home) e os `onclick=` do menu e do modal. Os `onclick=` viraram
+ * ouvintes de evento, e cada `<script>` embutido leva o nonce desta requisição:
+ * `<script nonce="{{ $cspNonce ?? '' }}">`. Desde 31/10 a política BARRA, e o
+ * relato continua ligado para mostrar o que quebrar.
  *
- * A política abaixo é a que o site QUER ter, não a que ele aguenta hoje. Já se
- * sabe o que ela vai acusar: os `<script>` embutidos (tema, menu,
- * acessibilidade, progresso, home) e os `onclick=` do menu e do modal. Esses
- * saem para arquivo ou ganham hash antes da troca para
- * `Content-Security-Policy` — o log diz se sobrou mais alguma coisa.
+ * Script embutido novo sem o nonce não roda. O sintoma é a página ficar sem o
+ * comportamento, e o log `csp-*.log` mostra o começo do script barrado.
+ * O que aparece lá de `use.typekit.net` e `font-src data` não é nosso: vem de
+ * extensão de navegador do visitante.
  *
  *  - `'report-sample'`: o relato traz os primeiros 40 caracteres do script
  *    barrado — é o que diz QUAL script embutido é, sem depender da linha.
@@ -39,7 +43,6 @@ class SecurityHeaders
 {
     private const POLITICA = [
         "default-src 'self'",
-        "script-src 'self' 'report-sample'",
         "style-src 'self' 'unsafe-inline' https://fonts.bunny.net",
         "font-src 'self' https://fonts.bunny.net",
         "img-src 'self' data: blob:",
@@ -55,6 +58,10 @@ class SecurityHeaders
 
     public function handle(Request $request, Closure $next): Response
     {
+        // Antes do `$next`: a view é montada lá dentro e precisa do valor.
+        $nonce = base64_encode(random_bytes(16));
+        View::share('cspNonce', $nonce);
+
         $resposta = $next($request);
 
         $resposta->headers->set('X-Content-Type-Options', 'nosniff');
@@ -67,7 +74,8 @@ class SecurityHeaders
             $resposta->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
         }
 
-        $resposta->headers->set('Content-Security-Policy-Report-Only', implode('; ', self::POLITICA));
+        $politica = ["script-src 'self' 'nonce-{$nonce}' 'report-sample'", ...self::POLITICA];
+        $resposta->headers->set('Content-Security-Policy', implode('; ', $politica));
 
         return $resposta;
     }

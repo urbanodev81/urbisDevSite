@@ -24,7 +24,7 @@
     }
 </style>
 
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 (function () {
     var barra = document.getElementById('navProgress');
     if (!barra) return;

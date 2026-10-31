@@ -121,14 +121,16 @@ Com o Sócrates fora, o site mostra a última cópia; sem cópia nenhuma, ou sem
 `PORTFOLIO_URL` no `.env`, a seção, a página e o link simplesmente não existem.
 Continua sem banco. Texto de trabalho não se edita aqui: edita-se lá.
 
-**CSP em report-only (desde 18/10/2026, pendência 136).** O
-`SecurityHeaders` manda `Content-Security-Policy-Report-Only` com a política que
-o site QUER ter; o navegador relata ao `POST /csp-relato`
-(`CspRelatoController`) e a lista fica em `storage/logs/csp-*.log`, uma linha
-por violação distinta, com teto diário. A medição de 18/10 deu seis itens, todos
-nossos: cinco `<script>` embutidos (tema, acessibilidade, menu, barra de
-progresso, grade de janelas da home) e o `onclick` do menu. Tirados esses para
-arquivo, a política troca para `Content-Security-Policy`. O `limit_req` do site
+**A CSP barra (desde 31/10/2026, pendência 136; medida em report-only desde
+18/10).** O `SecurityHeaders` manda `Content-Security-Policy` com um nonce
+novo por requisição. **Todo `<script>` embutido leva
+`nonce="{{ $cspNonce ?? '' }}"`**, senão não roda, e **nada de `onclick=`** nem
+de outro atributo de evento, porque o nonce não vale para eles: use
+`addEventListener`. Script com `src=` próprio não precisa do nonce. O
+navegador continua relatando ao `POST /csp-relato` (`CspRelatoController`), e a
+lista fica em `storage/logs/csp-*.log`, uma linha por violação distinta, com
+teto diário. `use.typekit.net` e `font-src data` que aparecem lá vêm de
+extensão do visitante, não do site. O `limit_req` do site
 mora no nginx do HOST (cópia em `infra/nginx-host-urbisdev.conf`): é o único
 andar que vê o IP de quem visita. O Laravel confia no `X-Forwarded-For` e no
 `X-Forwarded-Proto` que ele manda (`trustProxies` em `bootstrap/app.php`, só

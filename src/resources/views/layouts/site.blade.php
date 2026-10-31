@@ -233,7 +233,6 @@
                 <span class="brand-name">urbis<span>Dev</span></span>
             </a>
             <ul class="nav-links">
-                <li><a href="https://usi.urbisdev.tech">USI</a></li>
                 <li><a href="{{ $base }}#fazemos">O que fazemos</a></li>
                 @if ($temTrabalhos)
                     <li><a href="{{ url('/trabalhos') }}" @if (request()->is('trabalhos')) aria-current="page" @endif>Trabalhos</a></li>
@@ -251,7 +250,6 @@
             </button>
         </div>
         <nav class="mobile-menu" id="mobileMenu">
-            <a href="https://usi.urbisdev.tech">USI</a>
             <a href="{{ $base }}#fazemos">O que fazemos</a>
             @if ($temTrabalhos)
                 <a href="{{ url('/trabalhos') }}">Trabalhos</a>
@@ -367,7 +365,9 @@
             if (href === '#') return; // link morto (redes ainda sem perfil)
             var el = document.getElementById(href.slice(1));
             if (!el) return;
-            urbisSmoothTo(href === '#top' ? 0 : el.getBoundingClientRect().top + window.scrollY - 72);
+            // Respeita o scroll-margin-top do alvo (páginas com barra grudada pedem mais).
+            var folga = parseFloat(getComputedStyle(el).scrollMarginTop) || 72;
+            urbisSmoothTo(href === '#top' ? 0 : el.getBoundingClientRect().top + window.scrollY - folga);
             history.pushState(null, '', href);
         });
 

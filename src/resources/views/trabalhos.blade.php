@@ -12,10 +12,16 @@
 @include('partials.demo-estilos')
 @include('partials.trabalho-estilos')
 <style>
-    .trabalhos-indice { display: flex; flex-wrap: wrap; gap: 10px; list-style: none; padding-block: 28px 0; }
+    /* O filtro gruda logo abaixo do cabeçalho (68px) enquanto se rola a lista. */
+    .trabalhos-filtro { position: sticky; top: 68px; z-index: 40; background: var(--bg); border-bottom: 1px solid var(--border); padding-block: 12px; margin-top: 28px; }
+    .trabalhos-indice { display: flex; flex-wrap: wrap; gap: 10px; list-style: none; padding-block: 0; margin-block: 0; }
     .trabalhos-indice a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border: 1px solid var(--border); border-radius: 999px; text-decoration: none; font-size: .92rem; font-weight: 500; color: var(--fg-muted); }
     .trabalhos-indice a:hover { border-color: var(--accent); color: var(--fg); }
-    .trabalhos-categoria { padding-block: clamp(36px, 5vw, 56px) 0; scroll-margin-top: 88px; }
+    @media (max-width: 640px) {
+        .trabalhos-indice { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+        .trabalhos-indice a { white-space: nowrap; }
+    }
+    .trabalhos-categoria { padding-block: clamp(36px, 5vw, 56px) 0; scroll-margin-top: 140px; }
     .trabalhos-categoria h2 { font-size: clamp(1.5rem, 3vw, 2rem); margin-bottom: 8px; }
     .trabalhos-categoria > p { max-width: 62ch; margin-bottom: 24px; }
     .trabalhos-fim { padding-block: clamp(40px, 6vw, 64px) clamp(56px, 8vw, 96px); }
@@ -28,15 +34,18 @@
             <span class="eyebrow">Trabalhos</span>
             <h1 id="trabalhos-titulo">O que já saiu daqui.</h1>
             <p>Sites e sistemas feitos pela casa, separados por tipo. Onde o cliente ainda não autorizou o nome, mostramos só o que o trabalho é.</p>
-            @if (count($categorias) > 1)
-                <ul class="trabalhos-indice" aria-label="Tipos de trabalho">
-                    @foreach ($categorias as $categoria)
-                        <li><a href="#{{ $categoria['chave'] }}">{{ $categoria['nome'] }}</a></li>
-                    @endforeach
-                </ul>
-            @endif
         </div>
     </section>
+
+    @if (count($categorias) > 1)
+        <nav class="trabalhos-filtro" aria-label="Tipos de trabalho">
+            <ul class="container trabalhos-indice">
+                @foreach ($categorias as $categoria)
+                    <li><a href="#{{ $categoria['chave'] }}">{{ $categoria['nome'] }}</a></li>
+                @endforeach
+            </ul>
+        </nav>
+    @endif
 
     <div class="container">
         @foreach ($categorias as $categoria)

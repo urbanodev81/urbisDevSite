@@ -1,7 +1,7 @@
 ---
 titulo: O captcha que tirou do ar o formulário da Imóveis Jacob
 descricao: Por que saímos do Cloudflare Turnstile para um captcha próprio, e o que perdemos na troca.
-data: 2026-11-01
+data: 2026-11-17
 acao_texto: Conversar sobre o meu sistema
 imagem: /img/guias/captcha.jpg
 imagem_alt: Mãos digitando no teclado de um notebook

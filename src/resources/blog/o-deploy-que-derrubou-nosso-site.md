@@ -1,7 +1,7 @@
 ---
 titulo: O deploy automático que derrubou o nosso próprio site
 descricao: Uma opção de sincronização apagou arquivos que só existiam no servidor. O que mudou depois disso.
-data: 2026-11-01
+data: 2026-11-10
 acao_texto: Conversar sobre o meu sistema
 imagem: /img/guias/deploy.jpg
 imagem_alt: Cabos de rede azuis ligados a um switch de servidor

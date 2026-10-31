@@ -16,6 +16,7 @@ lançou. Não crie número de versão nem date release por conta própria.
 
 ### Adicionado
 
+- Três textos agendados em `/guias`, um por semana a partir de 03/11: backup na mesma máquina, o deploy que derrubou o site e o captcha que tirou do ar o formulário da Imóveis Jacob. Cada um tem foto de capa (domínio público, guardada no site), hashtags, botões de compartilhar (LinkedIn, WhatsApp, Facebook, X e e-mail) e "Copiar para o LinkedIn". A capa aparece na prévia do link nas redes.
 - Calculadora "Quanto a sua planilha custa por mês" em `/demonstracoes/calculadora`: pessoas, horas por semana, salário com encargos e erros viram o custo do mês, do ano e quanto dá para recuperar, com a conta por extenso. Tudo no navegador do visitante; nada é enviado.
 - Guias em `/guias`, com o pacote `urbanodev/blog`: textos em Markdown em `src/resources/blog`, publicados pelo github.com, sem banco nem painel. Entram no sitemap e no `llms.txt`, e o link do menu só aparece com o primeiro texto.
 

@@ -5709,16 +5709,16 @@
         },
         {
             "name": "urbanodev/blog",
-            "version": "v0.1.0",
+            "version": "v0.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/urbanodev81/blog.git",
-                "reference": "1a9477ae01b15ce5414fe16057b76cd2b892b5b2"
+                "reference": "5f40275ddd0d1505265095a135de7924856ab64d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/urbanodev81/blog/zipball/1a9477ae01b15ce5414fe16057b76cd2b892b5b2",
-                "reference": "1a9477ae01b15ce5414fe16057b76cd2b892b5b2",
+                "url": "https://api.github.com/repos/urbanodev81/blog/zipball/5f40275ddd0d1505265095a135de7924856ab64d",
+                "reference": "5f40275ddd0d1505265095a135de7924856ab64d",
                 "shasum": ""
             },
             "require": {
@@ -5757,10 +5757,10 @@
             ],
             "description": "Blog em arquivos Markdown para Laravel: sem banco, sem build, sem painel e sem IA. Escreveu, deu push, está no ar.",
             "support": {
-                "source": "https://github.com/urbanodev81/blog/tree/v0.1.0",
+                "source": "https://github.com/urbanodev81/blog/tree/v0.1.1",
                 "issues": "https://github.com/urbanodev81/blog/issues"
             },
-            "time": "2026-10-31T02:34:23+00:00"
+            "time": "2026-10-31T15:10:20+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -6071,5 +6071,5 @@
         "php": "^8.3"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.11.0"
 }

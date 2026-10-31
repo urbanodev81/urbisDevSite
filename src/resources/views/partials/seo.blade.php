@@ -21,7 +21,9 @@
     $titulo = html_entity_decode(trim($__env->yieldContent('titulo', 'UrbisDev — Software que resolve problemas reais')), ENT_QUOTES);
     $descricao = html_entity_decode(trim($__env->yieldContent('descricao')), ENT_QUOTES);
     $canonico = url()->current();
-    $imagem = asset('og-urbisdev.png');
+    // Página com imagem própria (a capa de um guia) troca a da casa na prévia.
+    $imagemPropria = html_entity_decode(trim($__env->yieldContent('og_imagem')), ENT_QUOTES);
+    $imagem = $imagemPropria ?: asset('og-urbisdev.png');
     $raiz = url('/');
 
     $casa = [
@@ -86,7 +88,9 @@
     <meta property="og:image" content="{{ $imagem }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
+    @unless ($imagemPropria)
     <meta property="og:image:alt" content="UrbisDev — sites, sistemas e aplicativos">
+    @endunless
     <meta name="twitter:card" content="summary_large_image">
     <link rel="sitemap" type="application/xml" href="{{ url('/sitemap.xml') }}">
     <link rel="alternate" type="text/plain" title="Resumo para assistentes de IA" href="{{ url('/llms.txt') }}">

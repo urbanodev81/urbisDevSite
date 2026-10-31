@@ -98,6 +98,8 @@
            menor). Antes da extração cada página trazia a sua e não havia
            padrão nenhum: eram duas escalas empatadas. */
         section { padding-block: clamp(72px, 10vw, 128px); scroll-margin-top: 72px; }
+        /* Guias (pacote urbanodev/blog): links e hashtags na cor da marca. */
+        .blog { --blog-destaque: var(--accent); }
         h1 { font-size: clamp(2.6rem, 6vw, 4.5rem); font-weight: 800; }
         h2 { font-size: clamp(1.9rem, 3.5vw, 2.6rem); font-weight: 700; }
         h3 { font-family: var(--font-body); font-weight: 600; font-size: 1.25rem; color: var(--fg); }

@@ -2,11 +2,14 @@
 titulo: O deploy automático que derrubou o nosso próprio site
 descricao: Uma opção de sincronização apagou arquivos que só existiam no servidor. O que mudou depois disso.
 data: 2026-11-01
-rascunho: sim
 acao_texto: Conversar sobre o meu sistema
+imagem: /img/guias/deploy.jpg
+imagem_alt: Cabos de rede azuis ligados a um switch de servidor
+imagem_credito: Foto: Raysonho, Wikimedia Commons (CC0)
+tags: deploy, DevOps, desenvolvimento web, lições aprendidas
 ---
 
-Em 31 de julho de 2026, o nosso deploy automático tirou o nosso próprio site do ar. Ele fez exatamente o que mandamos.
+O nosso deploy automático já tirou o nosso próprio site do ar. Ele fez exatamente o que mandamos. O nosso sistema nos alertou na hora, e duas horas depois o site estava de volta.
 
 ## O que aconteceu
 

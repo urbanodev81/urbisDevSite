@@ -1,18 +1,21 @@
 ---
-titulo: O captcha que travou o formulário de um cliente por duas semanas
+titulo: O captcha que tirou do ar o formulário da Imóveis Jacob
 descricao: Por que saímos do Cloudflare Turnstile para um captcha próprio, e o que perdemos na troca.
 data: 2026-11-01
-rascunho: sim
 acao_texto: Conversar sobre o meu sistema
+imagem: /img/guias/captcha.jpg
+imagem_alt: Mãos digitando no teclado de um notebook
+imagem_credito: Foto: Thomas Lefebvre, Wikimedia Commons (CC0)
+tags: captcha, segurança, Cloudflare, imobiliárias, desenvolvimento web
 ---
 
-Um formulário de contato ficou duas semanas sem funcionar no site de um cliente, e o problema não estava no código do formulário.
+O formulário "Procuro imóvel" do site da Imóveis Jacob, imobiliária que usa o nosso sistema, ficou cerca de duas semanas fora do ar. O problema não estava no código do formulário.
 
 ## O que aconteceu
 
 Usávamos o Cloudflare Turnstile, um bom captcha. A chave dele só aceita os domínios cadastrados antes no painel da Cloudflare. Em sistema com domínio próprio por cliente, isso vira um cadastro manual antes de cada site entrar no ar.
 
-Um domínio ficou de fora. O widget mostrava `Error: 110200`, e o formulário parou de aceitar envios.
+O domínio da Jacob ficou de fora. O widget mostrava `Error: 110200`, o formulário parou de aceitar envios, e tiramos ele da página até resolver.
 
 ## O que fizemos
 

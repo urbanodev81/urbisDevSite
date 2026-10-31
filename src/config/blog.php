@@ -11,6 +11,6 @@ return [
     'acao_texto' => 'Conversar sobre o meu caso',
     'acao_url' => '/?guia={slug}#contato',
     'layout' => 'layouts.site',
-    'secoes' => ['titulo' => 'titulo', 'descricao' => 'descricao', 'conteudo' => 'conteudo'],
+    'secoes' => ['titulo' => 'titulo', 'descricao' => 'descricao', 'conteudo' => 'conteudo', 'imagem' => 'og_imagem'],
     'pilha_cabecalho' => 'estilos',
 ];

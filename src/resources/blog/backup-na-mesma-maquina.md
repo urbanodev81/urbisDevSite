@@ -2,8 +2,11 @@
 titulo: Backup que mora na mesma máquina não é backup
 descricao: O que encontramos ao perguntar se nossa empresa continuaria de pé sem as ferramentas de hoje.
 data: 2026-11-01
-rascunho: sim
 acao_texto: Conversar sobre o meu sistema
+imagem: /img/guias/backup.jpg
+imagem_alt: Um disco rígido de computador sobre uma mesa de madeira
+imagem_credito: Foto: Hystiff, Wikimedia Commons (CC0)
+tags: backup, segurança da informação, continuidade de negócios, pequenas empresas
 ---
 
 Nosso backup rodava todo dia e nunca falhava. E, se o servidor morresse, ele morreria junto.

@@ -87,6 +87,19 @@ return [
     ],
 
     /*
+     * Calculadora (31/10/2026, pendência 243): conta feita no navegador com os
+     * números que o visitante digita; nada vai ao servidor. O guia do blog
+     * aponta para cá por `acao_url`.
+     */
+    'calculadora' => [
+        'titulo' => 'Quanto a sua planilha custa por mês',
+        'tipo' => 'Calculadora',
+        'resumo' => 'Diga quantas pessoas mexem na planilha, quantas horas por semana e quanto custam os erros: a conta mostra o mês, o ano e quanto dá para recuperar.',
+        'assunto' => 'trocar a planilha por um sistema (vim pela calculadora)',
+        'pronta' => true,
+    ],
+
+    /*
      * `pede_contato => true`: a página só entrega a ferramenta depois do
      * formulário com captcha (`DemoLeadController`), que vira lead. O arquivo
      * do visitante é lido no navegador e nunca chega ao servidor.

@@ -51,18 +51,30 @@
         .hero-meta span { display: inline-flex; align-items: center; gap: 8px; }
         .hero-meta svg { color: var(--amber-500); }
 
-        /* ---------- USI em destaque ---------- */
-        .usi-destaque { position: relative; background: var(--ink-800); border-block: 1px solid var(--line); }
-        .usi-destaque::before { content: ""; position: absolute; top: -1px; left: 0; right: 0; height: 3px; background: var(--d-urb); }
-        .usi-grade { display: grid; gap: 40px; align-items: center; }
-        @media (min-width: 880px) { .usi-grade { grid-template-columns: 1fr 1.1fr; gap: 64px; } }
-        .usi-texto h2 { margin: 16px 0 14px; }
-        .usi-texto .hero-ctas { margin-top: 28px; }
-        .usi-nota { margin-top: 16px; font-size: .9rem; color: var(--text-low); }
-        .usi-tela { display: block; border: 1px solid var(--line); border-radius: var(--r-card); overflow: hidden; transition: transform .2s ease-out, border-color .2s ease-out; }
-        .usi-tela:hover { transform: translateY(-3px); border-color: var(--d-urb); }
-        .usi-tela img { display: block; width: 100%; height: auto; }
-        @media (prefers-reduced-motion: reduce) { .usi-tela { transition: none; } .usi-tela:hover { transform: none; } }
+        /* ---------- banner de lançamentos ---------- */
+        .lancamentos { position: relative; background: var(--ink-800); border-block: 1px solid var(--line); }
+        .lancamentos::before { content: ""; position: absolute; top: -1px; left: 0; right: 0; height: 3px; background: var(--d-urb); }
+        .lanc-trilho { display: grid; gap: 64px; }
+        /* Todos na mesma célula: a altura é a do maior e a página não pula na troca. */
+        .em-passagem .lanc-slide { grid-area: 1 / 1; visibility: hidden; opacity: 0; transition: opacity .35s ease-out, visibility 0s linear .35s; }
+        .em-passagem .lanc-slide.ativo { visibility: visible; opacity: 1; transition: opacity .35s ease-out; }
+        .lanc-slide { display: grid; gap: 40px; align-items: center; }
+        @media (min-width: 880px) { .lanc-slide { grid-template-columns: 1fr 1.1fr; gap: 64px; } }
+        .lanc-slide h2 { margin: 16px 0 14px; }
+        .lanc-slide .hero-ctas { margin-top: 28px; }
+        .lanc-nota { margin-top: 16px; font-size: .9rem; color: var(--text-low); }
+        .lanc-tela { display: block; border: 1px solid var(--line); border-radius: var(--r-card); overflow: hidden; transition: transform .2s ease-out, border-color .2s ease-out; }
+        .lanc-tela:hover { transform: translateY(-3px); border-color: var(--d-urb); }
+        .lanc-tela img { display: block; width: 100%; height: auto; }
+        .lanc-controles { display: none; align-items: center; gap: 4px; margin-top: 28px; }
+        .em-passagem .lanc-controles { display: flex; }
+        .lanc-controles button { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0; background: none; border: 0; border-radius: 50%; color: var(--fg); cursor: pointer; }
+        .lanc-controles button:hover { color: var(--accent); }
+        .lanc-pausa [hidden] { display: none; }
+        .lanc-ponto::before { content: ""; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--text-mid); }
+        .lanc-ponto:hover::before { border-color: var(--accent); }
+        .lanc-ponto[aria-current="true"]::before { background: var(--accent); border-color: var(--accent); }
+        @media (prefers-reduced-motion: reduce) { .em-passagem .lanc-slide, .em-passagem .lanc-slide.ativo, .lanc-tela { transition: none; } .lanc-tela:hover { transform: none; } }
 
         /* ---------- demonstrações ---------- */
         .trabalho-de-tipo { display: flex; flex-direction: column; gap: 10px; }
@@ -143,26 +155,48 @@
             </div>
         </section>
 
-        {{-- USI em destaque, logo depois do hero (30/10/2026): é o produto da casa
-             que já está no ar e aberto a quem quiser testar. A imagem é uma captura
-             da home dele; trocou muito lá, refaça `public/usi-home.jpg`. --}}
-        <section id="usi" class="usi-destaque" aria-labelledby="usi-titulo">
-            <div class="container usi-grade">
-                <div class="usi-texto reveal">
-                    <span class="eyebrow">Nosso produto · No ar</span>
-                    <h2 id="usi-titulo">USI, a plataforma da UrbisDev para imobiliárias.</h2>
-                    <p>Site com busca de imóveis, fichas de lançamento e blog, e a gestão por trás, com o acervo, os contatos dos interessados e a marca da imobiliária em tudo.</p>
-                    <div class="hero-ctas">
-                        <a class="btn btn-primary" href="https://usi.urbisdev.tech">Conhecer o USI
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                        </a>
-                        <a class="btn btn-ghost" href="https://usi.urbisdev.tech/planos">Ver planos e preços</a>
-                    </div>
-                    <p class="usi-nota">30 dias grátis, sem cartão de crédito.</p>
+        {{-- Banner de lançamentos, logo depois do hero (30/10/2026): o que a casa já
+             lançou e tem endereço público. A lista mora em `config/lancamentos.php`
+             e a passagem em `public/lancamentos.js`. --}}
+        @php($lancamentos = config('lancamentos'))
+        <section id="lancamentos" class="lancamentos" aria-label="Lançamentos" aria-roledescription="carrossel">
+            <div class="container">
+                <div class="lanc-trilho">
+                    @foreach ($lancamentos as $lancamento)
+                        <div class="lanc-slide {{ $loop->first ? 'ativo' : '' }}" role="group" aria-roledescription="slide" aria-label="{{ $loop->iteration }} de {{ $loop->count }}">
+                            <div>
+                                <span class="eyebrow">{{ $lancamento['etiqueta'] }}</span>
+                                <h2>{{ $lancamento['titulo'] }}</h2>
+                                <p>{{ $lancamento['texto'] }}</p>
+                                <div class="hero-ctas">
+                                    <a class="btn btn-primary" href="{{ $lancamento['url'] }}">{{ $lancamento['chamada'] }}
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                                    </a>
+                                    <a class="btn btn-ghost" href="{{ $lancamento['secundario_url'] }}">{{ $lancamento['secundario'] }}</a>
+                                </div>
+                                @if ($lancamento['nota'])
+                                    <p class="lanc-nota">{{ $lancamento['nota'] }}</p>
+                                @endif
+                            </div>
+                            <a class="lanc-tela" href="{{ $lancamento['url'] }}" tabindex="-1" aria-hidden="true">
+                                <img src="{{ $lancamento['imagem'] }}" alt="" width="1200" height="750" loading="lazy" decoding="async">
+                            </a>
+                        </div>
+                    @endforeach
                 </div>
-                <a class="usi-tela reveal" href="https://usi.urbisdev.tech" tabindex="-1" aria-hidden="true">
-                    <img src="/usi-home.jpg" alt="" width="1200" height="750" loading="lazy" decoding="async">
-                </a>
+                @if (count($lancamentos) > 1)
+                    <div class="lanc-controles">
+                        <button type="button" class="lanc-anterior" aria-label="Lançamento anterior"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+                        @foreach ($lancamentos as $lancamento)
+                            <button type="button" class="lanc-ponto" aria-label="Ver lançamento {{ $loop->iteration }} de {{ $loop->count }}"></button>
+                        @endforeach
+                        <button type="button" class="lanc-proximo" aria-label="Próximo lançamento"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
+                        <button type="button" class="lanc-pausa">
+                            <svg class="lanc-icone-pausa" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+                            <svg class="lanc-icone-tocar" hidden width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg>
+                        </button>
+                    </div>
+                @endif
             </div>
         </section>
 
@@ -352,6 +386,7 @@
 @endsection
 
 @push('scripts')
+<script src="/lancamentos.js" defer></script>
 <script>
         // Grade de janelas acesas (assinatura da marca)
         (function () {

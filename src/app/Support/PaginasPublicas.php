@@ -2,6 +2,8 @@
 
 namespace App\Support;
 
+use UrbanoDev\Blog\Blog;
+
 /**
  * As páginas que o site quer ver em buscador e assistente de IA, com o nome
  * de cada uma (18/10/2026). Alimenta `/sitemap.xml` e `/llms.txt`.
@@ -13,7 +15,7 @@ namespace App\Support;
  */
 class PaginasPublicas
 {
-    public function __construct(private Portfolio $portfolio) {}
+    public function __construct(private Portfolio $portfolio, private Blog $blog) {}
 
     /** @return array<string, string> caminho => "Nome" ou "Nome — resumo" */
     public function todas(): array
@@ -30,6 +32,6 @@ class PaginasPublicas
             }
         }
 
-        return $paginas;
+        return $paginas + $this->blog->paginas();
     }
 }

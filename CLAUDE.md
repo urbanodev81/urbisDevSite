@@ -99,6 +99,8 @@ frente da home? Mude junto o `OfferCatalog` do partial e o `seo/llms.blade.php`.
 Escrever `@context` dentro de `{!! !!}` vira a diretiva do Laravel 12: monte o
 JSON no `@php`. A 404 é `errors/404.blade.php`, que estende o layout.
 
+**Guias (desde 31/10/2026)** são o pacote `urbanodev/blog` (`../../pacotes/blog`, público). Cada texto é um `.md` em `src/resources/blog`; o passo a passo está em `_LEIA.md` e dá para publicar pelo github.com, na `pre-prod`. A configuração mora em `config/blog.php`. Sem texto publicado, o link do menu não existe.
+
 **Não tem** banco, migration, autenticação, painel, tenancy nem suíte de
 testes — e isso é decisão, não pendência. Não sugira módulo, model ou
 `php artisan make:*` aqui sem o Ricardo pedir: o valor deste repo é ele

@@ -38,6 +38,8 @@
     $base = $naHome ? '' : url('/');
     // O link "Trabalhos" só existe quando o portfólio tem o que mostrar.
     $temTrabalhos = app(\App\Support\Portfolio::class)->temItens();
+    // O link "Guias" só existe depois do primeiro texto publicado.
+    $temGuias = app(\UrbanoDev\Blog\Blog::class)->publicados() !== [];
 @endphp
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -234,6 +236,9 @@
                 @if ($temTrabalhos)
                     <li><a href="{{ url('/trabalhos') }}" @if (request()->is('trabalhos')) aria-current="page" @endif>Trabalhos</a></li>
                 @endif
+                @if ($temGuias)
+                    <li><a href="{{ url('/guias') }}" @if (request()->is('guias*')) aria-current="page" @endif>Guias</a></li>
+                @endif
                 <li><a href="{{ url('/demonstracoes') }}" @if (request()->is('demonstracoes*')) aria-current="page" @endif>Demonstrações</a></li>
                 <li><a href="{{ url('/como-trabalhamos') }}" @if (request()->is('como-trabalhamos')) aria-current="page" @endif>Como trabalhamos</a></li>
                 <li><a href="{{ $base }}#contato">Contato</a></li>
@@ -248,6 +253,9 @@
             <a href="{{ $base }}#fazemos" onclick="closeMenu()">O que fazemos</a>
             @if ($temTrabalhos)
                 <a href="{{ url('/trabalhos') }}" onclick="closeMenu()">Trabalhos</a>
+            @endif
+            @if ($temGuias)
+                <a href="{{ url('/guias') }}" onclick="closeMenu()">Guias</a>
             @endif
             <a href="{{ url('/demonstracoes') }}" onclick="closeMenu()">Demonstrações</a>
             <a href="{{ url('/como-trabalhamos') }}" onclick="closeMenu()">Como trabalhamos</a>
@@ -271,6 +279,9 @@
                 <li><a href="{{ $base }}#fazemos">O que fazemos</a></li>
                 @if ($temTrabalhos)
                     <li><a href="{{ url('/trabalhos') }}">Trabalhos</a></li>
+                @endif
+                @if ($temGuias)
+                    <li><a href="{{ url('/guias') }}">Guias</a></li>
                 @endif
                 <li><a href="{{ url('/demonstracoes') }}">Demonstrações</a></li>
                 <li><a href="{{ url('/como-trabalhamos') }}">Como trabalhamos</a></li>

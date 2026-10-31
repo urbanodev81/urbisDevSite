@@ -11,6 +11,7 @@ use App\Support\Captcha\Altcha;
 use App\Support\PaginasPublicas;
 use App\Support\PergunteAosDados;
 use App\Support\Portfolio;
+use UrbanoDev\Blog\Blog;
 use Illuminate\Support\Facades\Storage;
 
 Route::get('/', function () {
@@ -19,10 +20,17 @@ Route::get('/', function () {
     // no endereço só ESCOLHE qual, nunca vira texto na página.
     $demo = config('demonstracoes.'.preg_replace('/[^a-z0-9-]/', '', (string) request()->query('demo')));
 
+    // O mesmo vale para quem chega de um guia: o slug só escolhe um texto da lista.
+    $guia = app(Blog::class)->achar(preg_replace('/[^a-z0-9-]/', '', (string) request()->query('guia')));
+
     return view('welcome', [
         'demos' => config('demonstracoes'),
         'trabalhos' => app(Portfolio::class)->porCategoria(),
-        'recadoDaDemo' => is_array($demo) ? 'Vi '.$demo['assunto'].' no site e quero algo parecido com os dados do meu negócio. ' : '',
+        'recadoDaDemo' => match (true) {
+            is_array($demo) => 'Vi '.$demo['assunto'].' no site e quero algo parecido com os dados do meu negócio. ',
+            $guia !== null => 'Li o guia "'.$guia->titulo.'" no site e quero conversar sobre o meu caso. ',
+            default => '',
+        },
     ]);
 });
 

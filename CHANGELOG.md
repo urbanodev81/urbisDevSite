@@ -15,6 +15,10 @@ lançou. Não crie número de versão nem date release por conta própria.
 ## [Não lançado]
 
 ### Adicionado
+
+- Guias em `/guias`, com o pacote `urbanodev/blog`: textos em Markdown em `src/resources/blog`, publicados pelo github.com, sem banco nem painel. Entram no sitemap e no `llms.txt`, e o link do menu só aparece com o primeiro texto.
+
+### Adicionado
 - **Página de erro 500 com a cara do site.** Falha no servidor mostra "Algo
   deu errado do nosso lado", com caminho para o início e o e-mail de contato,
   em vez da tela "Server Error" crua. Não depende do layout, para não quebrar

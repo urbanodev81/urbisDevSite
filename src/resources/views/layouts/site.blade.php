@@ -96,6 +96,9 @@
         img, svg { display: block; }
         .container { max-width: 1160px; margin-inline: auto; padding-inline: 24px; }
         @media (min-width: 768px) { .container { padding-inline: 32px; } }
+        /* Blog (pacote urbanodev/blog): coluna de 46rem (~72 caracteres) achada apertada em tela larga
+           pelo Ricardo em 03/11/2026; 50rem dá ~80. "body" na frente porque o CSS do pacote entra depois. */
+        body .blog, body .blog-topo { max-width: 50rem; }
         h1, h2 { font-family: var(--font-display); color: var(--fg); line-height: 1.08; letter-spacing: -0.02em; }
         /* Escala padrão do site — a da home, que é a identidade. Página que
            precisar de outra régua sobrescreve no próprio `@push('estilos')`,

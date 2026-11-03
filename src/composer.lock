@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b9b659aa9597fbd276743492aeb92878",
+    "content-hash": "21c41b4ee194bd480cf09ed70d839ee4",
     "packages": [
         {
             "name": "altcha-org/altcha",
@@ -5709,16 +5709,16 @@
         },
         {
             "name": "urbanodev/blog",
-            "version": "v0.3.0",
+            "version": "v0.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/urbanodev81/blog.git",
-                "reference": "37dec77acb699400afa81952490e1497f650e226"
+                "reference": "907fcd97c93347966391aec9130a0de836f77ae9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/urbanodev81/blog/zipball/37dec77acb699400afa81952490e1497f650e226",
-                "reference": "37dec77acb699400afa81952490e1497f650e226",
+                "url": "https://api.github.com/repos/urbanodev81/blog/zipball/907fcd97c93347966391aec9130a0de836f77ae9",
+                "reference": "907fcd97c93347966391aec9130a0de836f77ae9",
                 "shasum": ""
             },
             "require": {
@@ -5757,10 +5757,10 @@
             ],
             "description": "Blog em arquivos Markdown para Laravel: sem banco, sem build, sem painel e sem IA. Escreveu, deu push, está no ar.",
             "support": {
-                "source": "https://github.com/urbanodev81/blog/tree/v0.3.0",
+                "source": "https://github.com/urbanodev81/blog/tree/v0.4.0",
                 "issues": "https://github.com/urbanodev81/blog/issues"
             },
-            "time": "2026-11-03T18:51:42+00:00"
+            "time": "2026-11-03T21:26:43+00:00"
         },
         {
             "name": "vlucas/phpdotenv",

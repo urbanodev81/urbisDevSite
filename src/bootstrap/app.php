@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\ExigirSegundoFator;
+use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\SecurityHeaders;
 use App\Support\Alertas\AlertaDeErro;
 use App\Support\Portfolio;
@@ -7,15 +9,36 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Spatie\Permission\Middleware\PermissionMiddleware;
+use Spatie\Permission\Middleware\RoleMiddleware;
+use Symfony\Component\HttpFoundation\Response;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
+        commands: __DIR__.'/../routes/console.php',
     )
     // Um por requisição: o casco (menu) e a página leem o mesmo portfólio.
     ->withSingletons([Portfolio::class])
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->append(SecurityHeaders::class);
+
+        // Painel (03/11/2026, pendência 246). O Inertia só age em resposta
+        // Inertia; o `ExigirSegundoFator` só em rota com `auth` — as páginas
+        // públicas passam pelos dois sem tocar no banco.
+        $middleware->web(append: [
+            HandleInertiaRequests::class,
+            ExigirSegundoFator::class,
+        ]);
+
+        $middleware->redirectGuestsTo('/painel/login');
+        $middleware->redirectUsersTo('/painel');
+
+        $middleware->alias([
+            'permission' => PermissionMiddleware::class,
+            'role' => RoleMiddleware::class,
+        ]);
 
         // O IP de quem visita (18/10/2026, pendência 136). Até aqui o Laravel
         // via todo mundo como o gateway do Docker (172.16.4.1), e cada
@@ -35,5 +58,22 @@ return Application::configure(basePath: dirname(__DIR__))
         // erro distinto — até 29/09/2026 nenhum 500 do site avisava ninguém
         // (pendência 134).
         $exceptions->reportable(fn (Throwable $e) => AlertaDeErro::avisar($e));
+
+        // Erro DENTRO do painel sai na página de erro do painel (Inertia);
+        // no site público segue a `errors/404.blade.php` de sempre.
+        $exceptions->respond(function (Response $response, Throwable $e, Request $request) {
+            $status = $response->getStatusCode();
+
+            if (! $request->is('painel', 'painel/*')
+                || ($request->expectsJson() && ! $request->header('X-Inertia'))
+                || ! in_array($status, [403, 404, 419, 429, 500, 503], true)
+                || ($status === 500 && config('app.debug'))) {
+                return $response;
+            }
+
+            return Inertia::render('Error', ['status' => $status])
+                ->toResponse($request)
+                ->setStatusCode($status);
+        });
     })
     ->create();

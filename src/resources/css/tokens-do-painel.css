@@ -1,0 +1,67 @@
+/*
+ * GERADO por resources/css/tokens-do-painel.py a partir de
+ * resources/views/partials/tokens.blade.php. NÃO edite à mão:
+ * mude o token do site e rode o script (TokensDoPainelTest confere).
+ *
+ * Trio RGB porque o Tailwind só aplica opacidade (`bg-overlay/60`) assim.
+ * A marca nasce escura: `:root` é o escuro e `html.claro` o claro, como
+ * no site. `.dark` dentro do claro força o escuro (a porta do painel).
+ */
+:root,
+html.claro .dark {
+    color-scheme: dark;
+    --bg: 11 18 32;
+    --surface: 16 26 45;
+    --surface-raised: 22 35 60;
+    --fg: 234 240 250;
+    --fg-muted: 167 180 201;
+    --fg-subtle: 120 135 159;
+    --fg-on-accent: 26 18 4;
+    --border: 34 48 75;
+    --border-input: 85 103 138;
+    --accent: 245 165 36;
+    --accent-hover: 255 194 75;
+    --success: 61 214 140;
+    --warning: 245 165 36;
+    --danger: 242 106 110;
+    --surface-sunken: 8 14 24;
+    --overlay: 11 18 32;
+    --border-subtle: 27 39 63;
+    --border-strong: 245 165 36;
+    --accent-subtle: 53 48 44;
+    --accent-ring: 245 165 36;
+    --success-subtle: 23 56 60;
+    --warning-subtle: 53 48 44;
+    --danger-subtle: 52 39 55;
+    --info: 167 180 201;
+    --info-subtle: 40 51 70;
+}
+
+html.claro {
+    color-scheme: light;
+    --bg: 241 244 250;
+    --surface: 255 255 255;
+    --surface-raised: 255 255 255;
+    --fg: 11 18 32;
+    --fg-muted: 69 83 107;
+    --fg-subtle: 92 107 133;
+    --fg-on-accent: 255 248 236;
+    --border: 214 222 236;
+    --border-input: 123 139 166;
+    --accent: 150 87 10;
+    --accent-hover: 122 71 8;
+    --success: 23 120 74;
+    --warning: 138 90 0;
+    --danger: 192 39 44;
+    --surface-sunken: 244 247 251;
+    --overlay: 241 244 250;
+    --border-subtle: 230 235 244;
+    --border-strong: 150 87 10;
+    --accent-subtle: 244 238 230;
+    --accent-ring: 150 87 10;
+    --success-subtle: 232 242 237;
+    --warning-subtle: 243 238 230;
+    --danger-subtle: 249 233 234;
+    --info: 69 83 107;
+    --info-subtle: 236 238 240;
+}

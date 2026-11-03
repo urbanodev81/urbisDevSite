@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Vite;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -61,6 +62,8 @@ class SecurityHeaders
         // Antes do `$next`: a view é montada lá dentro e precisa do valor.
         $nonce = base64_encode(random_bytes(16));
         View::share('cspNonce', $nonce);
+        // As tags do `@vite` no painel (03/11/2026) saem com o mesmo nonce.
+        Vite::useCspNonce($nonce);
 
         $resposta = $next($request);
 

@@ -1,12 +1,15 @@
-# O contexto do build é lido pelo usuário do host. Em produção `src/storage` é
-# escrito pelo php-fpm (www-data), e o disco `local` do Laravel cria pasta com
-# 0700: desde o portfólio (12/10/2026) existe `storage/app/private/portfolio`,
-# que o host não consegue ler, e o `docker compose build` do deploy parava em
-# "permission denied". Nada daqui precisa entrar na imagem: o Dockerfile recria
-# as pastas de storage, e o compose monta `./src` por cima de tudo.
-src/storage
-src/vendor
-src/.env
-src/bootstrap/cache/*.php
+# Contexto do `docker build` (03/11/2026): sem isto o COPY levava
+# node_modules, vendor e o build do front — centenas de MB a cada construção.
+# vendor é instalado DENTRO da imagem pelo composer.
 src/node_modules
+src/vendor
+src/public/build
+src/storage/logs/*
+src/storage/framework/cache/data/*
+src/storage/framework/sessions/*
+src/storage/framework/views/*
 .git
+.env
+src/storage/app/private/*
+src/storage/app/public/*
+src/bootstrap/cache/*.php

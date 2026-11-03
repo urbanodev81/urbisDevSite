@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Suíte do site (03/11/2026, pendência 246). Até o painel o repo não tinha
+    teste nenhum, de propósito: era um site sem banco. Com login, 2º fator e
+    perfis, ausência de teste deixou de ser simplicidade e virou risco.
+
+    Roda dentro do contêiner, contra o Postgres do compose, num banco
+    próprio (`urbisdev_testing`) — nunca o do site:
+        docker compose exec app php artisan test
+-->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+>
+    <testsuites>
+        <testsuite name="Feature">
+            <directory>tests/Feature</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory>app</directory>
+        </include>
+    </source>
+    <php>
+        <!-- `force="true"` em TODAS (03/11/2026): o contêiner já traz
+             APP_ENV=local e DB_DATABASE=urbisdev no ambiente, e sem o force o
+             PHPUnit respeita o que já existe — a suíte rodava no banco do site
+             (o RefreshDatabase apagava tudo) e o CSRF ficava ligado (419). -->
+        <env name="APP_ENV" value="testing" force="true"/>
+        <env name="APP_MAINTENANCE_DRIVER" value="file" force="true"/>
+        <env name="BCRYPT_ROUNDS" value="4" force="true"/>
+        <!-- O 2º fator obrigatório fica DESLIGADO na suíte; os testes que
+             cuidam dele ligam com config() (SegundoFatorNoPainelTest). -->
+        <env name="DOIS_FATORES_OBRIGATORIO" value="false" force="true"/>
+        <env name="CACHE_STORE" value="array" force="true"/>
+        <env name="DB_URL" value="" force="true"/>
+        <env name="DB_CONNECTION" value="pgsql" force="true"/>
+        <env name="DB_DATABASE" value="urbisdev_testing" force="true"/>
+        <env name="MAIL_MAILER" value="array" force="true"/>
+        <env name="QUEUE_CONNECTION" value="sync" force="true"/>
+        <env name="SESSION_DRIVER" value="array" force="true"/>
+        <!-- Nada de rede na suíte: sem portfólio nem demo de IA do Sócrates. -->
+        <env name="PORTFOLIO_URL" value="" force="true"/>
+        <env name="DEMO_IA_URL" value="" force="true"/>
+        <env name="DEMO_IA_TOKEN" value="" force="true"/>
+        <!-- O Laravel lê $_SERVER antes de $_ENV, e o Docker põe as variáveis do
+             contêiner em $_SERVER: as mesmas, de novo, como <server>. -->
+        <server name="APP_ENV" value="testing" force="true"/>
+        <server name="APP_MAINTENANCE_DRIVER" value="file" force="true"/>
+        <server name="BCRYPT_ROUNDS" value="4" force="true"/>
+        <server name="DOIS_FATORES_OBRIGATORIO" value="false" force="true"/>
+        <server name="CACHE_STORE" value="array" force="true"/>
+        <server name="DB_URL" value="" force="true"/>
+        <server name="DB_CONNECTION" value="pgsql" force="true"/>
+        <server name="DB_DATABASE" value="urbisdev_testing" force="true"/>
+        <server name="MAIL_MAILER" value="array" force="true"/>
+        <server name="QUEUE_CONNECTION" value="sync" force="true"/>
+        <server name="SESSION_DRIVER" value="array" force="true"/>
+        <server name="PORTFOLIO_URL" value="" force="true"/>
+        <server name="DEMO_IA_URL" value="" force="true"/>
+        <server name="DEMO_IA_TOKEN" value="" force="true"/>
+    </php>
+</phpunit>

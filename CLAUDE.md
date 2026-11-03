@@ -7,9 +7,10 @@
 
 ## O que é (e o que NÃO é)
 
-Landing page da Urbano Dev — <https://urbisdev.tech>. Laravel 12 mínimo
-dentro de `src/`, servido por Nginx + PHP-FPM em Docker. Duas rotas de
-página, um `ContactController`, Altcha auto-hospedado no formulário (era Turnstile até 29/09/2026).
+Landing page da Urbano Dev — <https://urbisdev.tech>. Laravel 13 (PHP 8.4)
+dentro de `src/`, servido por Nginx + PHP-FPM em Docker. Altcha
+auto-hospedado no formulário (era Turnstile até 29/09/2026). Desde 03/11/2026
+(pendência 246) tem também um **painel** em `/painel` — ver "O painel" abaixo.
 
 **As views seguem um layout (desde 23/08/2026).** `layouts/site.blade.php`
 carrega o casco — head, header, rodapé, widget de acessibilidade, pilha
@@ -101,10 +102,43 @@ JSON no `@php`. A 404 é `errors/404.blade.php`, que estende o layout.
 
 **Guias (desde 31/10/2026)** são o pacote `urbanodev/blog` (`../../pacotes/blog`, público). Cada texto é um `.md` em `src/resources/blog`; o passo a passo está em `_LEIA.md` e dá para publicar pelo github.com, na `pre-prod`. A configuração mora em `config/blog.php`. Sem texto publicado, o link do menu não existe.
 
-**Não tem** banco, migration, autenticação, painel, tenancy nem suíte de
-testes — e isso é decisão, não pendência. Não sugira módulo, model ou
-`php artisan make:*` aqui sem o Ricardo pedir: o valor deste repo é ele
-continuar pequeno o bastante pra o deploy nunca ser assustador.
+**O painel (desde 03/11/2026, pendência 246; estudo em
+`../../Arquivos/analise/em-voo/urbisdev-admin.md`).** Até aqui o site era, de
+propósito, sem banco, login nem painel; ele decidiu que agora tem. O formato é
+o do molde "site pequeno" (Duo/Girls/WJ), e o painel veio de lá:
+
+- **Só o painel é Inertia + Vue** (`resources/js`, build do Vite em
+  `public/build`, fora do git). O site público continua Blade, sem build, e
+  **não depende do banco**: `SitePublicoSemBancoTest` derruba a conexão e pede
+  as páginas. Consulta nova em layout público quebra esse teste — de propósito.
+- **Postgres próprio** (`pgsql` no compose) e o `scheduler`, que roda o
+  agendador e drena a fila. A senha do banco vem do `.env` da RAIZ
+  (`DB_PASSWORD`); sem ela o compose não sobe.
+- **Login** em `/painel/login`: senha + Altcha (o mesmo do contato,
+  `App\Rules\Captcha`) + **2º fator obrigatório para toda conta**. Sem
+  cadastro público: conta nasce por `php artisan usuarios:criar` ou pela tela
+  Contas de acesso. Perfis `administrador` e `redacao`
+  (`database/seeders/PerfisESeguranca.php`, rodado por migration). Conta
+  inativa não entra. Trilha de auditoria em toda alteração de conta.
+- **Cores do painel = tokens do site.** `resources/css/tokens-do-painel.css` é
+  GERADO de `partials/tokens.blade.php` por
+  `python3 resources/css/tokens-do-painel.py`; `TokensDoPainelTest` acusa
+  divergência. Tema: a mesma chave `urbis-tema` do site.
+- **CSP:** o `app.blade.php` do painel põe o nonce no script do tema, no
+  `@routes` e no `@vite` (`Vite::useCspNonce` no `SecurityHeaders`).
+- **`artisan` como `www-data`** (`docker compose exec -u www-data app ...`):
+  rodado como root, ele cria pasta de cache com dono root e o painel dá 500.
+- Por blocos (6.4 do estudo): 1 Fundação ✅ · 2 Contatos (leads no banco +
+  outbox ao Sócrates) · 3 Blog no banco · 4 Configurações, serviços e
+  lançamentos · 5 Produção. **Até o bloco 5, o painel não vai para a
+  `pre-prod`**: só o dev (`urbisdev-site-dev`) roda a branch.
+
+**Suíte de testes (desde 03/11/2026).** `docker compose exec app php artisan test`,
+contra o banco `urbisdev_testing` do mesmo Postgres (crie uma vez:
+`docker compose exec pgsql psql -U urbisdev -c 'CREATE DATABASE urbisdev_testing;'`).
+O `phpunit.xml` força as variáveis com `force="true"` e repete como `<server>`:
+sem isso o ambiente do contêiner (`DB_DATABASE=urbisdev`) vence e a suíte apaga
+o banco do site.
 
 Este é o único repo do ecossistema que **não** é satélite do Sócrates —
 não manda presença, não aparece no kanban. (Desde 12/10/2026 tem um token de
@@ -140,7 +174,10 @@ esses dois); até 18/10 via todo mundo como o gateway do Docker, e cada
 ## Rodar
 
 ```bash
-docker compose up -d --build     # http://localhost:8100
+echo 'DB_PASSWORD=urbisdev_local' > .env      # uma vez: senha do Postgres local
+docker compose up -d --build                  # http://localhost:8099
+docker compose exec -u www-data app php artisan migrate
+(cd src && npm ci && npm run build)           # só o painel precisa do build
 ```
 
 Mailpit local em <http://localhost:8027> (é **do repo**, não a Mailpit
@@ -218,9 +255,9 @@ Mesmo fluxo dos outros repos (**A**nalise → **F**aça → **T**este →
 **S**egurança → **C**ommit → **D**ocumente → **+**), com duas ressalvas
 honestas pro tamanho daqui:
 
-- **Não há suíte de testes.** A etapa **T** é smoke real: subir o
-  container e conferir a página (Playwright ou `curl`). Não invente
-  `tests/` só pra cumprir a letra do fluxo.
+- **T** = a suíte (`php artisan test`, ver "Suíte de testes") **e** o smoke
+  real: subir o contêiner e conferir a página (Playwright ou `curl`); no
+  painel, login de verdade até uma tela autenticada.
 - **Não há `CHANGELOG.md` nem `docs/`.** O `.githooks/commit-msg` está
   ativo e, por não achar `docs/SESSAO_ATUAL.md`, só **avisa** sobre o
   checkpoint em vez de bloquear. O checkpoint continua valendo: ele é um

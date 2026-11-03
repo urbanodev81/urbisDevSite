@@ -1,4 +1,18 @@
-# UrbisDev — Landing Page (Laravel 12)
+# UrbisDev — site institucional + painel (Laravel 13)
+#
+# Desde 03/11/2026 (pendência 246) o site tem banco: o Postgres do painel
+# (`pgsql`) e o `scheduler`, que roda o agendador e drena a fila (o mesmo
+# desenho do molde "site pequeno"). As credenciais do banco vêm do `.env` da
+# RAIZ (ao lado deste arquivo, fora do git): sem `DB_PASSWORD` lá, o compose
+# recusa subir, de propósito. As páginas públicas não dependem do banco.
+
+x-app-env: &app-env
+  DB_CONNECTION: pgsql
+  DB_HOST: pgsql
+  DB_PORT: "5432"
+  DB_DATABASE: ${DB_DATABASE:-urbisdev}
+  DB_USERNAME: ${DB_USERNAME:-urbisdev}
+  DB_PASSWORD: ${DB_PASSWORD:?defina DB_PASSWORD no .env da raiz do repo}
 
 services:
   app:
@@ -19,6 +33,10 @@ services:
       MAIL_PASSWORD: ${MAIL_PASSWORD:-}
       MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS:-contato@urbisdev.tech}
       MAIL_FROM_NAME: ${MAIL_FROM_NAME:-UrbisDev}
+      <<: *app-env
+    depends_on:
+      pgsql:
+        condition: service_healthy
 
   nginx:
     image: nginx:alpine
@@ -40,6 +58,43 @@ services:
     depends_on:
       - app
 
+  # Banco do painel. Sem porta publicada: só o app e o scheduler o enxergam.
+  pgsql:
+    image: postgres:17-alpine
+    container_name: urbisdev-site-pgsql
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-urbisdev}
+      POSTGRES_USER: ${DB_USERNAME:-urbisdev}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?defina DB_PASSWORD no .env da raiz do repo}
+    volumes:
+      - pgsql:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # Agendador e fila juntos, como no molde: `schedule:work` roda o
+  # `routes/console.php`, que drena a fila a cada minuto com
+  # `queue:work --stop-when-empty` (entrega ao Sócrates, expurgo LGPD).
+  scheduler:
+    build: .
+    container_name: urbisdev-site-scheduler
+    restart: unless-stopped
+    working_dir: /var/www/html
+    command: php artisan schedule:work
+    user: www-data
+    volumes:
+      - ./src:/var/www/html
+    environment:
+      APP_ENV: ${APP_ENV:-production}
+      APP_DEBUG: ${APP_DEBUG:-false}
+      <<: *app-env
+    depends_on:
+      pgsql:
+        condition: service_healthy
+
   mailpit:
     image: axllent/mailpit:latest
     container_name: urbisdev-site-mailpit
@@ -48,3 +103,6 @@ services:
     ports:
       - "127.0.0.1:8027:8025"
       - "127.0.0.1:1027:1025"
+
+volumes:
+  pgsql:

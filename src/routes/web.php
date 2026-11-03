@@ -7,6 +7,10 @@ use App\Http\Controllers\CspRelatoController;
 use App\Http\Controllers\DemoDadosController;
 use App\Http\Controllers\DemoIaController;
 use App\Http\Controllers\DemoLeadController;
+use App\Http\Controllers\Painel\AuditoriaController;
+use App\Http\Controllers\Painel\PainelController;
+use App\Http\Controllers\Painel\UsuarioController;
+use App\Http\Controllers\ProfileController;
 use App\Support\Captcha\Altcha;
 use App\Support\PaginasPublicas;
 use App\Support\PergunteAosDados;
@@ -148,3 +152,44 @@ Route::get('/captcha/desafio', fn (Altcha $captcha) => response()
     ->json($captcha->criarDesafio())
     ->header('Cache-Control', 'no-store, private'))
     ->middleware('throttle:30,1');
+
+/*
+|--------------------------------------------------------------------------
+| Painel (03/11/2026, pendência 246)
+|--------------------------------------------------------------------------
+|
+| Tudo sob `/painel`, em Inertia; o site público acima continua Blade e não
+| depende do banco. Login, 2º fator e senha moram em `routes/auth.php`, com o
+| mesmo prefixo. O 2º fator é obrigatório para TODA conta
+| (`ExigirSegundoFator` + `User::exigeDoisFatores`): sem ele confirmado, toda
+| tela do painel leva ao Perfil.
+|
+| ⚠️ `ver` × `gerenciar`: a de leitura abre a tela, a de escrita muda o dado.
+| O menu esconde o que a pessoa não pode abrir, mas quem decide é o `can:`
+| de cada rota (PermissoesPorRotaTest).
+*/
+Route::middleware('auth')->prefix('painel')->group(function () {
+    Route::get('/', [PainelController::class, 'index'])->name('painel.inicio');
+
+    Route::get('usuarios', [UsuarioController::class, 'index'])
+        ->middleware('can:usuarios.ver')->name('painel.usuarios.index');
+    Route::middleware('can:usuarios.gerenciar')->name('painel.')->group(function () {
+        Route::get('usuarios/criar/novo', [UsuarioController::class, 'create'])->name('usuarios.create');
+        Route::post('usuarios', [UsuarioController::class, 'store'])->name('usuarios.store');
+        Route::get('usuarios/{usuario}/editar', [UsuarioController::class, 'edit'])->name('usuarios.edit');
+        Route::put('usuarios/{usuario}', [UsuarioController::class, 'update'])->name('usuarios.update');
+        Route::delete('usuarios/{usuario}', [UsuarioController::class, 'destroy'])->name('usuarios.destroy');
+        Route::patch('usuarios/{usuario}/restaurar', [UsuarioController::class, 'restaurar'])
+            ->whereUuid('usuario')->name('usuarios.restaurar');
+        Route::delete('usuarios/{usuario}/dois-fatores', [UsuarioController::class, 'desligarSegundoFator'])
+            ->middleware('throttle:6,1,desligar-2fa')->name('usuarios.dois-fatores.desligar');
+    });
+
+    Route::get('auditoria', AuditoriaController::class)
+        ->middleware('can:auditoria.ver')->name('painel.auditoria.index');
+
+    Route::get('perfil', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('perfil', [ProfileController::class, 'update'])->name('profile.update');
+});
+
+require __DIR__.'/auth.php';

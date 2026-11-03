@@ -1,0 +1,96 @@
+/*
+ * CSS do PAINEL (03/11/2026, pendência 246). O site público não carrega este
+ * arquivo: ele tem o próprio CSS embutido no layout Blade.
+ *
+ * As cores vêm de `tokens-do-painel.css`, GERADO dos tokens do site — veja o
+ * cabeçalho dele. Nada de cor literal aqui.
+ */
+@import './tokens-do-painel.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+
+    /* Foco sempre visível — o painel é operado no teclado o dia inteiro. */
+    :focus-visible {
+        outline: 2px solid rgb(var(--accent-ring));
+        outline-offset: 2px;
+    }
+}
+
+/*
+ * Quem pediu menos movimento ao sistema recebe menos movimento. Vale para o
+ * scroll suave da home também: em vestibular ou enxaqueca, o deslize é o que
+ * mais incomoda.
+ */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/*
+ * ------------------------------------------------------------ acessibilidade
+ *
+ * Preferências ligadas pelo painel (`useAcessibilidade.js`), aplicadas por
+ * classe no <html>. Contraste e escala de cinza NÃO estão aqui de propósito:
+ * os dois viram um único `filter` inline no composable, porque `filter` não
+ * acumula entre regras CSS — a última venceria e quem ligasse os dois veria só
+ * um.
+ */
+html.a11y-fonte-1 {
+    font-size: 112.5%;
+}
+
+html.a11y-fonte-2 {
+    font-size: 125%;
+}
+
+html.a11y-sublinhar-links a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+html.a11y-espacamento-texto,
+html.a11y-espacamento-texto * {
+    letter-spacing: 0.12em !important;
+    word-spacing: 0.16em !important;
+    line-height: 1.6 !important;
+}
+
+html.a11y-pausar-animacoes *,
+html.a11y-pausar-animacoes *::before,
+html.a11y-pausar-animacoes *::after {
+    animation-play-state: paused !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+}
+
+/*
+ * O painel de acessibilidade assume o acionamento do VLibras, então o botão
+ * nativo do plugin sai de cena — mas SÓ depois de o componente confirmar em
+ * runtime que o plugin carregou e adicionar `dock-vlibras` no <html>. Se o
+ * script do governo estiver fora do ar, a classe não existe e o botão nativo
+ * fica intacto.
+ *
+ * `opacity`/`pointer-events` em vez de `display: none` para não interferir nas
+ * medições internas do plugin — o clique programático continua funcionando.
+ */
+html.dock-vlibras #vlibras-access-wrapper,
+html.dock-vlibras [vw-access-button] {
+    opacity: 0 !important;
+    pointer-events: none !important;
+}

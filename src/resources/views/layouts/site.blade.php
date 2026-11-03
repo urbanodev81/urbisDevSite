@@ -39,7 +39,12 @@
     // O link "Trabalhos" só existe quando o portfólio tem o que mostrar.
     $temTrabalhos = app(\App\Support\Portfolio::class)->temItens();
     // O link "Guias" só existe depois do primeiro texto publicado.
-    $temGuias = app(\UrbanoDev\Blog\Blog::class)->publicados() !== [];
+    $blog = app(\UrbanoDev\Blog\Blog::class);
+    $temGuias = $blog->publicados() !== [];
+    // Submenu dos guias: as seções com texto no ar e o próximo agendado
+    // (só a data: o título fica para o dia).
+    $secoesGuias = $temGuias ? $blog->secoes() : [];
+    $proximoGuia = $temGuias ? ($blog->agendados()[0] ?? null) : null;
 @endphp
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -140,10 +145,25 @@
             .nav-toggle { display: none; }
         }
         .mobile-menu { display: flex; flex-direction: column; gap: 4px; padding: 0 24px; border-top: 1px solid transparent; max-height: 0; opacity: 0; visibility: hidden; overflow: hidden; transition: max-height .25s ease, opacity .25s ease, padding .25s ease, border-color .25s ease, visibility 0s linear .25s; }
-        .mobile-menu.open { max-height: 360px; opacity: 1; visibility: visible; padding: 16px 24px 24px; border-top-color: var(--border); transition: max-height .25s ease, opacity .25s ease, padding .25s ease, border-color .25s ease, visibility 0s; }
+        .mobile-menu.open { max-height: 640px; opacity: 1; visibility: visible; padding: 16px 24px 24px; border-top-color: var(--border); transition: max-height .25s ease, opacity .25s ease, padding .25s ease, border-color .25s ease, visibility 0s; }
         @media (min-width: 880px) { .mobile-menu { display: none; } }
         .mobile-menu a { text-decoration: none; padding: 12px 4px; font-weight: 500; color: var(--fg-muted); display: flex; align-items: center; min-height: 44px; }
         .mobile-menu a:hover { color: var(--fg); }
+        .mobile-menu a.mobile-sub { padding-left: 20px; font-size: .9rem; color: var(--fg-subtle); }
+        /* submenu dos guias (desktop) */
+        .nav-sub { position: relative; display: inline-flex; align-items: center; gap: 2px; }
+        .nav-sub-abrir { background: none; border: 0; color: var(--fg-muted); width: 32px; min-height: 44px; display: grid; place-items: center; cursor: pointer; border-radius: 6px; }
+        .nav-sub-abrir:hover { color: var(--fg); }
+        .nav-sub-abrir:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+        .nav-sub-abrir svg { transition: transform .18s ease-out; }
+        .nav-sub-abrir[aria-expanded="true"] svg { transform: rotate(180deg); }
+        .nav-sub-lista { position: absolute; top: calc(100% + 4px); left: -12px; min-width: 240px; list-style: none; margin: 0; padding: 8px; background: var(--surface-raised); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow-flutuante); }
+        .nav-sub-lista[hidden] { display: none; }
+        .nav-sub-lista a { display: flex; padding: 0 12px; border-radius: 8px; width: 100%; }
+        .nav-sub-lista a:hover, .nav-sub-lista a:focus-visible { background: var(--surface); color: var(--fg); }
+        .nav-sub-separa { height: 1px; margin: 6px 4px; background: var(--border); }
+        .nav-sub-nota { padding: 8px 12px 4px; font-family: var(--font-mono); font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--fg-subtle); }
+        @media (prefers-reduced-motion: reduce) { .nav-sub-abrir svg { transition: none; } }
         .nav-toggle svg { transition: transform .25s ease; }
         .nav-toggle[aria-expanded="true"] svg { transform: rotate(90deg); }
 
@@ -238,7 +258,23 @@
                     <li><a href="{{ url('/trabalhos') }}" @if (request()->is('trabalhos')) aria-current="page" @endif>Trabalhos</a></li>
                 @endif
                 @if ($temGuias)
-                    <li><a href="{{ url('/guias') }}" @if (request()->is('guias*')) aria-current="page" @endif>Guias</a></li>
+                    <li class="nav-sub">
+                        <a href="{{ url('/guias') }}" @if (request()->is('guias*')) aria-current="page" @endif>Guias</a>
+                        <button type="button" class="nav-sub-abrir" aria-expanded="false" aria-controls="subGuias" aria-label="Seções dos guias">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <ul class="nav-sub-lista" id="subGuias" hidden>
+                            <li><a href="{{ url('/guias') }}">Todos os guias</a></li>
+                            @foreach ($secoesGuias as $slug => $nome)
+                                <li><a href="{{ url('/guias/secao/'.$slug) }}" @if (request()->is('guias/secao/'.$slug)) aria-current="page" @endif>{{ $nome }}</a></li>
+                            @endforeach
+                            <li class="nav-sub-separa" role="separator"></li>
+                            <li><a href="{{ $base }}#contato">Sugira um tema</a></li>
+                            @if ($proximoGuia)
+                                <li class="nav-sub-nota">Próximo texto em {{ $proximoGuia->data->format('d/m') }}</li>
+                            @endif
+                        </ul>
+                    </li>
                 @endif
                 <li><a href="{{ url('/demonstracoes') }}" @if (request()->is('demonstracoes*')) aria-current="page" @endif>Demonstrações</a></li>
                 <li><a href="{{ url('/como-trabalhamos') }}" @if (request()->is('como-trabalhamos')) aria-current="page" @endif>Como trabalhamos</a></li>
@@ -256,6 +292,9 @@
             @endif
             @if ($temGuias)
                 <a href="{{ url('/guias') }}">Guias</a>
+                @foreach ($secoesGuias as $slug => $nome)
+                    <a class="mobile-sub" href="{{ url('/guias/secao/'.$slug) }}">{{ $nome }}</a>
+                @endforeach
             @endif
             <a href="{{ url('/demonstracoes') }}">Demonstrações</a>
             <a href="{{ url('/como-trabalhamos') }}">Como trabalhamos</a>
@@ -324,6 +363,24 @@
         // Ouvinte, não `onclick=`: a CSP barra atributo de evento, e o nonce não vale para ele.
         document.querySelector('.nav-toggle').addEventListener('click', function () { toggleMenu(this); });
         document.querySelectorAll('#mobileMenu a').forEach(function (a) { a.addEventListener('click', closeMenu); });
+
+        // Submenu dos guias: abre no clique da seta, fecha com Esc, clique fora ou foco saindo.
+        (function () {
+            var sub = document.querySelector('.nav-sub');
+            if (!sub) return;
+            var btn = sub.querySelector('.nav-sub-abrir');
+            var lista = document.getElementById('subGuias');
+            function abrir(sim) {
+                lista.hidden = !sim;
+                btn.setAttribute('aria-expanded', String(sim));
+            }
+            btn.addEventListener('click', function () { abrir(lista.hidden); });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && !lista.hidden) { abrir(false); btn.focus(); }
+            });
+            document.addEventListener('click', function (e) { if (!sub.contains(e.target)) abrir(false); });
+            sub.addEventListener('focusout', function (e) { if (!sub.contains(e.relatedTarget)) abrir(false); });
+        })();
 
         // Reveal on scroll
         (function () {

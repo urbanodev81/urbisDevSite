@@ -14,6 +14,11 @@ lançou. Não crie número de versão nem date release por conta própria.
 
 ## [Não lançado]
 
+- **Fontes servidas pelo próprio site** (pendência 248): Bricolage Grotesque,
+  Instrument Sans e JetBrains Mono em `public/fonts` (latin e latin-ext, licença
+  OFL junto). O bunny.net passou a mandar buscar a Bricolage no
+  `cdn.jsdelivr.net`, a CSP barrava e os títulos apareciam na fonte reserva. A
+  CSP agora só aceita fonte e estilo de `'self'`.
 - "Guias" vira **Blog** (pendência 247): o endereço passa a ser `/blog`, e
   `/guias/...` responde 301 para o mesmo caminho em `/blog`, com a query junto.
   Menu, submenu, rodapé, sitemap e `llms.txt` acompanham. O botão do fim do

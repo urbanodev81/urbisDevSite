@@ -26,8 +26,7 @@
         })();
     </script>
     <title>Algo deu errado — UrbisDev</title>
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=bricolage-grotesque:700|instrument-sans:400,600|jetbrains-mono:400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/fonts/fonts.css">
     <style>
         @include('partials.tokens')
         * { margin: 0; padding: 0; box-sizing: border-box; }

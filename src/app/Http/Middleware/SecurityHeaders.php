@@ -28,7 +28,9 @@ use Symfony\Component\HttpFoundation\Response;
  *
  *  - `'report-sample'`: o relato traz os primeiros 40 caracteres do script
  *    barrado — é o que diz QUAL script embutido é, sem depender da linha.
- *  - `fonts.bunny.net`: as três famílias do layout (CSS e arquivos de fonte).
+ *  - Fontes só de `'self'` (03/11/2026, pendência 248): as três famílias moram
+ *    em `public/fonts`. O bunny.net passou a mandar buscar a Bricolage no
+ *    `cdn.jsdelivr.net`, a política barrava e os títulos caíam na reserva.
  *  - `style-src 'unsafe-inline'`: cada página traz o seu `<style>` por
  *    `@push('estilos')`, e há `style=` solto. Estilo embutido não executa
  *    código; o que a política protege de verdade é o `script-src`.
@@ -44,8 +46,8 @@ class SecurityHeaders
 {
     private const POLITICA = [
         "default-src 'self'",
-        "style-src 'self' 'unsafe-inline' https://fonts.bunny.net",
-        "font-src 'self' https://fonts.bunny.net",
+        "style-src 'self' 'unsafe-inline'",
+        "font-src 'self'",
         "img-src 'self' data: blob:",
         "connect-src 'self'",
         "worker-src 'self' blob: data:",

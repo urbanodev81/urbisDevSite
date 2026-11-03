@@ -38,8 +38,7 @@
             })();
         </script>
 
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=bricolage-grotesque:400,700,800|instrument-sans:400,500,600|jetbrains-mono:400,500&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/fonts/fonts.css">
 
         {{-- O captcha do login: o mesmo Altcha auto-hospedado do contato. --}}
         <script type="module" src="/vendor/altcha/pt-br-3.2.2.js"></script>

@@ -26,7 +26,7 @@ export default {
 
     theme: {
         extend: {
-            // As três famílias do site (layouts/site.blade.php), pelo bunny.net.
+            // As três famílias do site (layouts/site.blade.php), de public/fonts (pendência 248).
             fontFamily: {
                 sans: ['"Instrument Sans"', ...defaultTheme.fontFamily.sans],
                 display: ['"Bricolage Grotesque"', ...defaultTheme.fontFamily.sans],

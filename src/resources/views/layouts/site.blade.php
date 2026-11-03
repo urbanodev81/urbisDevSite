@@ -99,6 +99,8 @@
         /* Blog (pacote urbanodev/blog): coluna de 46rem (~72 caracteres) achada apertada em tela larga
            pelo Ricardo em 03/11/2026; 50rem dá ~80. "body" na frente porque o CSS do pacote entra depois. */
         body .blog, body .blog-topo { max-width: 50rem; }
+        /* Título do blog no tamanho de artigo, não no de capa da home (até 4.5rem); pedido de 03/11/2026. */
+        body .blog h1 { font-size: clamp(2rem, 4.2vw, 3rem); line-height: 1.12; }
         h1, h2 { font-family: var(--font-display); color: var(--fg); line-height: 1.08; letter-spacing: -0.02em; }
         /* Escala padrão do site — a da home, que é a identidade. Página que
            precisar de outra régua sobrescreve no próprio `@push('estilos')`,

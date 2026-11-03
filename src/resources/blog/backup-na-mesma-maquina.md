@@ -1,6 +1,7 @@
 ---
 titulo: Backup que mora na mesma máquina não é backup
 descricao: O que encontramos ao perguntar se nossa empresa continuaria de pé sem as ferramentas de hoje.
+secao: Diário de obra
 data: 2026-11-03
 acao_texto: Conversar sobre o meu sistema
 imagem: /img/guias/backup.jpg

@@ -38,13 +38,13 @@
     $base = $naHome ? '' : url('/');
     // O link "Trabalhos" só existe quando o portfólio tem o que mostrar.
     $temTrabalhos = app(\App\Support\Portfolio::class)->temItens();
-    // O link "Guias" só existe depois do primeiro texto publicado.
+    // O link "Blog" só existe depois do primeiro texto publicado.
     $blog = app(\UrbanoDev\Blog\Blog::class);
-    $temGuias = $blog->publicados() !== [];
-    // Submenu dos guias: as seções com texto no ar e o próximo agendado
+    $temBlog = $blog->publicados() !== [];
+    // Submenu do blog: as seções com texto no ar e o próximo agendado
     // (só a data: o título fica para o dia).
-    $secoesGuias = $temGuias ? $blog->secoes() : [];
-    $proximoGuia = $temGuias ? ($blog->agendados()[0] ?? null) : null;
+    $secoesBlog = $temBlog ? $blog->secoes() : [];
+    $proximoTexto = $temBlog ? ($blog->agendados()[0] ?? null) : null;
 @endphp
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -103,7 +103,7 @@
            menor). Antes da extração cada página trazia a sua e não havia
            padrão nenhum: eram duas escalas empatadas. */
         section { padding-block: clamp(72px, 10vw, 128px); scroll-margin-top: 72px; }
-        /* Guias (pacote urbanodev/blog): links e hashtags na cor da marca. */
+        /* Blog (pacote urbanodev/blog): links e hashtags na cor da marca. */
         .blog { --blog-destaque: var(--accent); }
         h1 { font-size: clamp(2.6rem, 6vw, 4.5rem); font-weight: 800; }
         h2 { font-size: clamp(1.9rem, 3.5vw, 2.6rem); font-weight: 700; }
@@ -150,7 +150,7 @@
         .mobile-menu a { text-decoration: none; padding: 12px 4px; font-weight: 500; color: var(--fg-muted); display: flex; align-items: center; min-height: 44px; }
         .mobile-menu a:hover { color: var(--fg); }
         .mobile-menu a.mobile-sub { padding-left: 20px; font-size: .9rem; color: var(--fg-subtle); }
-        /* submenu dos guias (desktop) */
+        /* submenu do blog (desktop) */
         .nav-sub { position: relative; display: inline-flex; align-items: center; gap: 2px; }
         .nav-sub-abrir { background: none; border: 0; color: var(--fg-muted); width: 32px; min-height: 44px; display: grid; place-items: center; cursor: pointer; border-radius: 6px; }
         .nav-sub-abrir:hover { color: var(--fg); }
@@ -257,21 +257,21 @@
                 @if ($temTrabalhos)
                     <li><a href="{{ url('/trabalhos') }}" @if (request()->is('trabalhos')) aria-current="page" @endif>Trabalhos</a></li>
                 @endif
-                @if ($temGuias)
+                @if ($temBlog)
                     <li class="nav-sub">
-                        <a href="{{ url('/guias') }}" @if (request()->is('guias*')) aria-current="page" @endif>Guias</a>
-                        <button type="button" class="nav-sub-abrir" aria-expanded="false" aria-controls="subGuias" aria-label="Seções dos guias">
+                        <a href="{{ route('blog.index') }}" @if (request()->is('blog*')) aria-current="page" @endif>Blog</a>
+                        <button type="button" class="nav-sub-abrir" aria-expanded="false" aria-controls="subBlog" aria-label="Seções do blog">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
                         </button>
-                        <ul class="nav-sub-lista" id="subGuias" hidden>
-                            <li><a href="{{ url('/guias') }}">Todos os guias</a></li>
-                            @foreach ($secoesGuias as $slug => $nome)
-                                <li><a href="{{ url('/guias/secao/'.$slug) }}" @if (request()->is('guias/secao/'.$slug)) aria-current="page" @endif>{{ $nome }}</a></li>
+                        <ul class="nav-sub-lista" id="subBlog" hidden>
+                            <li><a href="{{ route('blog.index') }}">Todos os textos</a></li>
+                            @foreach ($secoesBlog as $slug => $nome)
+                                <li><a href="{{ route('blog.secao', $slug) }}" @if (request()->is('blog/secao/'.$slug)) aria-current="page" @endif>{{ $nome }}</a></li>
                             @endforeach
                             <li class="nav-sub-separa" role="separator"></li>
                             <li><a href="{{ $base }}#contato">Sugira um tema</a></li>
-                            @if ($proximoGuia)
-                                <li class="nav-sub-nota">Próximo texto em {{ $proximoGuia->data->format('d/m') }}</li>
+                            @if ($proximoTexto)
+                                <li class="nav-sub-nota">Próximo texto em {{ $proximoTexto->data->format('d/m') }}</li>
                             @endif
                         </ul>
                     </li>
@@ -290,10 +290,10 @@
             @if ($temTrabalhos)
                 <a href="{{ url('/trabalhos') }}">Trabalhos</a>
             @endif
-            @if ($temGuias)
-                <a href="{{ url('/guias') }}">Guias</a>
-                @foreach ($secoesGuias as $slug => $nome)
-                    <a class="mobile-sub" href="{{ url('/guias/secao/'.$slug) }}">{{ $nome }}</a>
+            @if ($temBlog)
+                <a href="{{ route('blog.index') }}">Blog</a>
+                @foreach ($secoesBlog as $slug => $nome)
+                    <a class="mobile-sub" href="{{ route('blog.secao', $slug) }}">{{ $nome }}</a>
                 @endforeach
             @endif
             <a href="{{ url('/demonstracoes') }}">Demonstrações</a>
@@ -319,8 +319,8 @@
                 @if ($temTrabalhos)
                     <li><a href="{{ url('/trabalhos') }}">Trabalhos</a></li>
                 @endif
-                @if ($temGuias)
-                    <li><a href="{{ url('/guias') }}">Guias</a></li>
+                @if ($temBlog)
+                    <li><a href="{{ route('blog.index') }}">Blog</a></li>
                 @endif
                 <li><a href="{{ url('/demonstracoes') }}">Demonstrações</a></li>
                 <li><a href="{{ url('/como-trabalhamos') }}">Como trabalhamos</a></li>
@@ -364,12 +364,12 @@
         document.querySelector('.nav-toggle').addEventListener('click', function () { toggleMenu(this); });
         document.querySelectorAll('#mobileMenu a').forEach(function (a) { a.addEventListener('click', closeMenu); });
 
-        // Submenu dos guias: abre no clique da seta, fecha com Esc, clique fora ou foco saindo.
+        // Submenu do blog: abre no clique da seta, fecha com Esc, clique fora ou foco saindo.
         (function () {
             var sub = document.querySelector('.nav-sub');
             if (!sub) return;
             var btn = sub.querySelector('.nav-sub-abrir');
-            var lista = document.getElementById('subGuias');
+            var lista = document.getElementById('subBlog');
             function abrir(sim) {
                 lista.hidden = !sim;
                 btn.setAttribute('aria-expanded', String(sim));

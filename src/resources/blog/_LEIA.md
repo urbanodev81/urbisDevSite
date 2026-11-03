@@ -11,7 +11,7 @@ vira página.
    Esse nome é o endereço da página.
 4. Copie o conteúdo de `_MODELO.md` e escreva. Troque a `data`.
 5. Para publicar, apague a linha `rascunho: sim`.
-6. **Commit changes**, espere até uns 2 minutos e abra `urbisdev.tech/guias/<nome>`.
+6. **Commit changes**, espere até uns 2 minutos e abra `urbisdev.tech/blog/<nome>`.
 
 ## Pelo terminal
 

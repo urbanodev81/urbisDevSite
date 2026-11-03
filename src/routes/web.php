@@ -20,21 +20,31 @@ Route::get('/', function () {
     // no endereço só ESCOLHE qual, nunca vira texto na página.
     $demo = config('demonstracoes.'.preg_replace('/[^a-z0-9-]/', '', (string) request()->query('demo')));
 
-    // O mesmo vale para quem chega de um guia: o slug só escolhe um texto da lista.
-    $guia = app(Blog::class)->achar(preg_replace('/[^a-z0-9-]/', '', (string) request()->query('guia')));
+    // O mesmo vale para quem chega de um texto do blog: o slug só escolhe um
+    // texto da lista. `?guia=` é o nome antigo (até 03/11/2026), ainda aceito.
+    $slugTexto = request()->query('texto', request()->query('guia'));
+    $texto = app(Blog::class)->achar(preg_replace('/[^a-z0-9-]/', '', is_string($slugTexto) ? $slugTexto : ''));
 
     return view('welcome', [
         'demos' => config('demonstracoes'),
         'trabalhos' => app(Portfolio::class)->porCategoria(),
         'recadoDaDemo' => match (true) {
             is_array($demo) => 'Vi '.$demo['assunto'].' no site e quero algo parecido com os dados do meu negócio. ',
-            $guia !== null => 'Li o guia "'.$guia->titulo.'" no site e quero conversar sobre o meu caso. ',
+            $texto !== null => 'Li o texto "'.$texto->titulo.'" no blog e quero conversar sobre o meu caso. ',
             default => '',
         },
     ]);
 });
 
 Route::get('/como-trabalhamos', fn () => view('como-trabalhamos'));
+
+// "Guias" virou "Blog" em 03/11/2026 (pendência 247). Link antigo, de busca ou
+// já compartilhado, cai no mesmo lugar do endereço novo, com 301 e a query junto.
+Route::get('/guias/{resto?}', function (?string $resto = null) {
+    $query = request()->getQueryString();
+
+    return redirect('/blog'.($resto === null ? '' : '/'.$resto).($query ? '?'.$query : ''), 301);
+})->where('resto', '[a-z0-9/-]+');
 
 /*
  * Trabalhos: o que a casa já fez, por categoria. A lista vem do Sócrates

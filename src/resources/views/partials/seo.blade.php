@@ -21,7 +21,7 @@
     $titulo = html_entity_decode(trim($__env->yieldContent('titulo', 'UrbisDev — Software que resolve problemas reais')), ENT_QUOTES);
     $descricao = html_entity_decode(trim($__env->yieldContent('descricao')), ENT_QUOTES);
     $canonico = url()->current();
-    // Página com imagem própria (a capa de um guia) troca a da casa na prévia.
+    // Página com imagem própria (a capa de um texto do blog) troca a da casa na prévia.
     $imagemPropria = html_entity_decode(trim($__env->yieldContent('og_imagem')), ENT_QUOTES);
     $imagem = $imagemPropria ?: asset('og-urbisdev.png');
     $raiz = url('/');

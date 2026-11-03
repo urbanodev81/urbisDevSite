@@ -14,6 +14,15 @@ lançou. Não crie número de versão nem date release por conta própria.
 
 ## [Não lançado]
 
+- "Guias" vira **Blog** (pendência 247): o endereço passa a ser `/blog`, e
+  `/guias/...` responde 301 para o mesmo caminho em `/blog`, com a query junto.
+  Menu, submenu, rodapé, sitemap e `llms.txt` acompanham. O botão do fim do
+  texto leva `?texto=<slug>` ao contato (o `?guia=` antigo segue aceito), e o
+  recado começa com "Li o texto … no blog".
+- Pacote `urbanodev/blog` v0.3: tags clicáveis com página própria, arquivo por
+  ano e mês (`/blog/2026/11`), busca e filtro por seção, tag e mês no topo da
+  lista. O resultado da busca sai `noindex` pela seção `robots` do layout.
+
 ### Adicionado
 
 - Três textos agendados em `/guias`, um por semana a partir de 03/11: backup na mesma máquina, o deploy que derrubou o site e o captcha que tirou do ar o formulário da Imóveis Jacob. Cada um tem foto de capa (domínio público, guardada no site), hashtags, botões de compartilhar (LinkedIn, WhatsApp, Facebook, X e e-mail) e "Copiar para o LinkedIn". A capa aparece na prévia do link nas redes.

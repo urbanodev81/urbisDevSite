@@ -5,6 +5,9 @@ data: 2026-11-03
 autor: Ricardo Urbano
 secao: Experiência da Equipe
 acao_texto: Conversar sobre o meu sistema
+imagem: /img/guias/ia-no-dia-a-dia.jpg
+imagem_alt: Ilustração de Ricardo Urbano no notebook com Claude Code, com anotações sobre onde a IA entra e o que continua na mão do dev
+imagem_credito: Arte: Ricardo Urbano
 tags: Claude Code, IA, desenvolvimento de software, PHP, Laravel, Node, React
 ---
 

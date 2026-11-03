@@ -80,8 +80,7 @@
     <title>@yield('titulo', 'UrbisDev — Software que resolve problemas reais')</title>
     <meta name="description" content="@yield('descricao')">
     @include('partials.seo')
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=bricolage-grotesque:400,700,800|instrument-sans:400,500,600|jetbrains-mono:400,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/fonts/fonts.css">
 
     <style>
         @include('partials.tokens')

@@ -8,6 +8,8 @@ acao_texto: Conversar sobre o meu sistema
 tags: Claude Code, IA, segurança, desenvolvimento de software, Laravel, multi-tenant
 ---
 
+*Parte 2 de 2 da série Experiência da Equipe. A parte 1 é [Onde a IA entra no meu trabalho de dev, e onde ela não entra](/guias/onde-a-ia-entra-e-onde-nao-entra).*
+
 Toda semana aparece uma ferramenta nova prometendo que a IA vai programar melhor. Pegamos sete das mais citadas e fizemos uma pergunta só: **ela resolve um problema que nós temos, de verdade, no nosso código?** Ficamos com uma, em teste. E no meio da avaliação a própria IA deu um alarme falso, que acabou sendo a parte mais útil do exercício.
 
 ## O problema real, antes da ferramenta

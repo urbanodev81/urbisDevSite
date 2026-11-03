@@ -8,6 +8,8 @@ acao_texto: Conversar sobre o meu sistema
 tags: Claude Code, IA, desenvolvimento de software, PHP, Laravel, Node, React
 ---
 
+*Parte 1 de 2 da série Experiência da Equipe.*
+
 Raramente publico coisa autoral por aqui. Mas o tanto que meu jeito de trabalhar mudou com IA nos últimos meses me fez querer registrar.
 
 Uso Claude Code todo dia. E olha, não é aquele papo de "a IA faz tudo por mim". É mais como ter alguém do lado pra tocar o trabalho chato mais rápido, enquanto a decisão continua minha. O que mais evoluiu, na real, nem foi a ferramenta. Foi a gente aprender a usar.
@@ -29,3 +31,7 @@ E isso vale atravessando stack: o trabalho hoje passa por PHP e Laravel, mas tam
 E essa eu defendo: IA entra em refatoração, teste, documentação, diagnóstico. Arquitetura e regra de negócio seguem na mão, com revisão antes de qualquer merge. É essa linha que separa a ferramenta somar de ela virar dívida técnica com cara de produtividade.
 
 Fico curioso: quem mais aí usa IA no dia a dia de dev, onde vocês traçaram esse limite?
+
+---
+
+**Parte 2, na quinta-feira (05/11):** avaliamos sete ferramentas de IA para programar, ficamos com uma, e a própria IA deu um alarme falso no caminho.

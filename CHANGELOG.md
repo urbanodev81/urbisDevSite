@@ -14,6 +14,18 @@ lançou. Não crie número de versão nem date release por conta própria.
 
 ## [Não lançado]
 
+- **Leitores do blog** (pendência 246, bloco 3b; por enquanto só no dev). No fim
+  de cada texto, o leitor responde "Este texto ajudou?" (no "Não", pode contar o
+  que faltou) e comenta. Todo comentário passa pela moderação em Painel →
+  Comentários antes de aparecer, e a equipe pode responder como "urbisDev". O
+  e-mail de quem comenta nunca vai para a página. Quem preferir comenta com o
+  LinkedIn e ganha o selo "verificado pelo LinkedIn"; o botão só aparece depois
+  que o app do LinkedIn existir. A página do blog ganhou "Mais lidos do mês", e
+  toda página do blog tem o botão "Fale com a gente", que abre o WhatsApp
+  citando o texto. As leituras são contadas pelo próprio site, sem script de
+  terceiro, sem guardar IP e ignorando robôs, e aparecem em Painel → Leitores
+  do blog junto com o "ajudou?" e os contatos que vieram de cada texto.
+- No painel, o item "Início" do menu deixou de ficar aceso em todas as telas.
 - **Blog escrito no painel** (pendência 246, bloco 3a; por enquanto só no dev).
   Em Painel → Blog dá para escrever, agendar e publicar sem deploy. O editor tem
   negrito, itálico, títulos, listas, citação, link, código, imagem e vídeo. A

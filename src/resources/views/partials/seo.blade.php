@@ -38,7 +38,7 @@
         'description' => 'Sites com painel próprio e sistemas de gestão para imobiliárias, clínicas, sindicatos, oficinas e artistas, do primeiro esboço ao app no celular.',
         'areaServed' => ['@type' => 'Country', 'name' => 'Brasil'],
         'knowsLanguage' => 'pt-BR',
-        'sameAs' => ['https://wa.me/5511976862551'],
+        'sameAs' => ['https://wa.me/'.config('site.whatsapp')],
         'contactPoint' => [
             '@type' => 'ContactPoint',
             'contactType' => 'comercial',

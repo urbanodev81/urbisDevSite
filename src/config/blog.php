@@ -13,6 +13,13 @@ return [
     'por_pagina' => 12,
     'acao_texto' => 'Conversar sobre o meu caso',
     'acao_url' => '/?texto={slug}#contato',
+    // Leitores (bloco 3b da 246): "ajudou?" e comentários no fim do texto, mais
+    // lidos na entrada do blog e o "Fale com a gente" do WhatsApp em toda página.
+    'encaixes' => [
+        'fim_do_texto' => ['blog.leitores'],
+        'fim_do_indice' => ['blog.mais-lidos'],
+        'pagina' => ['blog.whatsapp'],
+    ],
     'layout' => 'layouts.site',
     'secoes' => ['titulo' => 'titulo', 'descricao' => 'descricao', 'conteudo' => 'conteudo', 'imagem' => 'og_imagem', 'robots' => 'robots'],
     'pilha_cabecalho' => 'estilos',

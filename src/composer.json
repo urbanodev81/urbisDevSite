@@ -7,10 +7,11 @@
         "bacon/bacon-qr-code": "^3.0",
         "inertiajs/inertia-laravel": "^3.0",
         "laravel/framework": "^13.0",
+        "laravel/socialite": "^5.23",
         "spatie/laravel-permission": "^8.3",
         "symfony/html-sanitizer": "^7.3 || ^8.0",
         "tightenco/ziggy": "^2.0",
-        "urbanodev/blog": "^0.5"
+        "urbanodev/blog": "^0.6"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

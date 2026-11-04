@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Models\Auditoria;
+use App\Models\BlogComentario;
+use App\Models\BlogVoto;
 use App\Models\Contato;
 use App\Models\PoliticaRetencao;
 use Illuminate\Console\Command;
@@ -47,6 +49,12 @@ class ExpurgarPorRetencao extends Command
                 // Expurgar só o visível deixaria o arquivo guardando para sempre.
                 'contato' => Contato::withTrashed()->where('created_at', '<', $limite),
 
+                // Aprovado e no ar não expira: só o recusado e o arquivado.
+                'comentario' => BlogComentario::withTrashed()->where('created_at', '<', $limite)
+                    ->where(fn ($q) => $q->where('status', BlogComentario::RECUSADO)->orWhereNotNull('deleted_at')),
+
+                'voto' => BlogVoto::query()->where('created_at', '<', $limite),
+
                 default => null,
             };
 
@@ -64,7 +72,7 @@ class ExpurgarPorRetencao extends Command
 
             // `forceDelete` no que tem soft delete: expurgo que só marca
             // `deleted_at` não expurga nada.
-            $politica->recurso === 'contato' ? $consulta->forceDelete() : $consulta->delete();
+            in_array($politica->recurso, ['contato', 'comentario'], true) ? $consulta->forceDelete() : $consulta->delete();
 
             $this->info("· {$politica->recurso}: {$quantos} linha(s) apagada(s).");
         }

@@ -2,7 +2,7 @@
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import {
-    Inbox, LayoutDashboard, Newspaper, UserCog, ScrollText, X,
+    ChartColumn, Inbox, LayoutDashboard, MessagesSquare, Newspaper, UserCog, ScrollText, X,
 } from 'lucide-vue-next';
 
 defineProps({ aberta: Boolean });
@@ -32,6 +32,8 @@ const grupos = [
             { rotulo: 'Início', rota: 'painel.inicio', icone: LayoutDashboard, permissao: null },
             { rotulo: 'Contatos', rota: 'painel.contatos.index', icone: Inbox, permissao: 'leads' },
             { rotulo: 'Blog', rota: 'painel.blog.textos.index', icone: Newspaper, permissao: 'blog' },
+            { rotulo: 'Comentários', rota: 'painel.blog.comentarios.index', icone: MessagesSquare, permissao: 'blog' },
+            { rotulo: 'Leitores do blog', rota: 'painel.blog.leitores.index', icone: ChartColumn, permissao: 'blog' },
         ],
     },
     {
@@ -54,7 +56,9 @@ const visiveis = computed(() =>
 
 // `route().current()` com curinga: "painel.shows.*" mantém o item aceso na
 // tela de detalhe e na de edição, não só na listagem.
-const ativo = (rota) => route().current(rota) || route().current(rota.replace(/\.\w+$/, '.*'));
+// Só a rota de lista (`*.index`) vira curinga: antes, `painel.inicio` virava
+// `painel.*` e o Início ficava aceso em toda tela (achado no smoke do 3b).
+const ativo = (rota) => route().current(rota) || (rota.endsWith('.index') && route().current(rota.replace(/\.index$/, '.*')));
 </script>
 
 <template>

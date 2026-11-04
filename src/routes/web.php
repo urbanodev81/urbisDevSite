@@ -2,7 +2,11 @@
 
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Blog\LeitoresController;
+use App\Http\Controllers\Blog\LinkedinController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Painel\ComentarioController;
+use App\Http\Controllers\Painel\LeitoresDoBlogController;
 use App\Http\Controllers\CspRelatoController;
 use App\Http\Controllers\DemoDadosController;
 use App\Http\Controllers\DemoIaController;
@@ -142,6 +146,18 @@ Route::post('/demonstracoes/pergunte/perguntar', [DemoIaController::class, 'perg
 
 Route::post('/contato', [ContactController::class, 'store'])->middleware('throttle:10,1');
 
+// Leitores do blog (04/11/2026, bloco 3b da 246). Moram aqui e não no pacote
+// porque usam banco; as views entram pelos `encaixes` de config/blog.php.
+// Cada uma com balde próprio de throttle (o terceiro argumento).
+Route::prefix('/blog')->where(['slug' => '[a-z0-9-]+'])->group(function () {
+    Route::post('/{slug}/lido', [LeitoresController::class, 'lido'])->middleware('throttle:60,1,blog-lido');
+    Route::post('/{slug}/ajudou', [LeitoresController::class, 'ajudou'])->middleware('throttle:20,1,blog-voto');
+    Route::post('/{slug}/comentarios', [LeitoresController::class, 'comentar'])->middleware('throttle:5,1,blog-comentario');
+    Route::get('/entrar/linkedin', [LinkedinController::class, 'entrar'])->middleware('throttle:10,1,blog-linkedin');
+    Route::get('/entrar/linkedin/retorno', [LinkedinController::class, 'retorno'])->middleware('throttle:10,1,blog-linkedin');
+    Route::post('/entrar/linkedin/sair', [LinkedinController::class, 'sair']);
+});
+
 // Relatos da CSP em report-only (pendência 136). Quem manda é o navegador,
 // sem sessão nem token: daí sair do CSRF. O `csp` no fim do throttle dá a
 // esta rota um balde próprio — sem ele, uma página com cinco violações
@@ -206,6 +222,15 @@ Route::middleware('auth')->prefix('painel')->group(function () {
         Route::patch('textos/{texto}/restaurar', [TextoController::class, 'restaurar'])->name('restaurar');
         Route::get('textos/{texto}/previa', [BlogPreviaController::class, 'doBanco'])->name('previa');
         Route::post('imagens', [TextoController::class, 'imagem'])->middleware('throttle:30,1')->name('imagem');
+    });
+
+    // Leitores (04/11/2026, bloco 3b): moderar comentários e ver o que foi lido.
+    Route::middleware('can:blog.gerenciar')->prefix('blog')->name('painel.blog.')->group(function () {
+        Route::get('comentarios', [ComentarioController::class, 'index'])->name('comentarios.index');
+        Route::put('comentarios/{comentario}', [ComentarioController::class, 'update'])->name('comentarios.update');
+        Route::delete('comentarios/{comentario}', [ComentarioController::class, 'destroy'])->name('comentarios.destroy');
+        Route::patch('comentarios/{comentario}/restaurar', [ComentarioController::class, 'restaurar'])->name('comentarios.restaurar');
+        Route::get('leitores', LeitoresDoBlogController::class)->name('leitores.index');
     });
 
     Route::get('usuarios', [UsuarioController::class, 'index'])

@@ -75,6 +75,12 @@ defineProps({
                     ({{ blog.ultimo.data }})
                 </p>
 
+                <p v-if="blog.comentariosPendentes" class="mt-2 text-sm text-fg">
+                    <Link :href="route('painel.blog.comentarios.index')" class="text-accent underline">
+                        {{ blog.comentariosPendentes === 1 ? '1 comentário aguardando' : `${blog.comentariosPendentes} comentários aguardando` }} moderação
+                    </Link>
+                </p>
+
                 <h3 class="mt-6 font-label text-label uppercase text-fg-subtle">Agendados</h3>
                 <ul v-if="blog.agendados.length" class="mt-2 divide-y divide-line">
                     <li v-for="texto in blog.agendados" :key="texto.slug" class="flex items-baseline justify-between gap-4 py-2">
@@ -91,10 +97,7 @@ defineProps({
                 </ul>
                 <p v-else class="mt-2 text-sm text-fg-muted">Nenhum texto agendado.</p>
 
-                <p class="mt-6 text-xs text-fg-subtle">
-                    Por enquanto o texto ainda se escreve pelo GitHub, como antes
-                    (o passo a passo está em <code>resources/blog/_LEIA.md</code>).
-                </p>
+                <Link :href="route('painel.blog.leitores.index')" class="mt-6 inline-block text-sm text-accent underline">Ver o que os leitores leram</Link>
             </section>
 
             <section

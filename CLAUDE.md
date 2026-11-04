@@ -142,8 +142,21 @@ o do molde "site pequeno" (Duo/Girls/WJ), e o painel veio de lá:
   `SOCRATES_TOKEN`; o tipo `lead.recebido` (→ `/api/site/leads`) só grava com
   `SOCRATES_LEADS=true`, e **só se liga depois que o Sócrates tiver o endpoint**
   com `Idempotency-Key` (ainda não tem).
+- **Leitores do blog (bloco 3b, 04/11/2026).** As views moram em
+  `resources/views/blog/` e entram pelos `encaixes` do pacote (`config/blog.php`,
+  v0.6): `leitores` (ajudou + comentários) no fim do texto, `mais-lidos` na
+  entrada do blog e `whatsapp` em toda página do blog. A lógica e as rotas são
+  daqui (`App\Blog\Leitores`, `Http\Controllers\Blog\*`); o pacote segue sem
+  banco. A leitura conta por `sendBeacon` depois de 4 s com a aba à vista, uma
+  vez por sessão, só agregado por dia (`blog_leituras`, sem IP); robô e
+  headless ficam de fora. Comentário: nasce `pendente`, captcha e sem link no
+  formulário; quem entrou pelo LinkedIn (Socialite `linkedin-openid`, só com
+  `LINKEDIN_CLIENT_ID`/`SECRET`) pula o captcha e passa pela mesma fila.
+  Banco fora: a contagem vira no-op, e os comentários e os mais lidos somem
+  sem derrubar a página. Retenção: `comentario` (recusado/arquivado) e `voto`,
+  24 meses.
 - Por blocos (6.4 do estudo): 1 Fundação ✅ · 2 Contatos ✅ (lado do Sócrates
-  pendente) · 3 Blog no banco · 4 Configurações, serviços e lançamentos ·
+  pendente) · 3 Blog no banco ✅ (3a editor, 3b leitores) · 4 Configurações, serviços e lançamentos ·
   5 Produção. **Até o bloco 5, o painel não vai para a
   `pre-prod`**: só o dev (`urbisdev-site-dev`) roda a branch.
 

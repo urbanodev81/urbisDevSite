@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Painel;
 
 use App\Http\Controllers\Controller;
 use App\Models\Auditoria;
+use App\Models\BlogComentario;
 use App\Models\Contato;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -58,6 +59,8 @@ class PainelController extends Controller
                     'previa' => $podePrevia ? route('painel.blog.previa', $p->slug) : null,
                 ], $blog->agendados()),
                 'ultimo' => ($p = $blog->publicados()[0] ?? null) ? $resumo($p) : null,
+                // Bloco 3b: comentário só aparece no site depois de aprovado.
+                'comentariosPendentes' => $podePrevia ? BlogComentario::query()->pendentes()->count() : null,
             ],
 
             // Prop que não existe não vaza: quem não pode ver a trilha nem

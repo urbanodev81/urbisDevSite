@@ -15,6 +15,13 @@ use Illuminate\Database\Seeder;
  *   seguinte; passou disso, é dado pessoal de terceiro sem finalidade. Mesmo
  *   prazo da contratação no molde (Duo). ⚠️ Padrão a confirmar com o Ricardo.
  *
+ * - `comentario` 24 meses (bloco 3b, 04/11/2026): vale para o comentário
+ *   recusado ou arquivado. O aprovado fica enquanto estiver no ar, porque a
+ *   finalidade (conversa pública no texto) continua; o autor pede para tirar
+ *   pelo contato, e arquivar o tira do site.
+ * - `voto` 24 meses: anônimo, mas o "o que faltou" é texto livre e pode
+ *   trazer nome ou contato.
+ *
  * Idempotente (`updateOrCreate`): rodar de novo corrige deriva.
  */
 class PoliticasDeRetencao extends Seeder
@@ -32,6 +39,18 @@ class PoliticasDeRetencao extends Seeder
                 'recurso' => 'contato',
                 'meses' => 24,
                 'justificativa' => 'Dado pessoal de quem escreveu pelo site ou abriu uma demonstração. Passado o prazo, não há mais finalidade.',
+                'nunca_expurgar' => false,
+            ],
+            [
+                'recurso' => 'comentario',
+                'meses' => 24,
+                'justificativa' => 'Nome e e-mail de quem comentou no blog. O comentário aprovado fica enquanto estiver publicado; o recusado ou arquivado sai após o prazo.',
+                'nunca_expurgar' => false,
+            ],
+            [
+                'recurso' => 'voto',
+                'meses' => 24,
+                'justificativa' => 'Respostas do "Este texto ajudou?". Anônimas, mas o "o que faltou" é texto livre.',
                 'nunca_expurgar' => false,
             ],
         ];

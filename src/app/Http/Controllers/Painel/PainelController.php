@@ -32,6 +32,7 @@ class PainelController extends Controller
             'data' => $p->data->format('d/m/Y'),
             'url' => url('/blog/'.$p->slug),
         ];
+        $podePrevia = (bool) $usuario?->can('blog.gerenciar');
 
         return Inertia::render('Painel/Inicio', [
             // Mesmo raciocínio da trilha: quem não pode ver contatos nem recebe a prop.
@@ -51,7 +52,11 @@ class PainelController extends Controller
 
             'blog' => [
                 'publicados' => count($blog->publicados()),
-                'agendados' => array_map($resumo, array_slice($blog->agendados(), 0, 5)),
+                // Todos os agendados (são poucos, ~1 por semana) e, para quem
+                // cuida do blog, o link da prévia de cada um.
+                'agendados' => array_map(fn (Post $p) => $resumo($p) + [
+                    'previa' => $podePrevia ? route('painel.blog.previa', $p->slug) : null,
+                ], $blog->agendados()),
                 'ultimo' => ($p = $blog->publicados()[0] ?? null) ? $resumo($p) : null,
             ],
 

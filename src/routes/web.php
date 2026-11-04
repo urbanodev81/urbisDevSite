@@ -8,6 +8,7 @@ use App\Http\Controllers\DemoDadosController;
 use App\Http\Controllers\DemoIaController;
 use App\Http\Controllers\DemoLeadController;
 use App\Http\Controllers\Painel\AuditoriaController;
+use App\Http\Controllers\Painel\BlogPreviaController;
 use App\Http\Controllers\Painel\ContatoController;
 use App\Http\Controllers\Painel\PainelController;
 use App\Http\Controllers\Painel\UsuarioController;
@@ -188,6 +189,10 @@ Route::middleware('auth')->prefix('painel')->group(function () {
         Route::get('contatos/{contato}/exportar', [ContatoController::class, 'exportar'])
             ->middleware('throttle:20,1,exportar-titular')->name('contatos.exportar');
     });
+
+    // Prévia de texto agendado (04/11/2026): lê o futuro com a cara do site.
+    Route::get('blog/previa/{slug}', BlogPreviaController::class)
+        ->middleware('can:blog.gerenciar')->where('slug', '[a-z0-9-]+')->name('painel.blog.previa');
 
     Route::get('usuarios', [UsuarioController::class, 'index'])
         ->middleware('can:usuarios.ver')->name('painel.usuarios.index');

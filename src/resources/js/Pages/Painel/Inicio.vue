@@ -78,7 +78,14 @@ defineProps({
                 <h3 class="mt-6 font-label text-label uppercase text-fg-subtle">Agendados</h3>
                 <ul v-if="blog.agendados.length" class="mt-2 divide-y divide-line">
                     <li v-for="texto in blog.agendados" :key="texto.slug" class="flex items-baseline justify-between gap-4 py-2">
-                        <span class="text-sm text-fg">{{ texto.titulo }}</span>
+                        <a
+                            v-if="texto.previa"
+                            :href="texto.previa"
+                            target="_blank"
+                            rel="noopener"
+                            class="text-sm text-fg underline decoration-line underline-offset-4 hover:text-accent focus-visible:outline-2"
+                        >{{ texto.titulo }} <span class="sr-only">(abre a prévia em outra aba)</span></a>
+                        <span v-else class="text-sm text-fg">{{ texto.titulo }}</span>
                         <span class="shrink-0 font-mono text-xs text-fg-muted">{{ texto.data }}</span>
                     </li>
                 </ul>

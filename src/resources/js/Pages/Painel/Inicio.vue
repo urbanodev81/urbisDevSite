@@ -3,14 +3,15 @@
  * Início do painel (03/11/2026, bloco 1 da pendência 246).
  *
  * Mostra o que já existe: o blog (lido dos `.md`, como o site lê) e, para quem
- * pode ver a trilha, o que mudou por último no painel. A caixa de contatos
- * entra aqui no bloco 2.
+ * pode ver a trilha, o que mudou por último no painel. Desde o bloco 2
+ * (04/11/2026), os contatos que esperam resposta.
  */
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 
 defineProps({
+    contatos: { type: Object, default: null },
     blog: { type: Object, required: true },
     atividade: { type: Array, default: null },
 });
@@ -22,10 +23,40 @@ defineProps({
     <AuthenticatedLayout>
         <PageHeader
             titulo="Início"
-            descricao="O painel do site. Contatos, blog e configurações chegam aqui por etapas."
+            descricao="O painel do site. Blog e configurações chegam aqui nas próximas etapas."
         />
 
         <div class="grid gap-4 lg:grid-cols-2">
+            <section v-if="contatos !== null" class="rounded-card border border-line bg-surface p-6" aria-labelledby="titulo-contatos">
+                <h2 id="titulo-contatos" class="font-display text-lg font-bold text-fg">Contatos</h2>
+
+                <p class="mt-3 text-3xl font-bold text-fg">
+                    {{ contatos.novos }}
+                    <span class="text-base font-normal text-fg-muted">
+                        esperando resposta
+                    </span>
+                </p>
+
+                <p v-if="contatos.semAviso > 0" class="mt-2 text-sm text-danger">
+                    {{ contatos.semAviso === 1 ? '1 chegou' : `${contatos.semAviso} chegaram` }} sem o e-mail de aviso.
+                </p>
+
+                <ul v-if="contatos.esperando.length" class="mt-4 divide-y divide-line">
+                    <li v-for="c in contatos.esperando" :key="c.uuid" class="py-2">
+                        <Link :href="route('painel.contatos.show', c.uuid)" class="flex items-baseline justify-between gap-4 text-sm">
+                            <span class="min-w-0">
+                                <span class="block truncate font-medium text-fg">{{ c.nome }}</span>
+                                <span class="block truncate text-xs text-fg-subtle">{{ c.origem }}</span>
+                            </span>
+                            <span class="shrink-0 font-mono text-xs text-fg-muted">{{ c.dias === 0 ? 'hoje' : `${c.dias} d` }}</span>
+                        </Link>
+                    </li>
+                </ul>
+                <p v-else class="mt-2 text-sm text-fg-muted">Ninguém esperando. Contato novo aparece aqui sozinho.</p>
+
+                <Link :href="route('painel.contatos.index')" class="mt-4 inline-block text-sm text-accent underline">Abrir a caixa de contatos</Link>
+            </section>
+
             <section class="rounded-card border border-line bg-surface p-6" aria-labelledby="titulo-blog">
                 <h2 id="titulo-blog" class="font-display text-lg font-bold text-fg">Blog</h2>
 

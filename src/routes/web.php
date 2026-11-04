@@ -8,6 +8,7 @@ use App\Http\Controllers\DemoDadosController;
 use App\Http\Controllers\DemoIaController;
 use App\Http\Controllers\DemoLeadController;
 use App\Http\Controllers\Painel\AuditoriaController;
+use App\Http\Controllers\Painel\ContatoController;
 use App\Http\Controllers\Painel\PainelController;
 use App\Http\Controllers\Painel\UsuarioController;
 use App\Http\Controllers\ProfileController;
@@ -32,6 +33,10 @@ Route::get('/', function () {
     return view('welcome', [
         'demos' => config('demonstracoes'),
         'trabalhos' => app(Portfolio::class)->porCategoria(),
+        // O mesmo slug vai escondido no formulário: o painel mostra de onde o
+        // contato veio (04/11/2026, bloco 2 da 246).
+        'deDemo' => is_array($demo) ? preg_replace('/[^a-z0-9-]/', '', (string) request()->query('demo')) : null,
+        'deTexto' => $texto?->slug,
         'recadoDaDemo' => match (true) {
             is_array($demo) => 'Vi '.$demo['assunto'].' no site e quero algo parecido com os dados do meu negócio. ',
             $texto !== null => 'Li o texto "'.$texto->titulo.'" no blog e quero conversar sobre o meu caso. ',
@@ -170,6 +175,19 @@ Route::get('/captcha/desafio', fn (Altcha $captcha) => response()
 */
 Route::middleware('auth')->prefix('painel')->group(function () {
     Route::get('/', [PainelController::class, 'index'])->name('painel.inicio');
+
+    // Contatos (04/11/2026, bloco 2): quem escreveu ou abriu uma demonstração.
+    Route::middleware('can:leads.ver')->name('painel.')->group(function () {
+        Route::get('contatos', [ContatoController::class, 'index'])->name('contatos.index');
+        Route::get('contatos/{contato}', [ContatoController::class, 'show'])->name('contatos.show');
+    });
+    Route::middleware('can:leads.gerenciar')->name('painel.')->group(function () {
+        Route::put('contatos/{contato}', [ContatoController::class, 'update'])->name('contatos.update');
+        Route::delete('contatos/{contato}', [ContatoController::class, 'destroy'])->name('contatos.destroy');
+        Route::patch('contatos/{contato}/restaurar', [ContatoController::class, 'restaurar'])->name('contatos.restaurar');
+        Route::get('contatos/{contato}/exportar', [ContatoController::class, 'exportar'])
+            ->middleware('throttle:20,1,exportar-titular')->name('contatos.exportar');
+    });
 
     Route::get('usuarios', [UsuarioController::class, 'index'])
         ->middleware('can:usuarios.ver')->name('painel.usuarios.index');

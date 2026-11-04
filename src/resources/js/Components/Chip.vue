@@ -1,9 +1,9 @@
 <script setup>
 // Lista FECHADA de ícones (03/11/2026): o `import *` do molde levava a
 // biblioteca inteira para o build (585 KB). Ícone novo = uma linha aqui.
-import { CircleSlash, ScrollText, Tag } from 'lucide-vue-next';
+import { Archive, CircleSlash, FileText, MailCheck, MailWarning, ScrollText, Sparkles, Tag } from 'lucide-vue-next';
 
-const icones = { CircleSlash, ScrollText, Tag };
+const icones = { Archive, CircleSlash, FileText, MailCheck, MailWarning, ScrollText, Sparkles, Tag };
 import { computed } from 'vue';
 
 /**

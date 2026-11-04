@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Painel;
 
 use App\Http\Controllers\Controller;
 use App\Models\Auditoria;
+use App\Models\Contato;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -16,8 +17,8 @@ use UrbanoDev\Blog\Post;
  * Início do painel (03/11/2026, bloco 1 da pendência 246).
  *
  * Nasce pequeno de propósito: o que já existe para mostrar é o blog (lido dos
- * `.md`, como o site lê) e o que mudou no painel. A caixa de contatos entra
- * aqui no bloco 2, quando os leads passarem a morar no banco.
+ * `.md`, como o site lê) e o que mudou no painel. Desde o bloco 2
+ * (04/11/2026), os contatos que esperam resposta.
  */
 class PainelController extends Controller
 {
@@ -33,6 +34,21 @@ class PainelController extends Controller
         ];
 
         return Inertia::render('Painel/Inicio', [
+            // Mesmo raciocínio da trilha: quem não pode ver contatos nem recebe a prop.
+            'contatos' => $usuario?->can('leads.ver')
+                ? [
+                    'novos' => Contato::query()->novos()->count(),
+                    'semAviso' => Contato::query()->whereNull('email_enviado_em')->whereNotNull('email_erro')->count(),
+                    'esperando' => Contato::query()->novos()->orderBy('created_at')->limit(5)->get()
+                        ->map(fn (Contato $c) => [
+                            'uuid' => $c->uuid,
+                            'nome' => $c->nome,
+                            'origem' => $c->origemLegivel(),
+                            'dias' => $c->diasEsperando(),
+                        ])->all(),
+                ]
+                : null,
+
             'blog' => [
                 'publicados' => count($blog->publicados()),
                 'agendados' => array_map($resumo, array_slice($blog->agendados(), 0, 5)),

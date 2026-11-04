@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use App\Support\Alertas\EmailFormatado;
 use App\Support\Captcha\Altcha;
+use App\Support\Contatos\CaixaDeContatos;
 
 class ContactController extends Controller
 {
@@ -19,7 +20,7 @@ class ContactController extends Controller
      */
     private const JANELA_REPETICAO = 300;
 
-    public function store(Request $request, Altcha $captcha)
+    public function store(Request $request, Altcha $captcha, CaixaDeContatos $caixa)
     {
         $semLinks = $this->limparTextoLivre($request, 'message');
 
@@ -30,6 +31,10 @@ class ContactController extends Controller
             'message' => ['required', 'string', 'min:50', 'max:5000', $semLinks],
             'consent' => 'required|accepted',
             'captcha_token' => 'required|string',
+            // De onde a pessoa veio (`?demo=` / `?texto=` na home). Só slug que
+            // existe é guardado: ver CaixaDeContatos::demoValida/textoValido.
+            'de_demo' => 'nullable|string|max:40',
+            'de_texto' => 'nullable|string|max:120',
         ], [
             'captcha_token.required' => 'Aguarde a verificação de segurança terminar e envie de novo.',
         ]);
@@ -75,29 +80,59 @@ class ContactController extends Controller
         }
 
         /*
+         * O LEAD É GRAVADO ANTES DO E-MAIL — 04/11/2026 (bloco 2 da 246)
+         *
+         * Até aqui o recado era só o e-mail; se ele não saía, sobrava o log.
+         * Agora ele mora no banco (painel → Contatos) e o e-mail vira aviso.
+         * `guardar()` devolve null com o banco fora, e aí vale o caminho de
+         * antes, logo abaixo.
+         */
+        $contato = $caixa->guardar([
+            'origem' => \App\Models\Contato::ORIGEM_CONTATO,
+            'demo' => $validated['de_demo'] ?? null,
+            'texto' => $validated['de_texto'] ?? null,
+            'nome' => $validated['name'],
+            'email' => $validated['email'],
+            'telefone' => $validated['phone'],
+            'mensagem' => $validated['message'],
+        ]);
+
+        /*
          * SE O E-MAIL NÃO SAI, O RECADO NÃO SOME — 18/10/2026
          *
          * Com a senha SMTP do Zoho recusada (535), a exceção subia crua e a
-         * pessoa via a 500 depois de preencher tudo. Agora: o recado inteiro
-         * vai para o log (é o único lugar onde ele sobrevive), a chave de
-         * repetição é liberada para a pessoa poder tentar de novo, e a tela
-         * volta com o que ela escreveu e um aviso honesto.
+         * pessoa via a 500 depois de preencher tudo. Desde 04/11 o recado já
+         * está no banco, e a pessoa vê sucesso: para ela, deu certo. Só com o
+         * banco TAMBÉM fora vale o caminho antigo: o recado inteiro vai para
+         * o log, a chave de repetição é liberada e a tela volta com um aviso.
          */
         try {
             $this->enviar($validated);
+            $caixa->emailEnviado($contato);
         } catch (\Throwable $e) {
-            Cache::forget($chave);
+            $caixa->emailFalhou($contato, $e);
 
-            Log::error('Contato NÃO enviado — recado guardado aqui', [
+            if ($contato === null) {
+                Cache::forget($chave);
+
+                Log::error('Contato NÃO enviado — recado guardado aqui', [
+                    'erro' => $e->getMessage(),
+                    'name' => $validated['name'],
+                    'email' => $validated['email'],
+                    'phone' => $validated['phone'],
+                    'message' => $validated['message'],
+                ]);
+
+                return back()->withErrors(['envio' => 'Não conseguimos enviar agora. Tente de novo em alguns minutos ou escreva para contato@urbisdev.tech.'])->withInput();
+            }
+
+            Log::error('Contato gravado no painel, mas o e-mail de aviso não saiu', [
+                'contato' => $contato->uuid,
                 'erro' => $e->getMessage(),
-                'name' => $validated['name'],
-                'email' => $validated['email'],
-                'phone' => $validated['phone'],
-                'message' => $validated['message'],
             ]);
-
-            return back()->withErrors(['envio' => 'Não conseguimos enviar agora. Tente de novo em alguns minutos ou escreva para contato@urbisdev.tech.'])->withInput();
         }
+
+        $caixa->contarAoSocrates($contato);
 
         Log::info('Contato recebido', [
             'name' => $validated['name'],

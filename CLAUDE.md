@@ -128,9 +128,23 @@ o do molde "site pequeno" (Duo/Girls/WJ), e o painel veio de lá:
   `@routes` e no `@vite` (`Vite::useCspNonce` no `SecurityHeaders`).
 - **`artisan` como `www-data`** (`docker compose exec -u www-data app ...`):
   rodado como root, ele cria pasta de cache com dono root e o painel dá 500.
-- Por blocos (6.4 do estudo): 1 Fundação ✅ · 2 Contatos (leads no banco +
-  outbox ao Sócrates) · 3 Blog no banco · 4 Configurações, serviços e
-  lançamentos · 5 Produção. **Até o bloco 5, o painel não vai para a
+- **Contatos (bloco 2, 04/11/2026).** `ContactController` e `DemoLeadController`
+  gravam o lead em `contatos` ANTES do e-mail (`App\Support\Contatos\CaixaDeContatos`).
+  Banco fora → `guardar()` devolve null e vale o caminho antigo (e-mail; log só
+  se o e-mail também falhar): o POST público também não depende do banco, e o
+  `SitePublicoSemBancoTest` confere. E-mail fora com o lead gravado → o
+  visitante vê sucesso e o painel marca "aviso não saiu". A home leva
+  `de_demo`/`de_texto` escondidos; só slug que existe é gravado. Retenção:
+  `politicas_retencao` (24 meses, contato e trilha) + `lgpd:expurgo` às 03:40
+  (`--dry-run` para conferir), a única exclusão real do painel.
+- **Outbox ao Sócrates** (do molde): `socrates_outbox` + `OutboxDoSocrates`,
+  entregue de minuto em minuto pelo `scheduler`. Precisa de `SOCRATES_URL` e
+  `SOCRATES_TOKEN`; o tipo `lead.recebido` (→ `/api/site/leads`) só grava com
+  `SOCRATES_LEADS=true`, e **só se liga depois que o Sócrates tiver o endpoint**
+  com `Idempotency-Key` (ainda não tem).
+- Por blocos (6.4 do estudo): 1 Fundação ✅ · 2 Contatos ✅ (lado do Sócrates
+  pendente) · 3 Blog no banco · 4 Configurações, serviços e lançamentos ·
+  5 Produção. **Até o bloco 5, o painel não vai para a
   `pre-prod`**: só o dev (`urbisdev-site-dev`) roda a branch.
 
 **Suíte de testes (desde 03/11/2026).** `docker compose exec app php artisan test`,

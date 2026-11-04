@@ -313,6 +313,9 @@
 
                 <form action="/contato" method="POST" class="reveal">
                     @csrf
+                    {{-- De onde a pessoa veio, para o painel (04/11/2026). Só slug; o servidor confere. --}}
+                    @if (old('de_demo', $deDemo ?? null))<input type="hidden" name="de_demo" value="{{ old('de_demo', $deDemo ?? null) }}">@endif
+                    @if (old('de_texto', $deTexto ?? null))<input type="hidden" name="de_texto" value="{{ old('de_texto', $deTexto ?? null) }}">@endif
 
                     <div class="field-row">
                         <div class="field">

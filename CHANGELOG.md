@@ -14,6 +14,19 @@ lançou. Não crie número de versão nem date release por conta própria.
 
 ## [Não lançado]
 
+- **Painel em `/painel`, com a caixa de Contatos** (pendência 246, blocos 1 e 2;
+  por enquanto só no dev). Login com senha, verificação de segurança e 2º fator
+  obrigatório; contas de acesso com perfis Administrador e Redação; trilha de
+  alterações. Todo contato do formulário da home e da porta das demonstrações
+  agora é **gravado antes do e-mail**: se o e-mail não sai, o contato continua
+  guardado e o painel avisa. A caixa mostra quem espera resposta (do mais antigo
+  para o mais novo), de onde a pessoa veio (qual demonstração, qual texto do
+  blog), a situação (novo, respondido, virou proposta, descartado) e uma nota
+  interna; arquivar não apaga. Dá para baixar os dados de uma pessoa que os
+  pedir (LGPD), e todo contato é apagado sozinho 24 meses depois de chegar. O
+  site público continua de pé com o banco fora: o formulário volta a ir só por
+  e-mail.
+
 - **Fontes servidas pelo próprio site** (pendência 248): Bricolage Grotesque,
   Instrument Sans e JetBrains Mono em `public/fonts` (latin e latin-ext, licença
   OFL junto). O bunny.net passou a mandar buscar a Bricolage no

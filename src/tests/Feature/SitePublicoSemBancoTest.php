@@ -41,3 +41,16 @@ it('abre a página pública sem banco', function (string $url) {
 it('a 404 do site também abre sem banco', function () {
     $this->get('/pagina-que-nao-existe')->assertNotFound();
 });
+
+it('o formulário de contato funciona sem banco (vai pelo e-mail, como antes)', function () {
+    \Illuminate\Support\Facades\Mail::fake();
+
+    $this->from('/')->post('/contato', [
+        'name' => 'Sem Banco',
+        'email' => 'sem@banco.com',
+        'phone' => '21999990000',
+        'message' => str_repeat('Recado com o banco fora do ar. ', 3),
+        'consent' => '1',
+        'captcha_token' => CAPTCHA_DE_TESTE,
+    ])->assertRedirect('/')->assertSessionHas('success');
+});

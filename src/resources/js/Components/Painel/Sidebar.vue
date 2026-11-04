@@ -2,7 +2,7 @@
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import {
-    Inbox, LayoutDashboard, UserCog, ScrollText, X,
+    Inbox, LayoutDashboard, Newspaper, UserCog, ScrollText, X,
 } from 'lucide-vue-next';
 
 defineProps({ aberta: Boolean });
@@ -31,6 +31,7 @@ const grupos = [
         itens: [
             { rotulo: 'Início', rota: 'painel.inicio', icone: LayoutDashboard, permissao: null },
             { rotulo: 'Contatos', rota: 'painel.contatos.index', icone: Inbox, permissao: 'leads' },
+            { rotulo: 'Blog', rota: 'painel.blog.textos.index', icone: Newspaper, permissao: 'blog' },
         ],
     },
     {

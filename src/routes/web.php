@@ -9,6 +9,7 @@ use App\Http\Controllers\DemoIaController;
 use App\Http\Controllers\DemoLeadController;
 use App\Http\Controllers\Painel\AuditoriaController;
 use App\Http\Controllers\Painel\BlogPreviaController;
+use App\Http\Controllers\Painel\TextoController;
 use App\Http\Controllers\Painel\ContatoController;
 use App\Http\Controllers\Painel\PainelController;
 use App\Http\Controllers\Painel\UsuarioController;
@@ -193,6 +194,19 @@ Route::middleware('auth')->prefix('painel')->group(function () {
     // Prévia de texto agendado (04/11/2026): lê o futuro com a cara do site.
     Route::get('blog/previa/{slug}', BlogPreviaController::class)
         ->middleware('can:blog.gerenciar')->where('slug', '[a-z0-9-]+')->name('painel.blog.previa');
+
+    // Blog no banco (04/11/2026, bloco 3a): escrever, agendar, arquivar.
+    Route::middleware('can:blog.gerenciar')->prefix('blog')->name('painel.blog.textos.')->group(function () {
+        Route::get('textos', [TextoController::class, 'index'])->name('index');
+        Route::get('textos/novo', [TextoController::class, 'create'])->name('create');
+        Route::post('textos', [TextoController::class, 'store'])->name('store');
+        Route::get('textos/{texto}', [TextoController::class, 'edit'])->name('edit');
+        Route::put('textos/{texto}', [TextoController::class, 'update'])->name('update');
+        Route::delete('textos/{texto}', [TextoController::class, 'destroy'])->name('destroy');
+        Route::patch('textos/{texto}/restaurar', [TextoController::class, 'restaurar'])->name('restaurar');
+        Route::get('textos/{texto}/previa', [BlogPreviaController::class, 'doBanco'])->name('previa');
+        Route::post('imagens', [TextoController::class, 'imagem'])->middleware('throttle:30,1')->name('imagem');
+    });
 
     Route::get('usuarios', [UsuarioController::class, 'index'])
         ->middleware('can:usuarios.ver')->name('painel.usuarios.index');

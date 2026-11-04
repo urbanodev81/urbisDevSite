@@ -38,6 +38,10 @@ use Symfony\Component\HttpFoundation\Response;
  *    criado de `blob:` ou de `data:` (`altcha-3.2.2.min.js`).
  *  - `img-src data: blob:`: SVG embutido em CSS e o logo que o visitante sobe
  *    na demonstração `sites`, que só existe como `blob:` no aparelho dele.
+ *  - `frame-src` (04/11/2026, 246 bloco 3a): era `'none'`. O vídeo dos textos
+ *    do blog é iframe, e só destes dois endereços, que o `SaneadorDeTexto`
+ *    monta: YouTube na versão sem cookie e Vimeo com `dnt=1`. Iframe de
+ *    qualquer outro lugar segue barrado.
  *
  * As fichas estáticas de `public/demos/lancamento/` não passam por aqui: o
  * nginx as serve direto.
@@ -51,7 +55,7 @@ class SecurityHeaders
         "img-src 'self' data: blob:",
         "connect-src 'self'",
         "worker-src 'self' blob: data:",
-        "frame-src 'none'",
+        "frame-src https://www.youtube-nocookie.com https://player.vimeo.com",
         "object-src 'none'",
         "base-uri 'self'",
         "form-action 'self'",

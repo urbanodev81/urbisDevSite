@@ -14,6 +14,17 @@ lançou. Não crie número de versão nem date release por conta própria.
 
 ## [Não lançado]
 
+- **Blog escrito no painel** (pendência 246, bloco 3a; por enquanto só no dev).
+  Em Painel → Blog dá para escrever, agendar e publicar sem deploy. O editor tem
+  negrito, itálico, títulos, listas, citação, link, código, imagem e vídeo. A
+  imagem é enviada pelo painel, e o site a reduz e tira a localização da foto
+  antes de publicar. O vídeo entra colando o link do YouTube ou do Vimeo e vai ao
+  ar no player sem cookie. A capa é recortada em 1200×630 para a prévia nas
+  redes. Há prévia de rascunho e de agendado. O endereço trava depois que o
+  texto vai ao ar, e arquivar tira do site sem apagar. Os `.md` continuam
+  valendo como reserva: o `blog:importar` traz os que existem para o painel, e
+  com o banco fora o blog segue com os arquivos.
+
 - **Painel em `/painel`, com a caixa de Contatos** (pendência 246, blocos 1 e 2;
   por enquanto só no dev). Login com senha, verificação de segurança e 2º fator
   obrigatório; contas de acesso com perfis Administrador e Redação; trilha de

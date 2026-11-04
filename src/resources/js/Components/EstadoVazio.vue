@@ -1,8 +1,8 @@
 <script setup>
 // Lista FECHADA (03/11/2026): o `import *` levava a biblioteca inteira.
-import { Inbox, ScrollText } from 'lucide-vue-next';
+import { FileText, Inbox, ScrollText } from 'lucide-vue-next';
 
-const icones = { Inbox, ScrollText };
+const icones = { FileText, Inbox, ScrollText };
 import { computed } from 'vue';
 
 /**

@@ -53,6 +53,7 @@ services:
       - "127.0.0.1:${NGINX_SSL_PORT:-8443}:443"
     volumes:
       - ./src/public:/var/www/html/public:ro
+      - ./src/storage/app/public:/var/www/storage-publico:ro
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - ./certbot/conf:/etc/nginx/certs:ro
     depends_on:

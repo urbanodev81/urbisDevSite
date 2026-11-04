@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5855fefa34724ae7c47a80a71f34b0cd",
+    "content-hash": "9ea143b8f353d20e4666c225c777acf2",
     "packages": [
         {
             "name": "altcha-org/altcha",
@@ -4124,6 +4124,79 @@
             "published-time": "2026-10-28T18:25:54+00:00"
         },
         {
+            "name": "symfony/html-sanitizer",
+            "version": "v8.1.11",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/html-sanitizer.git",
+                "reference": "1ecf13d98b75f5d8a2dcc1ffecde7184d29506ef"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/html-sanitizer/zipball/1ecf13d98b75f5d8a2dcc1ffecde7184d29506ef",
+                "reference": "1ecf13d98b75f5d8a2dcc1ffecde7184d29506ef",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "league/uri": "^6.5|^7.0",
+                "php": ">=8.4.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\HtmlSanitizer\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Titouan Galopin",
+                    "email": "galopintitouan@gmail.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Provides an object-oriented API to sanitize untrusted HTML input for safe insertion into a document's DOM.",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "Purifier",
+                "html",
+                "sanitizer"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/html-sanitizer/tree/v8.1.11"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-11-04T08:39:20+00:00",
+            "published-time": "2026-11-04T11:31:16+00:00"
+        },
+        {
             "name": "symfony/http-foundation",
             "version": "v8.1.10",
             "source": {
@@ -6287,16 +6360,16 @@
         },
         {
             "name": "urbanodev/blog",
-            "version": "v0.4.0",
+            "version": "v0.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/urbanodev81/blog.git",
-                "reference": "907fcd97c93347966391aec9130a0de836f77ae9"
+                "reference": "ff7b51dc2c90f22d1f31194e35f4f52b2d7b33cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/urbanodev81/blog/zipball/907fcd97c93347966391aec9130a0de836f77ae9",
-                "reference": "907fcd97c93347966391aec9130a0de836f77ae9",
+                "url": "https://api.github.com/repos/urbanodev81/blog/zipball/ff7b51dc2c90f22d1f31194e35f4f52b2d7b33cc",
+                "reference": "ff7b51dc2c90f22d1f31194e35f4f52b2d7b33cc",
                 "shasum": ""
             },
             "require": {
@@ -6335,10 +6408,10 @@
             ],
             "description": "Blog em arquivos Markdown para Laravel: sem banco, sem build, sem painel e sem IA. Escreveu, deu push, está no ar.",
             "support": {
-                "source": "https://github.com/urbanodev81/blog/tree/v0.4.0",
+                "source": "https://github.com/urbanodev81/blog/tree/v0.5.1",
                 "issues": "https://github.com/urbanodev81/blog/issues"
             },
-            "time": "2026-11-03T21:26:43+00:00"
+            "time": "2026-11-04T17:46:22+00:00"
         },
         {
             "name": "vlucas/phpdotenv",

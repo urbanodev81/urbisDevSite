@@ -13,3 +13,4 @@ src/storage/framework/views/*
 src/storage/app/private/*
 src/storage/app/public/*
 src/bootstrap/cache/*.php
+src/storage/inertia-devtools

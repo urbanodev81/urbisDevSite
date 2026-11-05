@@ -3,7 +3,8 @@
 
     Nasceu porque o app do LinkedIn pede a URL, mas valia por si: o site já
     guardava nome, e-mail e telefone pelo contato, pelas demonstrações e pelos
-    comentários. Cada frase aqui descreve o que o código faz HOJE. Mudou a
+    comentários. O texto é o do Ricardo (05/11/2026), com cinco ajustes para não
+    prometer o que o site não faz. Cada frase aqui descreve o que o código faz HOJE. Mudou a
     coleta (campo novo, serviço de fora novo, prazo novo)? Mude esta página no
     mesmo commit e a data de "Atualizada em".
 --}}
@@ -25,19 +26,9 @@
         .privacidade strong { color: var(--text-hi); font-weight: 600; }
         .privacidade a { color: var(--amber-500); text-underline-offset: 3px; }
         .privacidade .data { color: var(--text-low); font-size: .95rem; }
-        .privacidade table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: .95rem; }
-        .privacidade th, .privacidade td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line); color: var(--text-mid); }
-        .privacidade th { color: var(--text-hi); font-weight: 600; }
-        /* No celular a tabela vira uma ficha por linha: três colunas não cabem em 390 px. */
-        @media (max-width: 640px) {
-            .privacidade thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-            .privacidade table, .privacidade tbody, .privacidade tr, .privacidade td { display: block; }
-            .privacidade tr { padding: 12px 0; border-bottom: 1px solid var(--line); }
-            .privacidade td { border: 0; padding: 4px 0; }
-            .privacidade td:first-child { color: var(--text-hi); font-weight: 600; }
-            .privacidade td:nth-child(2)::before { content: "Fica: "; color: var(--text-low); }
-            .privacidade td:nth-child(3)::before { content: "Para quê: "; color: var(--text-low); }
-        }
+        .privacidade dt { color: var(--text-hi); font-weight: 600; margin-top: 18px; }
+        .privacidade dd { margin: 4px 0 0; color: var(--text-mid); line-height: 1.7; }
+        .privacidade dd em { font-style: normal; color: var(--text-low); }
 </style>
 @endpush
 
@@ -46,131 +37,109 @@
             <div class="container">
                 <div class="texto">
                     <span class="eyebrow">LGPD · Lei 13.709/2018</span>
-                    <h1>Política de privacidade</h1>
+                    <h1>Política de Privacidade</h1>
                     <p class="data">Atualizada em 5 de novembro de 2026.</p>
 
                     <p>
-                        Esta página explica, em linguagem direta, que dados o site
-                        <strong>urbisdev.tech</strong> guarda, para quê, por quanto tempo, com quem
-                        eles passam e como você pede para ver, corrigir ou apagar os seus. Quem
-                        responde por eles é a <strong>UrbisDev</strong>. Qualquer pedido ou dúvida:
-                        <a href="mailto:contato@urbisdev.tech">contato@urbisdev.tech</a>.
+                        Esta política descreve de forma transparente quais dados pessoais são coletados pelo site
+                        <strong>urbisdev.tech</strong>, com qual finalidade, por quanto tempo são armazenados, com quem são
+                        compartilhados e quais são os direitos dos usuários em conformidade com a Lei Geral de Proteção de
+                        Dados (LGPD, Lei nº 13.709/2018).
+                    </p>
+                    <p>
+                        O controlador responsável pelo tratamento dos dados é a <strong>UrbisDev</strong>. Em caso de dúvidas
+                        ou solicitações, o canal de contato oficial é: <a href="mailto:contato@urbisdev.tech">contato@urbisdev.tech</a>.
                     </p>
 
-                    <h2 id="o-que">O que guardamos e para quê</h2>
-                    <div class="tabela">
-                        <table>
-                            <thead>
-                                <tr><th scope="col">Quando</th><th scope="col">O que fica</th><th scope="col">Para quê</th></tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Você usa o formulário de contato</td>
-                                    <td>Nome, e-mail, telefone, a mensagem e a data do aceite</td>
-                                    <td>Responder ao seu pedido e mandar a proposta, se for o caso</td>
-                                </tr>
-                                <tr>
-                                    <td>Você abre uma demonstração que pede contato</td>
-                                    <td>Nome, e-mail, telefone e qual demonstração foi aberta</td>
-                                    <td>Liberar a demonstração e poder conversar com você depois sobre ela</td>
-                                </tr>
-                                <tr>
-                                    <td>Você comenta no blog</td>
-                                    <td>Nome, e-mail, o comentário e a data do aceite</td>
-                                    <td>Moderar o comentário e avisar por e-mail quando respondermos. <strong>Só o nome aparece no site</strong>; o e-mail, nunca.</td>
-                                </tr>
-                                <tr>
-                                    <td>Você comenta entrando pelo LinkedIn</td>
-                                    <td>Nome, e-mail e o identificador da sua conta, que o próprio LinkedIn nos entrega depois que você autoriza</td>
-                                    <td>O mesmo do comentário comum, com o selo "verificado pelo LinkedIn". Não publicamos nada no seu LinkedIn e não lemos a sua rede.</td>
-                                </tr>
-                                <tr>
-                                    <td>Você responde "Este texto ajudou?"</td>
-                                    <td>Sim ou não e, se quiser, o que faltou. Sem nome, sem e-mail.</td>
-                                    <td>Melhorar os textos</td>
-                                </tr>
-                                <tr>
-                                    <td>Você lê um texto do blog</td>
-                                    <td>Só um número: quantas leituras aquele texto teve no dia. Sem IP, sem identificar quem leu.</td>
-                                    <td>Saber quais textos são úteis e mostrar os mais lidos</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <h2 id="dados">1. Dados coletados e finalidades</h2>
+                    <p>A coleta de dados restringe-se ao necessário para a execução das funcionalidades do site e o atendimento aos usuários:</p>
+                    <dl>
+                        <dt>Formulário de contato</dt>
+                        <dd>Coleta nome, e-mail, telefone, mensagem e data do aceite. <em>Finalidade:</em> responder a solicitações e viabilizar o envio de propostas comerciais, quando aplicável.</dd>
+                        <dt>Solicitação de demonstração</dt>
+                        <dd>Coleta nome, e-mail, telefone e identificação da demonstração solicitada. <em>Finalidade:</em> liberar o acesso à demonstração e estabelecer contato comercial subsequente.</dd>
+                        <dt>Comentários no blog</dt>
+                        <dd>Coleta nome, e-mail, conteúdo do comentário e data do aceite. <em>Finalidade:</em> moderação de comentários e notificação por e-mail sobre respostas. Apenas o nome é exibido publicamente no site; o e-mail permanece estritamente confidencial.</dd>
+                        <dt>Comentários via LinkedIn</dt>
+                        <dd>Coleta nome, e-mail e identificador de conta fornecidos mediante autorização prévia do usuário na plataforma LinkedIn. <em>Finalidade:</em> exibição com o selo de verificação. A UrbisDev não realiza publicações automáticas nem acessa dados adicionais da rede social do usuário.</dd>
+                        <dt>Feedback ("Este texto ajudou?")</dt>
+                        <dd>Coleta resposta binária (sim/não) e, opcionalmente, sugestões de melhoria, sem vincular nome ou e-mail. <em>Finalidade:</em> aprimoramento contínuo dos conteúdos publicados.</dd>
+                        <dt>Métricas de leitura do blog</dt>
+                        <dd>Contabiliza exclusivamente o número diário de acessos por artigo, sem registro de endereço IP ou identificação individual dos leitores. <em>Finalidade:</em> análise de relevância e tráfego de conteúdo.</dd>
+                    </dl>
                     <p>
-                        O que permite guardar esses dados (a "base legal" da LGPD) é o
-                        <strong>seu consentimento</strong>, dado na caixa de aceite de cada formulário,
-                        e, no caso de quem pediu proposta, os <strong>procedimentos preliminares de um
-                        contrato</strong> que você mesmo pediu.
+                        <strong>Base legal (LGPD):</strong> o tratamento fundamenta-se no consentimento do titular (manifestado
+                        mediante aceite nos formulários) e, nos casos de propostas comerciais, nos procedimentos preliminares a
+                        contrato solicitados pelo próprio titular.
                     </p>
 
-                    <h2 id="nao">O que não fazemos</h2>
+                    <h2 id="nao">2. O que a UrbisDev não faz</h2>
+                    <p>Em respeito à privacidade dos usuários, declaramos expressamente que:</p>
                     <ul>
-                        <li>Não vendemos nem alugamos dados.</li>
-                        <li>Não usamos Google Analytics, pixel de rede social nem qualquer rastreador de publicidade.</li>
-                        <li>Não guardamos o seu IP junto com o que você envia, nem montamos perfil de navegação.</li>
-                        <li>Não mandamos newsletter ou propaganda para quem só deixou um contato ou um comentário.</li>
+                        <li>Não comercializamos nem alugamos dados pessoais a terceiros.</li>
+                        <li>Não utilizamos ferramentas de rastreamento publicitário, pixels de redes sociais ou Google Analytics.</li>
+                        <li>Não armazenamos endereços IP vinculados aos envios de formulários e não criamos perfis comportamentais de navegação.</li>
+                        <li>Não realizamos o envio de e-mails em massa, newsletters ou campanhas promocionais para contatos obtidos exclusivamente por meio de mensagens ou comentários.</li>
                     </ul>
 
-                    <h2 id="cookies">Cookies e armazenamento no navegador</h2>
+                    <h2 id="cookies">3. Cookies e armazenamento local</h2>
+                    <p>O site não utiliza cookies de rastreamento de terceiros, dispensando a exibição de banners de consentimento de cookies. Os únicos recursos de armazenamento utilizados são:</p>
                     <ul>
-                        <li><strong>Sessão</strong> e <strong>proteção de formulário</strong>: dois cookies técnicos, sem os quais os formulários não funcionam. Valem por 2 horas sem uso.</li>
-                        <li><strong>Tema claro ou escuro</strong>: a sua escolha fica guardada no próprio navegador (<code>localStorage</code>), não vem para nós.</li>
+                        <li><strong>Cookies técnicos de sessão:</strong> utilizados estritamente para o funcionamento dos formulários e para protegê-los contra envios forjados a partir de outros sites, com validade de 2 horas de inatividade.</li>
+                        <li><strong>Preferência de tema (claro/escuro):</strong> armazenada localmente no navegador do usuário (<code>localStorage</code>), sem transmissão de dados para os servidores da UrbisDev.</li>
                     </ul>
-                    <p>Não há cookie de terceiros. Por isso o site não mostra aviso de cookies: não há o que recusar.</p>
 
-                    <h2 id="terceiros">Com quem os dados passam</h2>
+                    <h2 id="terceiros">4. Compartilhamento de dados com terceiros</h2>
+                    <p>Os dados podem ser processados por prestadores de serviços essenciais à infraestrutura do site:</p>
                     <ul>
-                        <li><strong>Hostinger</strong>: o servidor onde o site e o banco de dados ficam.</li>
-                        <li><strong>Zoho</strong>: o serviço de e-mail. É por ele que chega a nós o aviso de cada contato e que sai a resposta para quem comentou.</li>
-                        <li><strong>LinkedIn</strong>: só se você escolher comentar entrando por ele. Aí vale também a política do LinkedIn.</li>
-                        <li><strong>WhatsApp</strong>: só se você clicar no botão. A conversa acontece no WhatsApp, fora deste site.</li>
-                        <li>
-                            <strong>Demonstrações</strong>: a de CEP e CNPJ consulta bases públicas (BrasilAPI e ViaCEP) com o número
-                            que você digitar. A "Pergunte aos dados" manda a sua pergunta para um modelo de inteligência
-                            artificial responder sobre uma tabela fictícia. Não escreva dados pessoais nessas caixas.
-                        </li>
+                        <li><strong>Hostinger:</strong> hospedagem do servidor web e do banco de dados.</li>
+                        <li><strong>Zoho:</strong> serviço de correio eletrônico para recepção e envio de comunicações de suporte e comentários.</li>
+                        <li><strong>LinkedIn:</strong> aplicável apenas caso o usuário opte por autenticar o comentário por meio da plataforma.</li>
+                        <li><strong>WhatsApp:</strong> acionado voluntariamente pelo usuário através de link externo de atendimento.</li>
+                        <li><strong>Demonstrações técnicas:</strong> as demonstrações de CEP e CNPJ consultam bases públicas (BrasilAPI e ViaCEP) apenas com os dados informados pelo usuário. A demonstração "Pergunte aos dados" encaminha consultas a um modelo de inteligência artificial utilizando exclusivamente tabelas fictícias (recomenda-se não inserir dados pessoais nestes campos).</li>
                     </ul>
                     <p>
-                        A verificação contra robôs dos formulários roda no nosso próprio servidor; ela não
-                        manda nada para Google ou para outro serviço.
+                        <strong>Nota técnica:</strong> os mecanismos de proteção contra robôs nos formulários (captcha) são
+                        executados integralmente no servidor próprio da UrbisDev, sem envio de dados a serviços externos como o
+                        Google reCAPTCHA.
                     </p>
 
-                    <h2 id="prazo">Por quanto tempo</h2>
+                    <h2 id="retencao">5. Retenção e armazenamento de dados</h2>
+                    <p>Os dados pessoais são mantidos pelo período necessário para cumprir as finalidades descritas:</p>
                     <ul>
-                        <li><strong>Contatos e pedidos de demonstração</strong>: 24 meses. Depois disso são apagados automaticamente.</li>
-                        <li><strong>Comentários</strong>: o aprovado fica enquanto estiver publicado. O recusado ou arquivado é apagado depois de 24 meses.</li>
-                        <li><strong>Respostas do "Este texto ajudou?"</strong>: 24 meses.</li>
-                        <li><strong>Cópias de segurança</strong>: o banco é copiado todo dia, e cada cópia é substituída com o tempo. Um dado apagado some das cópias quando elas vencem.</li>
+                        <li><strong>Contatos e demonstrações:</strong> 24 meses, após os quais são eliminados automaticamente.</li>
+                        <li><strong>Comentários:</strong> mantidos enquanto o respectivo artigo estiver publicado. Comentários rejeitados ou arquivados são eliminados automaticamente depois de 24 meses.</li>
+                        <li><strong>Respostas de feedback:</strong> 24 meses.</li>
+                        <li><strong>Cópias de segurança (backups):</strong> o banco de dados passa por rotinas diárias de backup. Os dados excluídos são removidos definitivamente das cópias conforme o ciclo de renovação dos arquivos de segurança.</li>
                     </ul>
 
-                    <h2 id="direitos">Os seus direitos</h2>
-                    <p>A qualquer momento você pode pedir para:</p>
+                    <h2 id="direitos">6. Direitos do titular dos dados</h2>
+                    <p>Nos termos da LGPD, o titular pode, a qualquer momento, exercer os seguintes direitos mediante solicitação ao e-mail <a href="mailto:contato@urbisdev.tech">contato@urbisdev.tech</a>:</p>
                     <ul>
-                        <li>saber se temos dados seus e quais são;</li>
-                        <li>corrigir o que estiver errado;</li>
-                        <li>receber os seus dados num arquivo aberto, para levar para onde quiser;</li>
-                        <li>apagar os seus dados ou retirar o consentimento, o que também tira o seu comentário do site.</li>
+                        <li>Confirmação da existência de tratamento de dados.</li>
+                        <li>Acesso aos dados pessoais armazenados.</li>
+                        <li>Correção de dados incompletos, inexatos ou desatualizados.</li>
+                        <li>Portabilidade dos dados a outro fornecedor de serviço ou produto.</li>
+                        <li>Eliminação dos dados pessoais tratados com consentimento ou revogação do mesmo (o que implica a remoção de comentários associados).</li>
                     </ul>
                     <p>
-                        Escreva para <a href="mailto:contato@urbisdev.tech">contato@urbisdev.tech</a> com o e-mail que
-                        você usou no site. Respondemos em até 15 dias. Se achar que não fomos corretos, você
-                        também pode reclamar à Autoridade Nacional de Proteção de Dados
-                        (<a href="https://www.gov.br/anpd">gov.br/anpd</a>).
+                        As solicitações serão respondidas no prazo máximo de 15 dias. Persistindo dúvidas ou discordâncias, o
+                        titular possui o direito de peticionar perante a Autoridade Nacional de Proteção de Dados (ANPD) através
+                        do portal oficial <a href="https://www.gov.br/anpd">gov.br/anpd</a>.
                     </p>
 
-                    <h2 id="seguranca">Segurança</h2>
+                    <h2 id="seguranca">7. Segurança da informação</h2>
                     <p>
-                        O site só funciona por conexão cifrada (HTTPS). O painel onde lemos os contatos exige
-                        senha e um segundo fator de verificação, e cada acesso e alteração fica registrado.
-                        O mesmo cuidado que descrevemos em <a href="{{ url('/como-trabalhamos') }}">como trabalhamos</a>
-                        vale para os nossos próprios dados.
+                        O site opera exclusivamente sob protocolo criptografado (HTTPS). O painel administrativo de gestão de
+                        contatos exige autenticação por senha e verificação em duas etapas (2FA), com registro de logs de acesso
+                        e alteração.
                     </p>
 
-                    <h2 id="mudancas">Mudanças nesta política</h2>
+                    <h2 id="alteracoes">8. Alterações nesta política</h2>
                     <p>
-                        Se passarmos a guardar algo novo ou a usar outro serviço, esta página muda antes e a data
-                        lá em cima acompanha.
+                        Esta Política de Privacidade poderá ser atualizada periodicamente para refletir melhorias operacionais ou
+                        adequações normativas. A versão vigente estará sempre disponível nesta página, com a data de atualização
+                        revisada no topo do documento.
                     </p>
                 </div>
             </div>

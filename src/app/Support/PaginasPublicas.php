@@ -20,7 +20,7 @@ class PaginasPublicas
     /** @return array<string, string> caminho => "Nome" ou "Nome — resumo" */
     public function todas(): array
     {
-        $paginas = ['/' => 'Início', '/demonstracoes' => 'Demonstrações', '/como-trabalhamos' => 'Como trabalhamos'];
+        $paginas = ['/' => 'Início', '/demonstracoes' => 'Demonstrações', '/como-trabalhamos' => 'Como trabalhamos', '/privacidade' => 'Política de privacidade'];
 
         if ($this->portfolio->temItens()) {
             $paginas['/trabalhos'] = 'Trabalhos';

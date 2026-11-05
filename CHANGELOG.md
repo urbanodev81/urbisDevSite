@@ -14,6 +14,14 @@ lançou. Não crie número de versão nem date release por conta própria.
 
 ## [Não lançado]
 
+- **Política de privacidade** em `/privacidade` (05/11/2026). Diz, em linguagem
+  direta, o que o site guarda (contato, demonstrações, comentários, o "ajudou?"
+  e a contagem de leituras), para quê, por quanto tempo (24 meses, com descarte
+  automático), com quem os dados passam (Hostinger, Zoho, LinkedIn, WhatsApp e
+  as bases públicas das demonstrações) e como pedir para ver, corrigir ou
+  apagar. O link fica no rodapé, no sitemap e nas três caixas de aceite. No
+  celular, a tabela vira uma ficha por linha.
+
 - **Leitores do blog** (pendência 246, bloco 3b; por enquanto só no dev). No fim
   de cada texto, o leitor responde "Este texto ajudou?" (no "Não", pode contar o
   que faltou) e comenta. Todo comentário passa pela moderação em Painel →

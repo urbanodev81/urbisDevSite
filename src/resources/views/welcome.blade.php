@@ -346,7 +346,7 @@
                     <div class="field">
                         <div class="consent">
                             <input type="checkbox" id="consent" name="consent" value="1" required>
-                            <label for="consent">Autorizo o armazenamento dos meus dados para fins de contato, conforme a LGPD.</label>
+                            <label for="consent">Autorizo o armazenamento dos meus dados para fins de contato, conforme a LGPD e a <a href="{{ url('/privacidade') }}">política de privacidade</a>.</label>
                         </div>
                         @error('consent') <span class="field-error">{{ $message }}</span> @enderror
                     </div>

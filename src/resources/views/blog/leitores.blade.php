@@ -175,7 +175,7 @@
                     <div class="field">
                         <div class="consent">
                             <input type="checkbox" id="comentario-consent" name="consent" value="1" required>
-                            <label for="comentario-consent">Autorizo guardar meu nome e e-mail para a moderação do comentário, conforme a LGPD. O nome aparece junto do comentário; o e-mail, não.</label>
+                            <label for="comentario-consent">Autorizo guardar meu nome e e-mail para a moderação do comentário, conforme a LGPD e a <a href="{{ url('/privacidade') }}">política de privacidade</a>. O nome aparece junto do comentário; o e-mail, não.</label>
                         </div>
                         @if ($erros->has('consent')) <span class="field-error">{{ $erros->first('consent') }}</span> @endif
                     </div>

@@ -330,6 +330,7 @@
                 <li><a href="{{ url('/como-trabalhamos') }}">Como trabalhamos</a></li>
                 <li><a href="https://usi.urbisdev.tech">USI, sistema imobiliário</a></li>
                 <li><a href="{{ $base }}#contato">Contato</a></li>
+                <li><a href="{{ url('/privacidade') }}">Privacidade</a></li>
             </ul>
             @include('partials.redes', ['classe' => 'social-bar', 'tamanho' => 18, 'rotulo' => null])
             <p>&copy; {{ date('Y') }} UrbisDev. Todos os direitos reservados.</p>

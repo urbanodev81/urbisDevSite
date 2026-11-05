@@ -52,6 +52,7 @@ Route::get('/', function () {
 });
 
 Route::get('/como-trabalhamos', fn () => view('como-trabalhamos'));
+Route::get('/privacidade', fn () => view('privacidade'));
 
 // "Guias" virou "Blog" em 03/11/2026 (pendência 247). Link antigo, de busca ou
 // já compartilhado, cai no mesmo lugar do endereço novo, com 301 e a query junto.

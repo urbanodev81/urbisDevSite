@@ -32,6 +32,7 @@ it('abre a página pública sem banco', function (string $url) {
 })->with([
     '/',
     '/como-trabalhamos',
+    '/privacidade',
     '/demonstracoes',
     '/blog',
     '/sitemap.xml',

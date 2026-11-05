@@ -222,6 +222,7 @@ Route::middleware('auth')->prefix('painel')->group(function () {
         Route::delete('textos/{texto}', [TextoController::class, 'destroy'])->name('destroy');
         Route::patch('textos/{texto}/restaurar', [TextoController::class, 'restaurar'])->name('restaurar');
         Route::get('textos/{texto}/previa', [BlogPreviaController::class, 'doBanco'])->name('previa');
+        Route::get('imagens', [TextoController::class, 'imagens'])->name('imagens');
         Route::post('imagens', [TextoController::class, 'imagem'])->middleware('throttle:30,1')->name('imagem');
     });
 

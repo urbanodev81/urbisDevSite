@@ -7,10 +7,12 @@ namespace App\Http\Controllers\Painel;
 use App\Blog\GuardaImagens;
 use App\Blog\SaneadorDeTexto;
 use App\Http\Controllers\Controller;
+use App\Models\ImagemDoBlog;
 use App\Models\Texto;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -33,6 +35,9 @@ use UrbanoDev\Blog\Post;
  */
 class TextoController extends Controller
 {
+    /** Quantas imagens a galeria do editor mostra (as mais novas). */
+    private const GALERIA = 120;
+
     private const IMAGEM_OU_ENDERECO = '~^(https://|/(?!/))~i';
 
     public function index(Request $request, Blog $blog, FonteDeArquivos $arquivos): Response
@@ -165,6 +170,27 @@ class TextoController extends Controller
         $t->restore();
 
         return redirect()->route('painel.blog.textos.edit', $t)->with('sucesso', $this->mensagem($t, 'Texto restaurado'));
+    }
+
+    /**
+     * A galeria do editor (05/11/2026): as imagens já enviadas, da mais nova
+     * para a mais velha, para reusar sem subir de novo. Só o que o editor
+     * precisa para inserir; o arquivo que sumiu do disco não entra.
+     */
+    public function imagens(): JsonResponse
+    {
+        $imagens = ImagemDoBlog::query()->latest('id')->limit(self::GALERIA)->get()
+            ->filter(fn (ImagemDoBlog $i) => Storage::disk('public')->exists($i->caminho))
+            ->map(fn (ImagemDoBlog $i) => [
+                'url' => $i->url(),
+                'largura' => $i->largura,
+                'altura' => $i->altura,
+                'capa' => $i->tipo === 'capa',
+                'nome' => $i->nome_original,
+                'em' => $i->created_at?->format('d/m/Y'),
+            ])->values();
+
+        return response()->json(['imagens' => $imagens]);
     }
 
     /** Imagem do editor ou da capa. Devolve o endereço para o editor pôr no texto. */

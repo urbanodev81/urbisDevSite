@@ -14,6 +14,11 @@ lançou. Não crie número de versão nem date release por conta própria.
 
 ## [Não lançado]
 
+- **Galeria de imagens no editor do blog** (05/11/2026). O botão de imagem abre
+  a grade com as fotos já enviadas (as 120 mais novas, com selo na capa): um
+  clique reusa, sem subir de novo. "Subir nova" continua no topo, e a foto
+  recém-enviada já entra na grade.
+
 - **Foto do blog até 8 MB, de verdade** (05/11/2026). O editor prometia 8 MB,
   mas qualquer foto acima de 1 MB morria com "A imagem não subiu": o nginx do
   servidor, o do contêiner e o PHP cortavam antes. Os três agora aceitam 10 MB.

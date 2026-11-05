@@ -102,6 +102,26 @@ const imagemPendente = ref(null);
 const campoRef = ref(null);
 const arquivoRef = ref(null);
 
+// Galeria (05/11/2026): ao abrir a imagem, mostra o que já subiu para reusar.
+// Carrega uma vez por edição e recarrega depois de cada envio.
+const galeria = ref(null);
+const galeriaErro = ref('');
+async function carregarGaleria() {
+    galeriaErro.value = '';
+    try {
+        const { data } = await axios.get(route('painel.blog.textos.imagens'));
+        galeria.value = data.imagens;
+    } catch {
+        galeriaErro.value = 'Não deu para carregar as imagens já enviadas.';
+        galeria.value = [];
+    }
+}
+function escolherDaGaleria(imagem) {
+    erro.value = '';
+    imagemPendente.value = imagem;
+    nextTick(() => campoRef.value?.focus());
+}
+
 function abrir(qual) {
     erro.value = '';
     alt.value = '';
@@ -109,7 +129,7 @@ function abrir(qual) {
     campo.value = qual === 'link' ? (editor.value.getAttributes('link').href ?? '') : '';
     modo.value = modo.value === qual ? null : qual;
     if (qual === 'imagem' && modo.value) {
-        nextTick(() => arquivoRef.value?.click());
+        if (galeria.value === null) carregarGaleria();
     } else {
         nextTick(() => campoRef.value?.focus());
     }
@@ -162,6 +182,8 @@ async function enviarImagem(evento) {
         dados.append('arquivo', arquivo);
         const { data } = await axios.post(route('painel.blog.textos.imagem'), dados);
         imagemPendente.value = data;
+        galeria.value = null;
+        carregarGaleria();
         nextTick(() => campoRef.value?.focus());
     } catch (e) {
         erro.value = e.response?.data?.errors?.arquivo?.[0] ?? 'A imagem não subiu. Tente de novo.';
@@ -265,13 +287,35 @@ const ativo = (b) => (b.ativo === null ? false : Array.isArray(b.ativo) ? editor
                     <label for="editor-alt" class="text-fg-muted">Descreva a imagem</label>
                     <input id="editor-alt" ref="campoRef" v-model="alt" type="text" maxlength="300" placeholder="O que a imagem mostra" class="campo min-w-[14rem] flex-1" @keydown.esc.prevent="fechar" />
                     <button type="submit" class="acao">Inserir no texto</button>
-                    <button type="button" class="acao-sec" @click="fechar">Cancelar</button>
+                    <button type="button" class="acao-sec" @click="imagemPendente = null">Voltar</button>
                 </form>
-                <p v-else class="flex flex-wrap items-center gap-2">
-                    <button type="button" class="acao" @click="arquivoRef?.click()">Escolher imagem</button>
-                    <span class="text-fg-subtle">JPG, PNG ou WebP até 8 MB. O site reduz e tira a localização da foto.</span>
-                    <button type="button" class="acao-sec" @click="fechar">Cancelar</button>
-                </p>
+                <div v-else>
+                    <p class="flex flex-wrap items-center gap-2">
+                        <button type="button" class="acao" @click="arquivoRef?.click()">Subir nova</button>
+                        <span class="text-fg-subtle">JPG, PNG ou WebP até 8 MB. O site reduz e tira a localização da foto.</span>
+                        <button type="button" class="acao-sec" @click="fechar">Cancelar</button>
+                    </p>
+                    <p v-if="galeria === null" class="mt-3 text-fg-subtle" role="status">Carregando as imagens já enviadas…</p>
+                    <p v-else-if="galeriaErro" class="mt-3 text-danger" role="alert">{{ galeriaErro }}</p>
+                    <p v-else-if="galeria.length === 0" class="mt-3 text-fg-subtle">Nenhuma imagem enviada ainda. Suba a primeira.</p>
+                    <template v-else>
+                        <p class="mt-3 text-fg-muted">Ou reuse uma que já subiu ({{ galeria.length }}):</p>
+                        <ul class="mt-2 grid max-h-80 grid-cols-3 gap-2 overflow-y-auto sm:grid-cols-5 lg:grid-cols-6" aria-label="Imagens já enviadas">
+                            <li v-for="img in galeria" :key="img.url">
+                                <button
+                                    type="button"
+                                    class="miniatura"
+                                    :title="(img.nome ?? 'Imagem') + ' · ' + img.largura + '×' + img.altura + (img.em ? ' · ' + img.em : '')"
+                                    :aria-label="'Usar ' + (img.nome ?? 'imagem') + (img.capa ? ' (capa)' : '') + (img.em ? ', enviada em ' + img.em : '')"
+                                    @click="escolherDaGaleria(img)"
+                                >
+                                    <img :src="img.url" alt="" loading="lazy" class="h-full w-full object-cover" />
+                                    <span v-if="img.capa" class="selo">capa</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </template>
+                </div>
             </div>
             <p v-if="erro" class="mt-2 text-danger" role="alert">{{ erro }}</p>
         </div>
@@ -286,6 +330,8 @@ const ativo = (b) => (b.ativo === null ? false : Array.isArray(b.ativo) ? editor
 .botao:focus-visible, .acao:focus-visible, .acao-sec:focus-visible { @apply outline-none ring-2 ring-accent-ring; }
 .campo { @apply rounded-md border-line-input bg-surface text-sm text-fg placeholder:text-fg-subtle focus:border-line-strong focus:ring-2 focus:ring-accent-ring; }
 .acao { @apply inline-flex min-h-[36px] items-center rounded-md bg-accent px-3 font-semibold text-fg-on-accent; }
+.miniatura { @apply relative block aspect-[4/3] w-full overflow-hidden rounded-md border border-line bg-surface transition hover:border-line-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-ring; }
+.selo { @apply absolute bottom-1 left-1 rounded bg-surface/90 px-1.5 text-[11px] font-semibold text-fg; }
 .acao-sec { @apply inline-flex min-h-[36px] items-center px-2 text-fg-muted underline; }
 
 :deep(.texto-do-blog) { min-height: 22rem; padding: 1rem 1.25rem; outline: none; line-height: 1.7; }

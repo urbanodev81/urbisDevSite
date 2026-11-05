@@ -219,6 +219,21 @@ it('a imagem sai em WebP, sem EXIF e com no máximo 1600 px', function () {
         ->and($bytes)->not->toContain('GPS-SEGREDO')->not->toContain('Exif');
 });
 
+it('a galeria lista as imagens já enviadas, da mais nova para a mais velha', function () {
+    $conta = contaDoBlog();
+    $primeira = $this->actingAs($conta)->post('/painel/blog/imagens', ['arquivo' => fotoComExif(800, 600)], ['Accept' => 'application/json'])->json('url');
+    $segunda = $this->post('/painel/blog/imagens', ['arquivo' => fotoComExif(1000, 1000), 'capa' => '1'], ['Accept' => 'application/json'])->json('url');
+
+    $this->getJson('/painel/blog/imagens')
+        ->assertOk()
+        ->assertJsonPath('imagens.0.url', $segunda)
+        ->assertJsonPath('imagens.0.capa', true)
+        ->assertJsonPath('imagens.1.url', $primeira)
+        ->assertJsonPath('imagens.1.largura', 800);
+
+    $this->actingAs(contaDoBlog(null))->getJson('/painel/blog/imagens')->assertForbidden();
+});
+
 it('a capa sai recortada em 1200×630', function () {
     $this->actingAs(contaDoBlog())
         ->post('/painel/blog/imagens', ['arquivo' => fotoComExif(1000, 1000), 'capa' => '1'], ['Accept' => 'application/json'])

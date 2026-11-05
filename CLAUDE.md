@@ -157,8 +157,13 @@ o do molde "site pequeno" (Duo/Girls/WJ), e o painel veio de lá:
   24 meses.
 - Por blocos (6.4 do estudo): 1 Fundação ✅ · 2 Contatos ✅ (lado do Sócrates
   pendente) · 3 Blog no banco ✅ (3a editor, 3b leitores) · 4 Configurações, serviços e lançamentos ·
-  5 Produção. **Até o bloco 5, o painel não vai para a
-  `pre-prod`**: só o dev (`urbisdev-site-dev`) roda a branch.
+  5 Produção ✅ (05/11/2026; o bloco 4 vem depois, direto em produção).
+  **O painel está em produção** (`urbisdev.tech/painel`). O urbisdev **só tem
+  produção** (decisão dele, 05/11): texto novo se confere pela **Prévia** do
+  painel, nunca num ambiente à parte. O `urbisdev-site-dev` é desligado depois
+  da conferência da produção. Publicar = push na `pre-prod`. A receita
+  (`site_prod` no `publicar.sh`) constrói a imagem do commit novo **antes** do
+  `git pull`, então a troca leva menos de 1 minuto.
 
 **Suíte de testes (desde 03/11/2026).** `docker compose exec app php artisan test`,
 contra o banco `urbisdev_testing` do mesmo Postgres (crie uma vez:

@@ -15,9 +15,14 @@ lançou. Não crie número de versão nem date release por conta própria.
 ## [Não lançado]
 
 - **Galeria de imagens no editor do blog** (05/11/2026). O botão de imagem abre
-  a grade com as fotos já enviadas (as 120 mais novas, com selo na capa): um
-  clique reusa, sem subir de novo. "Subir nova" continua no topo, e a foto
-  recém-enviada já entra na grade.
+  um modal com TODA imagem do sistema — as enviadas pelo painel, as capas, as de
+  dentro dos textos e as ilustrações dos guias —, com busca, onde cada uma já foi
+  usada e "Subir nova" no topo. Escolhida, pede a descrição (vem a última usada),
+  o tamanho (pequena, média ou inteira) e a posição (à esquerda ou à direita com
+  o texto ao lado, ou no centro). Clique com o botão direito numa imagem do texto
+  abre o menu rápido (tamanho, posição, descrição, trocar, remover); a mesma
+  barra aparece quando a imagem está selecionada. No site, no celular, a imagem
+  sempre fica sozinha na linha.
 
 - **Foto do blog até 8 MB, de verdade** (05/11/2026). O editor prometia 8 MB,
   mas qualquer foto acima de 1 MB morria com "A imagem não subiu": o nginx do

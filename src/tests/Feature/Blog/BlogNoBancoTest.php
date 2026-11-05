@@ -234,6 +234,45 @@ it('a galeria lista as imagens já enviadas, da mais nova para a mais velha', fu
     $this->actingAs(contaDoBlog(null))->getJson('/painel/blog/imagens')->assertForbidden();
 });
 
+it('a galeria junta as ilustrações dos guias, as capas e as imagens de dentro dos textos, com onde foram usadas', function () {
+    $conta = contaDoBlog();
+    $url = $this->actingAs($conta)->post('/painel/blog/imagens', ['arquivo' => fotoComExif(800, 600)], ['Accept' => 'application/json'])->json('url');
+    $this->post('/painel/blog/textos', textoValido([
+        'titulo' => 'Texto com as duas',
+        'imagem' => '/img/guias/backup.jpg', 'imagem_alt' => 'Servidor e backup',
+        'corpo_html' => '<p>Oi.</p><img src="'.$url.'" alt="Gráfico do mês" data-tamanho="media" data-alinhar="direita">',
+    ]));
+
+    $imagens = collect($this->getJson('/painel/blog/imagens')->assertOk()->json('imagens'))->keyBy('url');
+
+    expect($imagens['/img/guias/backup.jpg'])->toMatchArray(['capa' => true, 'usos' => ['Texto com as duas'], 'alt' => 'Servidor e backup'])
+        ->and($imagens['/img/guias/backup.jpg']['largura'])->toBeGreaterThan(0)
+        ->and($imagens[$url])->toMatchArray(['usos' => ['Texto com as duas'], 'alt' => 'Gráfico do mês'])
+        ->and($imagens->keys())->toContain('/img/guias/captcha.jpg');
+});
+
+it('a imagem pequena à direita chega ao site com o atributo e o estilo', function () {
+    $this->actingAs(contaDoBlog())->post('/painel/blog/textos', textoValido([
+        'corpo_html' => '<p>Antes.</p><img src="/img/guias/deploy.jpg" alt="O deploy" data-tamanho="pequena" data-alinhar="direita"><p>Depois.</p>',
+    ]));
+
+    $this->get('/blog/como-escolher-um-sistema')->assertOk()
+        ->assertSee('data-tamanho="pequena"', false)
+        ->assertSee('data-alinhar="direita"', false)
+        ->assertSee('.blog-texto img[data-alinhar="direita"]', false);
+});
+
+it('tamanho e alinhamento da imagem passam, valor inventado sai', function () {
+    $saneador = app(\App\Blog\SaneadorDeTexto::class);
+
+    expect($saneador->limpar('<img src="/img/guias/deploy.jpg" alt="a" data-tamanho="pequena" data-alinhar="esquerda">'))
+        ->toContain('data-tamanho="pequena"')->toContain('data-alinhar="esquerda"')->toContain('/img/guias/deploy.jpg')
+        ->and($saneador->limpar('<img src="/img/guias/deploy.jpg" alt="a" data-tamanho="gigante" data-alinhar="x" onerror="y">'))
+        ->not->toContain('data-tamanho')->not->toContain('data-alinhar')->not->toContain('onerror')
+        ->and($saneador->limpar('<img src="/img/guias/../../.env" alt="a"><img src="https://fora.com/x.jpg" alt="b">'))
+        ->not->toContain('<img');
+});
+
 it('a capa sai recortada em 1200×630', function () {
     $this->actingAs(contaDoBlog())
         ->post('/painel/blog/imagens', ['arquivo' => fotoComExif(1000, 1000), 'capa' => '1'], ['Accept' => 'application/json'])

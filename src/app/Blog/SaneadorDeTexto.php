@@ -28,7 +28,17 @@ class SaneadorDeTexto
 {
     public const PROVEDORES = ['youtube' => '/^[A-Za-z0-9_-]{11}$/', 'vimeo' => '/^\d{6,12}$/'];
 
-    private const IMAGEM = '~^/storage/blog/\d{4}/\d{2}/[0-9a-f-]{36}\.webp$~';
+    /**
+     * Imagem que pode ficar no texto: a que o painel subiu (WebP sem EXIF) ou
+     * uma das ilustrações dos guias que moram no próprio site (05/11/2026, a
+     * galeria deixa reusar as duas). Endereço de fora não entra.
+     */
+    public const IMAGEM = '~^(/storage/blog/\d{4}/\d{2}/[0-9a-f-]{36}\.webp|/img/guias/[a-z0-9-]+\.(jpe?g|png|webp))$~';
+
+    /** Tamanho e alinhamento da imagem no texto (05/11/2026): só estes valores. */
+    public const TAMANHOS = ['pequena', 'media', 'inteira'];
+
+    public const ALINHAMENTOS = ['esquerda', 'centro', 'direita'];
 
     private HtmlSanitizer $sanitizer;
 
@@ -47,7 +57,7 @@ class SaneadorDeTexto
         }
         $config = $config
             ->allowElement('a', ['href', 'title'])
-            ->allowElement('img', ['src', 'alt', 'width', 'height'])
+            ->allowElement('img', ['src', 'alt', 'width', 'height', 'data-tamanho', 'data-alinhar'])
             ->allowElement('figure', ['data-video', 'data-id'])
             // Tag de formatação que não está na lista sai, o texto dentro fica.
             ->blockElement('span')->blockElement('div')->blockElement('u')->blockElement('h1')
@@ -75,6 +85,11 @@ class SaneadorDeTexto
             foreach (['width', 'height'] as $medida) {
                 if ($img->hasAttribute($medida) && preg_match('/^\d{1,4}$/', (string) $img->getAttribute($medida)) !== 1) {
                     $img->removeAttribute($medida);
+                }
+            }
+            foreach (['data-tamanho' => self::TAMANHOS, 'data-alinhar' => self::ALINHAMENTOS] as $atributo => $valores) {
+                if ($img->hasAttribute($atributo) && ! in_array($img->getAttribute($atributo), $valores, true)) {
+                    $img->removeAttribute($atributo);
                 }
             }
         }

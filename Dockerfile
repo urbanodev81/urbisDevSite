@@ -12,6 +12,14 @@ RUN apk add --no-cache \
     && docker-php-ext-configure gd --with-jpeg --with-webp --with-freetype \
     && docker-php-ext-install intl pdo pdo_pgsql zip opcache gd exif
 
+# Foto do blog até 8 MB (a regra do `TextoController::imagem`). O padrão do PHP
+# é 2 MB por arquivo: a foto do celular morria com 413 antes de chegar ao
+# Laravel (05/11/2026). Os dois nginx (o do contêiner e o do HOST) levam
+# `client_max_body_size 10m` pelo mesmo motivo — mexeu num, mexa nos três.
+# A memória sobe para 256 MB porque o GD abre a foto inteira: 8000x8000 px
+# (o teto da validação) passa de 128 MB sozinho.
+RUN printf 'upload_max_filesize=10M\npost_max_size=12M\nmemory_limit=256M\n' > /usr/local/etc/php/conf.d/uploads.ini
+
 COPY src/ /var/www/html/
 
 WORKDIR /var/www/html

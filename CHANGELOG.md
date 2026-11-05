@@ -14,6 +14,10 @@ lançou. Não crie número de versão nem date release por conta própria.
 
 ## [Não lançado]
 
+- **Foto do blog até 8 MB, de verdade** (05/11/2026). O editor prometia 8 MB,
+  mas qualquer foto acima de 1 MB morria com "A imagem não subiu": o nginx do
+  servidor, o do contêiner e o PHP cortavam antes. Os três agora aceitam 10 MB.
+
 - **Política de privacidade** em `/privacidade` (05/11/2026). Diz, em linguagem
   direta, o que o site guarda (contato, demonstrações, comentários, o "ajudou?"
   e a contagem de leituras), para quê, por quanto tempo (24 meses, com descarte

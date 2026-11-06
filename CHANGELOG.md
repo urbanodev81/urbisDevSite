@@ -4,6 +4,15 @@ Todas as mudanças relevantes deste projeto.
 
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 **Estamos pré-v1**: tudo vive em `## [Não lançado]` até o Ricardo dizer que
+
+### Alterado
+- **Blog mais legível para o Google e para assistentes de IA** (auditoria SEO/GEO
+  de 06/11/2026). Todo texto sai assinado (o do painel sem autor leva
+  "Ricardo Urbano", trocável em `BLOG_AUTOR_PADRAO`), é anunciado como artigo no
+  cartão do LinkedIn/WhatsApp e mostra a trilha Início › Blog › texto. A aba do
+  navegador ganha "— UrbisDev" no blog e nos textos. As páginas de tag, seção e
+  mês saem do índice e do sitemap (são só listas de títulos); o sitemap passa a
+  dizer a data da última mudança de cada texto.
 lançou. Não crie número de versão nem date release por conta própria.
 
 > Este arquivo nasceu em 21/09/2026, reconstruído a partir do histórico —

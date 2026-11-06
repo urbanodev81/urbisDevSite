@@ -65,22 +65,37 @@
     ];
 
     // Trilha só fora da home: "Início › <página>", com o nome antes do " — ".
+    // Dentro do blog, o Blog entra no meio: "Início › Blog › <texto>" (06/11/2026).
     if (request()->path() !== '/') {
-        $grafo[] = ['@type' => 'BreadcrumbList', 'itemListElement' => [
-            ['@type' => 'ListItem', 'position' => 1, 'name' => 'Início', 'item' => $raiz],
-            ['@type' => 'ListItem', 'position' => 2, 'name' => \Illuminate\Support\Str::before($titulo, ' — '), 'item' => $canonico],
-        ]];
+        $trilha = [['Início', $raiz]];
+        if (request()->is('blog/*')) {
+            $trilha[] = [config('blog.titulo'), url('/blog')];
+        }
+        $trilha[] = [\Illuminate\Support\Str::before($titulo, ' — '), $canonico];
+        $grafo[] = ['@type' => 'BreadcrumbList', 'itemListElement' => collect($trilha)
+            ->map(fn ($passo, $i) => ['@type' => 'ListItem', 'position' => $i + 1, 'name' => $passo[0], 'item' => $passo[1]])->all()];
     }
+
+    // Auditoria SEO/GEO de 06/11/2026. Tag e mês do blog são listas de títulos
+    // que repetem os textos: com poucos textos, é página rala aos olhos do
+    // buscador. Ficam fora do índice (os links seguem valendo) e fora do sitemap
+    // (`PaginasPublicas`). Quando o blog tiver volume, é só tirar daqui.
+    $robots = request()->is('blog/tag/*', 'blog/secao/*') || preg_match('#^blog/\d{4}(/\d{2})?$#', request()->path())
+        ? 'noindex, follow'
+        : trim($__env->yieldContent('robots', 'index, follow, max-image-preview:large, max-snippet:-1'));
+    // O texto do blog é artigo, não página: o cartão no LinkedIn e no WhatsApp e
+    // o Open Graph dizem isso, com a data.
+    $ehTexto = request()->routeIs(config('blog.nome_rota').'.show');
 
     // Montado AQUI, dentro do @php: escrito no `{!! !!}`, o Blade lia o
     // "@context" como a diretiva @context do Laravel 12 e quebrava o JSON.
     $jsonld = json_encode(['@context' => 'https://schema.org', '@graph' => $grafo], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG);
 @endphp
-    <meta name="robots" content="@yield('robots', 'index, follow, max-image-preview:large, max-snippet:-1')">
+    <meta name="robots" content="{{ $robots }}">
     <link rel="canonical" href="{{ $canonico }}">
     <meta name="theme-color" content="#0B1220">
     <meta property="og:locale" content="pt_BR">
-    <meta property="og:type" content="website">
+    <meta property="og:type" content="{{ $ehTexto ? 'article' : 'website' }}">
     <meta property="og:site_name" content="UrbisDev">
     <meta property="og:title" content="{{ $titulo }}">
     <meta property="og:description" content="{{ $descricao }}">

@@ -9,6 +9,8 @@ return [
     'fontes' => [App\Blog\FonteDoBanco::class, UrbanoDev\Blog\FonteDeArquivos::class],
     'pasta' => resource_path('blog'),
     'titulo' => 'Blog',
+    // Quem assina o texto do painel que não diz o autor (byline e JSON-LD).
+    'autor_padrao' => env('BLOG_AUTOR_PADRAO', 'Ricardo Urbano'),
     'introducao' => 'Respostas diretas para quem está decidindo sobre software para o próprio negócio.',
     'por_pagina' => 12,
     'acao_texto' => 'Conversar sobre o meu caso',

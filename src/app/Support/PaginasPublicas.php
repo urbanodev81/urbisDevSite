@@ -32,6 +32,24 @@ class PaginasPublicas
             }
         }
 
-        return $paginas + $this->blog->paginas();
+        // Tag, seção e mês do blog ficam de fora: são `noindex` (partials/seo,
+        // auditoria SEO/GEO de 06/11/2026).
+        $doBlog = array_filter($this->blog->paginas(), fn (string $caminho) => ! preg_match('#^/blog/(tag/|secao/|\d{4}(/|$))#', $caminho), ARRAY_FILTER_USE_KEY);
+
+        return $paginas + $doBlog;
+    }
+
+    /** @return array<string, string> caminho => data da última mudança (AAAA-MM-DD), só onde se sabe */
+    public function ultimasMudancas(): array
+    {
+        $datas = [];
+        foreach ($this->blog->publicados() as $post) {
+            $datas['/blog/'.$post->slug] = ($post->atualizado ?? $post->data)->toDateString();
+        }
+        if ($datas !== []) {
+            $datas['/blog'] = max($datas);
+        }
+
+        return $datas;
     }
 }

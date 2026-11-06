@@ -77,7 +77,8 @@
         })();
     </script>
 
-    <title>@yield('titulo', 'UrbisDev — Software que resolve problemas reais')</title>
+    {{-- A marca no fim do título quando a página não a traz (o blog e os textos, 06/11/2026). --}}
+    <title>{!! \Illuminate\Support\Str::of(trim($__env->yieldContent('titulo', 'UrbisDev — Software que resolve problemas reais')))->unless(fn ($t) => $t->contains('UrbisDev'), fn ($t) => $t->append(' — UrbisDev')) !!}</title>
     <meta name="description" content="@yield('descricao')">
     @include('partials.seo')
     <link rel="stylesheet" href="/fonts/fonts.css">

@@ -67,7 +67,9 @@ class Texto extends Model
             descricao: $this->descricao,
             data: $this->data,
             atualizado: $this->atualizado,
-            autor: $this->autor,
+            // Sem autor no texto, assina quem responde pela casa (auditoria SEO/GEO de
+            // 06/11/2026: artigo sem autor pesa contra no buscador e na citação por IA).
+            autor: $this->autor ?: config('blog.autor_padrao'),
             imagem: $this->imagem,
             imagemAlt: $this->imagem_alt,
             imagemCredito: $this->imagem_credito,

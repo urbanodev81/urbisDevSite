@@ -86,7 +86,7 @@ Route::get('/trabalhos/capturas/{arquivo}', function (string $arquivo) {
 
 // SEO e GEO (18/10/2026): a lista vem de `App\Support\PaginasPublicas`.
 Route::get('/sitemap.xml', fn (PaginasPublicas $paginas) => response()
-    ->view('seo.sitemap', ['paginas' => array_keys($paginas->todas())])
+    ->view('seo.sitemap', ['paginas' => array_keys($paginas->todas()), 'datas' => $paginas->ultimasMudancas()])
     ->header('Content-Type', 'application/xml; charset=UTF-8'));
 
 // Para assistentes de IA (a convenção de llmstxt.org): quem é a casa, o que

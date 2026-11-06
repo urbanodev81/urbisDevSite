@@ -46,13 +46,26 @@ class LinkedinController extends Controller
         abort_unless(self::disponivel(), 404);
         $volta = url('/blog/'.$request->session()->pull(self::SESSAO_VOLTA, '')).'#comentar';
 
+        $falhou = fn () => redirect()->to($volta)->withErrors(['linkedin' => 'Não deu para entrar com o LinkedIn. Você pode comentar com nome e e-mail.'], 'comentario');
+
+        // O LinkedIn volta com ?error=…&error_description=… quando a pessoa
+        // cancela ou quando a configuração do app está errada (invalid_scope_error
+        // em 06/11). Sem isso no log, a falha aparecia como {"erro":""}.
+        if ($request->has('error')) {
+            Log::info('Entrada pelo LinkedIn não concluída', [
+                'error' => mb_substr((string) $request->query('error'), 0, 100),
+                'error_description' => mb_substr((string) $request->query('error_description'), 0, 300),
+            ]);
+
+            return $falhou();
+        }
+
         try {
             $usuario = Socialite::driver('linkedin-openid')->user();
         } catch (Throwable $e) {
-            // Inclui quem clicou em "Cancelar" na tela do LinkedIn.
-            Log::info('Entrada pelo LinkedIn não concluída', ['erro' => $e->getMessage()]);
+            Log::info('Entrada pelo LinkedIn não concluída', ['classe' => $e::class, 'erro' => $e->getMessage()]);
 
-            return redirect()->to($volta)->withErrors(['linkedin' => 'Não deu para entrar com o LinkedIn. Você pode comentar com nome e e-mail.'], 'comentario');
+            return $falhou();
         }
 
         $email = $usuario->getEmail();

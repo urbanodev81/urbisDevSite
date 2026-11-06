@@ -247,3 +247,18 @@ it('o expurgo leva o comentário recusado antigo e mantém o aprovado', function
     expect(BlogComentario::withTrashed()->find($recusado->id))->toBeNull()
         ->and(BlogComentario::find($aprovado->id))->not->toBeNull();
 });
+
+it('quando o LinkedIn volta com erro, o log guarda o código e a descrição', function () {
+    config(['services.linkedin-openid.client_id' => 'id', 'services.linkedin-openid.client_secret' => 'segredo']);
+    \Illuminate\Support\Facades\Log::spy();
+
+    $this->withSession(['blog.linkedin_volta' => 'primeiro'])
+        ->get('/blog/entrar/linkedin/retorno?error=user_cancelled_login&error_description=The+user+cancelled+LinkedIn+login')
+        ->assertRedirect(url('/blog/primeiro').'#comentar')
+        ->assertSessionHasErrors('linkedin', null, 'comentario');
+
+    \Illuminate\Support\Facades\Log::shouldHaveReceived('info')->once()->with('Entrada pelo LinkedIn não concluída', [
+        'error' => 'user_cancelled_login',
+        'error_description' => 'The user cancelled LinkedIn login',
+    ]);
+});

@@ -1,8 +1,8 @@
 <script setup>
 import { Link, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, reactive } from 'vue';
 import {
-    Briefcase, ChartColumn, GalleryHorizontal, Inbox, LayoutDashboard, MessagesSquare, Newspaper, UserCog, ScrollText, Settings, X,
+    Briefcase, ChartColumn, ChevronDown, GalleryHorizontal, Inbox, LayoutDashboard, MessagesSquare, Newspaper, NotebookPen, UserCog, ScrollText, Settings, X,
 } from 'lucide-vue-next';
 
 defineProps({ aberta: Boolean });
@@ -31,9 +31,18 @@ const grupos = [
         itens: [
             { rotulo: 'Início', rota: 'painel.inicio', icone: LayoutDashboard, permissao: null },
             { rotulo: 'Contatos', rota: 'painel.contatos.index', icone: Inbox, permissao: 'leads' },
-            { rotulo: 'Blog', rota: 'painel.blog.textos.index', icone: Newspaper, permissao: 'blog' },
-            { rotulo: 'Comentários', rota: 'painel.blog.comentarios.index', icone: MessagesSquare, permissao: 'blog' },
-            { rotulo: 'Leitores do blog', rota: 'painel.blog.leitores.index', icone: ChartColumn, permissao: 'blog' },
+            // Blog com subitens (06/11/2026): textos, comentários e leitores
+            // são a mesma frente; soltos, ocupavam três linhas da raiz.
+            {
+                rotulo: 'Blog',
+                icone: Newspaper,
+                permissao: 'blog',
+                filhos: [
+                    { rotulo: 'Textos', rota: 'painel.blog.textos.index', icone: NotebookPen },
+                    { rotulo: 'Comentários', rota: 'painel.blog.comentarios.index', icone: MessagesSquare },
+                    { rotulo: 'Leitores', rota: 'painel.blog.leitores.index', icone: ChartColumn },
+                ],
+            },
         ],
     },
     {
@@ -67,6 +76,14 @@ const visiveis = computed(() =>
 // Só a rota de lista (`*.index`) vira curinga: antes, `painel.inicio` virava
 // `painel.*` e o Início ficava aceso em toda tela (achado no smoke do 3b).
 const ativo = (rota) => route().current(rota) || (rota.endsWith('.index') && route().current(rota.replace(/\.index$/, '.*')));
+
+// Submenu: abre sozinho quando a tela atual é de um dos filhos (criar e
+// editar texto contam, pelo curinga de `ativo`); o clique só alterna a escolha.
+const escolha = reactive({});
+const filhoAtivo = (item) => item.filhos.some((f) => ativo(f.rota));
+const aberto = (item) => escolha[item.rotulo] ?? filhoAtivo(item);
+const alternar = (item) => { escolha[item.rotulo] = !aberto(item); };
+const idDoSubmenu = (item) => `submenu-${item.rotulo.toLowerCase()}`;
 </script>
 
 <template>
@@ -109,8 +126,43 @@ const ativo = (rota) => route().current(rota) || (rota.endsWith('.index') && rou
                 </p>
 
                 <ul class="space-y-1">
-                    <li v-for="item in grupo.itens" :key="item.rota">
+                    <li v-for="item in grupo.itens" :key="item.rota ?? item.rotulo">
+                        <template v-if="item.filhos">
+                            <button
+                                type="button"
+                                class="flex min-h-[44px] w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm font-medium transition"
+                                :class="filhoAtivo(item) ? 'text-accent' : 'text-fg-muted hover:bg-surface-sunken hover:text-fg'"
+                                :aria-expanded="aberto(item) ? 'true' : 'false'"
+                                :aria-controls="idDoSubmenu(item)"
+                                @click="alternar(item)"
+                            >
+                                <component :is="item.icone" class="h-5 w-5 shrink-0" aria-hidden="true" />
+                                <span class="flex-1">{{ item.rotulo }}</span>
+                                <ChevronDown
+                                    class="h-4 w-4 shrink-0 transition-transform"
+                                    :class="aberto(item) ? 'rotate-180' : ''"
+                                    aria-hidden="true"
+                                />
+                            </button>
+                            <ul v-show="aberto(item)" :id="idDoSubmenu(item)" class="mt-1 space-y-1 border-l border-line pl-3 ml-5">
+                                <li v-for="filho in item.filhos" :key="filho.rota">
+                                    <Link
+                                        :href="route(filho.rota)"
+                                        class="flex min-h-[44px] items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition"
+                                        :class="ativo(filho.rota)
+                                            ? 'bg-accent-subtle text-accent'
+                                            : 'text-fg-muted hover:bg-surface-sunken hover:text-fg'"
+                                        :aria-current="ativo(filho.rota) ? 'page' : undefined"
+                                        @click="$emit('fechar')"
+                                    >
+                                        <component :is="filho.icone" class="h-4 w-4 shrink-0" aria-hidden="true" />
+                                        {{ filho.rotulo }}
+                                    </Link>
+                                </li>
+                            </ul>
+                        </template>
                         <Link
+                            v-else
                             :href="route(item.rota)"
                             class="flex min-h-[44px] items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition"
                             :class="ativo(item.rota)

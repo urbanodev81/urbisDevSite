@@ -1,5 +1,14 @@
 # Infra do ambiente de teste (`site-dev.urbisdev.tech`)
 
+> **⚠️ Tier DESLIGADO em 06/11/2026.** O urbisdev só tem produção (decisão de
+> 05/11): texto novo se confere pela Prévia do painel. Na VPS saíram os 4
+> contêineres, o volume, as imagens, `~/site-dev`, o vhost e o certificado; o
+> registro DNS `site-dev.urbisdev.tech` ficou (cai no server padrão, 301).
+> Backup (dump do banco de smoke, `.env`, vhost, commit) em
+> `~/backups/urbisdev-site-dev-desligado-20261106/`. Este arquivo fica como
+> **receita para religar**: o passo a passo abaixo continua valendo, mais
+> `certbot --nginx -d site-dev.urbisdev.tech`.
+
 > Criado em 19/08/2026. Estes arquivos são a **cópia versionada** do que está
 > rodando na VPS — o original vive lá, e até aqui a infra da VPS não tinha
 > controle de versão nenhum. Se você mudar um dos dois lados, mude o outro.

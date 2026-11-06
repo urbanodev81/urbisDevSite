@@ -161,8 +161,9 @@ o do molde "site pequeno" (Duo/Girls/WJ), e o painel veio de lá:
   5 Produção ✅ (05/11/2026; o bloco 4 vem depois, direto em produção).
   **O painel está em produção** (`urbisdev.tech/painel`). O urbisdev **só tem
   produção** (decisão dele, 05/11): texto novo se confere pela **Prévia** do
-  painel, nunca num ambiente à parte. O `urbisdev-site-dev` é desligado depois
-  da conferência da produção. Publicar = push na `pre-prod`. A receita
+  painel, nunca num ambiente à parte. O `urbisdev-site-dev` **foi desligado em
+  06/11/2026** (backup em `~/backups/urbisdev-site-dev-desligado-20261106/` na
+  VPS; para religar, `infra/README.md`). Publicar = push na `pre-prod`. A receita
   (`site_prod` no `publicar.sh`) constrói a imagem do commit novo **antes** do
   `git pull`, então a troca leva menos de 1 minuto.
 

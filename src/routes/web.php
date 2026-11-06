@@ -16,6 +16,7 @@ use App\Http\Controllers\Painel\BlogPreviaController;
 use App\Http\Controllers\Painel\TextoController;
 use App\Http\Controllers\Painel\ContatoController;
 use App\Http\Controllers\Painel\ConfiguracaoController;
+use App\Http\Controllers\Painel\LancamentoController;
 use App\Http\Controllers\Painel\ServicoController;
 use App\Http\Controllers\Painel\PainelController;
 use App\Http\Controllers\Painel\UsuarioController;
@@ -266,6 +267,18 @@ Route::middleware('auth')->prefix('painel')->group(function () {
         Route::put('servicos/{servico}', [ServicoController::class, 'update'])->whereNumber('servico')->name('update');
         Route::delete('servicos/{servico}', [ServicoController::class, 'destroy'])->whereNumber('servico')->name('destroy');
         Route::post('servicos/{servico}/mover', [ServicoController::class, 'mover'])->whereNumber('servico')->name('mover');
+    });
+
+    // Banner de lançamentos (bloco 4c, 06/11/2026). Mesma permissão. A imagem
+    // sobe no próprio formulário: o Vue manda POST com `_method=PUT` ao editar,
+    // porque o PHP não lê multipart em PUT.
+    Route::middleware('can:configuracoes.gerenciar')->prefix('site')->name('painel.lancamentos.')->group(function () {
+        Route::get('lancamentos', [LancamentoController::class, 'index'])->name('index');
+        Route::post('lancamentos', [LancamentoController::class, 'store'])->middleware('throttle:20,1')->name('store');
+        Route::put('lancamentos/{lancamento}', [LancamentoController::class, 'update'])->whereNumber('lancamento')
+            ->middleware('throttle:20,1')->name('update');
+        Route::delete('lancamentos/{lancamento}', [LancamentoController::class, 'destroy'])->whereNumber('lancamento')->name('destroy');
+        Route::post('lancamentos/{lancamento}/mover', [LancamentoController::class, 'mover'])->whereNumber('lancamento')->name('mover');
     });
 
     Route::get('auditoria', AuditoriaController::class)

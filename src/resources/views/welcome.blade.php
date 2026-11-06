@@ -157,9 +157,11 @@
         </section>
 
         {{-- Banner de lançamentos, logo depois do hero (30/10/2026): o que a casa já
-             lançou e tem endereço público. A lista mora em `config/lancamentos.php`
-             e a passagem em `public/lancamentos.js`. --}}
-        @php($lancamentos = config('lancamentos'))
+             lançou e tem endereço público. Os slides vêm de Site › Lançamentos
+             (App\Support\LancamentosDoSite, bloco 4c, 06/11/2026); nenhum ativo, o
+             banner some. A passagem mora em `public/lancamentos.js`. --}}
+        @php($lancamentos = \App\Support\LancamentosDoSite::lista())
+        @if ($lancamentos)
         <section id="lancamentos" class="lancamentos" aria-label="Lançamentos" aria-roledescription="carrossel">
             <div class="container">
                 <div class="lanc-trilho">
@@ -173,14 +175,16 @@
                                     <a class="btn btn-primary" href="{{ $lancamento['url'] }}">{{ $lancamento['chamada'] }}
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                                     </a>
-                                    <a class="btn btn-ghost" href="{{ $lancamento['secundario_url'] }}">{{ $lancamento['secundario'] }}</a>
+                                    @if ($lancamento['secundario_url'])
+                                        <a class="btn btn-ghost" href="{{ $lancamento['secundario_url'] }}">{{ $lancamento['secundario'] }}</a>
+                                    @endif
                                 </div>
                                 @if ($lancamento['nota'])
                                     <p class="lanc-nota">{{ $lancamento['nota'] }}</p>
                                 @endif
                             </div>
                             <a class="lanc-tela" href="{{ $lancamento['url'] }}" tabindex="-1" aria-hidden="true">
-                                <img src="{{ $lancamento['imagem'] }}" alt="" width="1200" height="750" loading="lazy" decoding="async">
+                                <img src="{{ $lancamento['imagem_url'] }}" alt="" width="1200" height="750" loading="lazy" decoding="async">
                             </a>
                         </div>
                     @endforeach
@@ -200,6 +204,7 @@
                 @endif
             </div>
         </section>
+        @endif
 
         {{-- O que fazemos --}}
         {{-- As frentes vêm de Site › Serviços (App\Support\ServicosDoSite, bloco 4b,

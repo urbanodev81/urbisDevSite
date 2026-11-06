@@ -15,6 +15,14 @@ lançou. Não crie número de versão nem date release por conta própria.
 ## [Não lançado]
 
 ### Adicionado
+- **Lançamentos da home no painel** (06/11/2026, bloco 4c). Em Site ›
+  Lançamentos o administrador adiciona, edita, oculta, remove e reordena os
+  slides do banner logo depois do topo: etiqueta, título, texto, botão
+  principal, segundo link e nota opcionais, e a imagem, enviada pela própria
+  tela e recortada no centro em 1200×750 (a tela mostra o corte antes de
+  salvar). Nasce com os 2 slides de sempre (USI e Imóveis Jacob), que saíram do
+  `config/lancamentos.php`; com o banco fora, o site mostra esses 2. Sem nenhum
+  ativo, o banner some.
 - **Serviços da home no painel** (06/11/2026, bloco 4b). Em Site › Serviços o
   administrador adiciona, edita, oculta, remove e reordena as frentes de "O que
   fazemos": título, etiqueta, texto, ícone e cor (de listas fechadas), selo "No

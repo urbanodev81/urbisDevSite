@@ -93,7 +93,7 @@ robôs de IA entrarem de propósito. **Nenhum produto (Synapse, SSB) nem
 cliente pelo nome** em texto da home ou nesses dados — decisão dele. **A exceção é
 o USI (30/10/2026):** lançado, é citado com link para <https://usi.urbisdev.tech> no
 cartão de imobiliárias, no rodapé, no `OfferCatalog` e no `llms.txt`. Logo depois do hero mora o banner de
-lançamentos (`config/lancamentos.php`, capturas em `public/lancamentos/`, passagem
+lançamentos (Site › Lançamentos desde 06/11, ver "Lançamentos" abaixo; passagem
 em `public/lancamentos.js`): só o que já foi lançado, e é o único lugar da home
 que cita cliente pelo nome (Imóveis Jacob, pedido dele em 30/10/2026). A home do
 USI aponta de volta para cá. As frentes
@@ -178,8 +178,18 @@ o do molde "site pequeno" (Duo/Girls/WJ), e o painel veio de lá:
   (o banco não guarda SVG nem CSS); ícone novo = linha em `ICONES`. Banco fora →
   `PADRAO` (os 4 de 06/11, também a semente da migration); nenhum ativo → a
   seção e o catálogo somem.
+- **Lançamentos (bloco 4c, 06/11/2026).** Os slides do banner são a tabela
+  `lancamentos`, lida só por `App\Support\LancamentosDoSite::lista()` (mesmo
+  desenho dos Serviços: cache limpo pelo model, `PADRAO` com o banco fora,
+  nenhum ativo → o banner some). O `config/lancamentos.php` saiu; os 2 slides
+  dele são a semente e a reserva. A imagem sobe no próprio formulário (o Vue
+  manda POST com `_method=PUT` ao editar: o PHP não lê arquivo em PUT) e
+  `ImagemDoSite` recorta o centro em 1200×750, JPEG, em `storage/app/public/site/`.
+  A coluna `imagem` aceita os dois formatos: `site/…jpg` (disco `public`) ou
+  `/lancamentos/…jpg` (as capturas de `public/`, que nunca são apagadas).
+  Trocar ou remover apaga do disco só a imagem que a tela subiu.
 - Por blocos (6.4 do estudo): 1 Fundação ✅ · 2 Contatos ✅ (lado do Sócrates
-  pendente) · 3 Blog no banco ✅ (3a editor, 3b leitores) · 4 Configurações, serviços e lançamentos ·
+  pendente) · 3 Blog no banco ✅ (3a editor, 3b leitores) · 4 Configurações, serviços e lançamentos (4a–4c ✅; 4d Perguntas a seguir) ·
   5 Produção ✅ (05/11/2026; o bloco 4 vem depois, direto em produção).
   **O painel está em produção** (`urbisdev.tech/painel`). O urbisdev **só tem
   produção** (decisão dele, 05/11): texto novo se confere pela **Prévia** do

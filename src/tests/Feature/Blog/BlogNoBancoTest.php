@@ -258,8 +258,10 @@ it('a imagem pequena à direita chega ao site com o atributo e o estilo', functi
 
     $this->get('/blog/como-escolher-um-sistema')->assertOk()
         ->assertSee('data-tamanho="pequena"', false)
-        ->assertSee('data-alinhar="direita"', false)
-        ->assertSee('.blog-texto img[data-alinhar="direita"]', false);
+        ->assertSee('data-alinhar="direita"', false);
+
+    // O estilo vem do pacote urbanodev/blog desde a v0.7.0.
+    $this->get('/blog/estilo.css')->assertOk()->assertSee('.blog-texto img[data-alinhar="direita"]', false);
 });
 
 it('tamanho e alinhamento da imagem passam, valor inventado sai', function () {
@@ -285,8 +287,7 @@ it('ampliar ao clicar: só "sim" passa e o site leva a caixa da foto grande', fu
 
     $this->get('/blog/como-escolher-um-sistema')->assertOk()
         ->assertSee('data-ampliar="sim"', false)
-        ->assertSee('id="foto-ampliada"', false)
-        ->assertSee('img[data-ampliar="sim"]', false);
+        ->assertSee('id="blog-foto-ampliada"', false);
 });
 
 it('a capa sai recortada em 1200×630', function () {

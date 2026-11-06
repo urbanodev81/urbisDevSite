@@ -20,7 +20,7 @@ return [
     'encaixes' => [
         'fim_do_texto' => ['blog.leitores'],
         'fim_do_indice' => ['blog.mais-lidos'],
-        'pagina' => ['blog.whatsapp', 'blog.imagens'],
+        'pagina' => ['blog.whatsapp'],
     ],
     'layout' => 'layouts.site',
     'secoes' => ['titulo' => 'titulo', 'descricao' => 'descricao', 'conteudo' => 'conteudo', 'imagem' => 'og_imagem', 'robots' => 'robots'],

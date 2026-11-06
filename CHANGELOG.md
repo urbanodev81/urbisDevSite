@@ -6,6 +6,13 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 **Estamos pré-v1**: tudo vive em `## [Não lançado]` até o Ricardo dizer que
 
 ### Alterado
+- **Foto ao lado do texto e "ampliar ao clicar" agora vêm do pacote
+  `urbanodev/blog` v0.7.0** (06/11/2026). O site não muda: o estilo e o script
+  saíram de `views/blog/imagens.blade.php` (apagada) para o pacote, e qualquer
+  sistema com o blog ganha o mesmo recurso.
+- **Log do "Comentar com o LinkedIn" diz por que falhou.** Quando o LinkedIn
+  volta com `?error=`, o log guarda o `error` e o `error_description` (antes
+  ficava `{"erro":""}`).
 - **Blog mais legível para o Google e para assistentes de IA** (auditoria SEO/GEO
   de 06/11/2026). Todo texto sai assinado (o do painel sem autor leva
   "Ricardo Urbano", trocável em `BLOG_AUTOR_PADRAO`), é anunciado como artigo no

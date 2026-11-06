@@ -465,7 +465,7 @@ const ativo = (b) => (b.ativo === null ? false : Array.isArray(b.ativo) ? editor
 :deep(.texto-do-blog pre code) { background: none; padding: 0; }
 :deep(.texto-do-blog hr) { border: 0; border-top: 1px solid rgba(127, 127, 127, 0.4); margin: 1.5rem 0; }
 :deep(.texto-do-blog img) { max-width: 100%; height: auto; border-radius: 0.5rem; }
-/* Tamanho e posição: os mesmos números do site (resources/views/blog/imagens.blade.php). */
+/* Tamanho e posição: os mesmos números do site (blog.css do pacote urbanodev/blog, desde a v0.7.0). */
 :deep(.texto-do-blog img[data-tamanho="pequena"]) { width: 33%; }
 :deep(.texto-do-blog img[data-tamanho="media"]) { width: 50%; }
 :deep(.texto-do-blog img[data-alinhar="centro"]) { display: block; margin-left: auto; margin-right: auto; }

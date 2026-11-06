@@ -14,6 +14,14 @@ lançou. Não crie número de versão nem date release por conta própria.
 
 ## [Não lançado]
 
+- **Mover a foto no texto e ampliar ao clicar** (06/11/2026). A imagem
+  selecionada ganhou Subir e Descer (na barra e no menu do botão direito): passa
+  para antes ou depois do parágrafo vizinho, inclusive no celular, onde não há
+  arrastar. Com a posição à esquerda ou à direita, o texto continua em volta.
+  Nova opção "Ampliar ao clicar", marcada foto por foto: no site, a foto marcada
+  abre grande sobre fundo escuro, com a descrição embaixo; fecha com Esc, com
+  clique ou no X, e também abre pelo teclado.
+
 - **Galeria de imagens no editor do blog** (05/11/2026). O botão de imagem abre
   um modal com TODA imagem do sistema — as enviadas pelo painel, as capas, as de
   dentro dos textos e as ilustrações dos guias —, com busca, onde cada uma já foi

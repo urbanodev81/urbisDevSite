@@ -40,6 +40,9 @@ class SaneadorDeTexto
 
     public const ALINHAMENTOS = ['esquerda', 'centro', 'direita'];
 
+    /** "Ampliar ao clicar" (06/11/2026): marcado foto por foto no editor. */
+    public const AMPLIAR = ['sim'];
+
     private HtmlSanitizer $sanitizer;
 
     public function __construct()
@@ -57,7 +60,7 @@ class SaneadorDeTexto
         }
         $config = $config
             ->allowElement('a', ['href', 'title'])
-            ->allowElement('img', ['src', 'alt', 'width', 'height', 'data-tamanho', 'data-alinhar'])
+            ->allowElement('img', ['src', 'alt', 'width', 'height', 'data-tamanho', 'data-alinhar', 'data-ampliar'])
             ->allowElement('figure', ['data-video', 'data-id'])
             // Tag de formatação que não está na lista sai, o texto dentro fica.
             ->blockElement('span')->blockElement('div')->blockElement('u')->blockElement('h1')
@@ -87,7 +90,7 @@ class SaneadorDeTexto
                     $img->removeAttribute($medida);
                 }
             }
-            foreach (['data-tamanho' => self::TAMANHOS, 'data-alinhar' => self::ALINHAMENTOS] as $atributo => $valores) {
+            foreach (['data-tamanho' => self::TAMANHOS, 'data-alinhar' => self::ALINHAMENTOS, 'data-ampliar' => self::AMPLIAR] as $atributo => $valores) {
                 if ($img->hasAttribute($atributo) && ! in_array($img->getAttribute($atributo), $valores, true)) {
                     $img->removeAttribute($atributo);
                 }

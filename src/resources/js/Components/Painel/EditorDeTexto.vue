@@ -14,11 +14,16 @@
  * `data-alinhar`; o servidor só aceita esses valores. Clique com o botão
  * direito numa imagem abre o menu rápido; a mesma barra aparece quando ela
  * está selecionada (teclado e celular não têm botão direito).
+ * Subir/Descer (06/11/2026) passa a imagem para antes ou depois do bloco
+ * vizinho — arrastar existe, mas com a foto flutuando ao lado do texto o
+ * ponto de soltar é impreciso, e no celular nem há arrastar. "Ampliar ao
+ * clicar" vira `data-ampliar="sim"`; no site a foto marcada abre grande.
  * Vídeo: cola o link do YouTube ou do Vimeo; no site vira o player sem cookie.
  */
 import { computed, onBeforeUnmount, onMounted, ref, watch, nextTick } from 'vue';
 import { EditorContent, useEditor } from '@tiptap/vue-3';
 import { Node } from '@tiptap/core';
+import { NodeSelection } from '@tiptap/pm/state';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import { Placeholder } from '@tiptap/extensions';
@@ -27,7 +32,7 @@ import { lerVideo } from '@/Composables/lerVideo';
 import {
     Bold, Italic, Strikethrough, Heading2, Heading3, List, ListOrdered, Quote,
     Link2, Code, SquareCode, Minus, ImagePlus, Video, Undo2, Redo2,
-    AlignLeft, AlignCenter, AlignRight, Replace, Trash2, Type,
+    AlignLeft, AlignCenter, AlignRight, Replace, Trash2, Type, ArrowUp, ArrowDown, Maximize2,
 } from 'lucide-vue-next';
 
 const props = defineProps({
@@ -78,9 +83,13 @@ const ImagemDoTexto = Image.extend({
             ...this.parent?.(),
             tamanho: atributoDeDados('tamanho', 'data-tamanho'),
             alinhar: atributoDeDados('alinhar', 'data-alinhar'),
+            ampliar: atributoDeDados('ampliar', 'data-ampliar'),
         };
     },
 });
+
+// Conta transações: o que depende da posição da imagem recalcula com ela.
+const transacoes = ref(0);
 
 const editor = useEditor({
     content: props.modelValue,
@@ -108,13 +117,14 @@ const editor = useEditor({
                 if (evento.target?.tagName !== 'IMG') return false;
                 const pos = view.posAtDOM(evento.target, 0);
                 editor.value.chain().focus().setNodeSelection(pos).run();
-                menu.value = { x: Math.min(evento.clientX, window.innerWidth - 240), y: Math.min(evento.clientY, window.innerHeight - 370) };
+                menu.value = { x: Math.min(evento.clientX, window.innerWidth - 240), y: Math.min(evento.clientY, window.innerHeight - 470) };
                 evento.preventDefault();
                 return true;
             },
         },
     },
     onUpdate: ({ editor: e }) => emit('update:modelValue', e.isEmpty ? '' : e.getHTML()),
+    onTransaction: () => { transacoes.value++; },
 });
 
 watch(() => props.modelValue, (valor) => {
@@ -233,6 +243,50 @@ function salvarDescricao() {
     editor.value.chain().focus().updateAttributes('image', { alt: novoAlt.value.trim() }).run();
     editandoAlt.value = false;
 }
+function alternarAmpliar() {
+    editor.value.chain().focus().updateAttributes('image', { ampliar: atual.value.ampliar === 'sim' ? null : 'sim' }).run();
+    menu.value = null;
+}
+
+// Onde a imagem está entre os irmãos (no texto, quase sempre a raiz).
+function vizinhanca() {
+    const { selection, doc } = editor.value.state;
+    if (!(selection instanceof NodeSelection)) return null;
+    const $pos = doc.resolve(selection.from);
+    return { selection, pai: $pos.parent, indice: $pos.index() };
+}
+const podeSubir = computed(() => {
+    transacoes.value; // recalcula a cada transação
+    const v = imagemSelecionada.value && vizinhanca();
+    return !!v && v.indice > 0;
+});
+const podeDescer = computed(() => {
+    transacoes.value;
+    const v = imagemSelecionada.value && vizinhanca();
+    return !!v && v.indice < v.pai.childCount - 1;
+});
+function moverImagem(direcao) {
+    const v = vizinhanca();
+    if (!v) return;
+    const { selection, pai, indice } = v;
+    const alvo = indice + direcao;
+    if (alvo < 0 || alvo >= pai.childCount) return;
+    const no = selection.node;
+    const vizinho = pai.child(alvo);
+    const tr = editor.value.state.tr;
+    let destino;
+    if (direcao < 0) {
+        destino = selection.from - vizinho.nodeSize;
+        tr.delete(selection.from, selection.to).insert(destino, no);
+    } else {
+        tr.insert(selection.to + vizinho.nodeSize, no).delete(selection.from, selection.to);
+        destino = selection.from + vizinho.nodeSize;
+    }
+    tr.setSelection(NodeSelection.create(tr.doc, destino)).scrollIntoView();
+    editor.value.view.dispatch(tr);
+    editor.value.view.focus();
+}
+
 function removerImagem() {
     editor.value.chain().focus().deleteSelection().run();
     menu.value = null;
@@ -344,6 +398,10 @@ const ativo = (b) => (b.ativo === null ? false : Array.isArray(b.ativo) ? editor
                 <component :is="icone" class="h-4 w-4" aria-hidden="true" />
             </button>
             <span class="mx-1 h-6 w-px bg-line" aria-hidden="true" />
+            <button type="button" class="botao" title="Subir (antes do bloco de cima)" aria-label="Subir a imagem" :disabled="!podeSubir" @click="moverImagem(-1)"><ArrowUp class="h-4 w-4" aria-hidden="true" /></button>
+            <button type="button" class="botao" title="Descer (depois do bloco de baixo)" aria-label="Descer a imagem" :disabled="!podeDescer" @click="moverImagem(1)"><ArrowDown class="h-4 w-4" aria-hidden="true" /></button>
+            <button type="button" class="botao gap-1 px-2" :class="{ ligado: atual.ampliar === 'sim' }" title="Ampliar ao clicar, no site" :aria-pressed="String(atual.ampliar === 'sim')" @click="alternarAmpliar"><Maximize2 class="h-4 w-4" aria-hidden="true" /><span class="hidden sm:inline">Ampliar</span></button>
+            <span class="mx-1 h-6 w-px bg-line" aria-hidden="true" />
             <button type="button" class="botao gap-1 px-2" title="Descrição" @click="abrirDescricao"><Type class="h-4 w-4" aria-hidden="true" /><span class="hidden sm:inline">Descrição</span></button>
             <button type="button" class="botao gap-1 px-2" title="Trocar imagem" aria-haspopup="dialog" @click="abrirGaleria(true)"><Replace class="h-4 w-4" aria-hidden="true" /><span class="hidden sm:inline">Trocar</span></button>
             <button type="button" class="botao gap-1 px-2 text-danger" title="Remover imagem" @click="removerImagem"><Trash2 class="h-4 w-4" aria-hidden="true" /><span class="hidden sm:inline">Remover</span></button>
@@ -368,6 +426,10 @@ const ativo = (b) => (b.ativo === null ? false : Array.isArray(b.ativo) ? editor
                 <component :is="icone" class="h-4 w-4" aria-hidden="true" />{{ nome }}
             </button>
             <div class="border-t border-line" />
+            <button type="button" role="menuitem" class="item" :disabled="!podeSubir" @click="moverImagem(-1)"><ArrowUp class="h-4 w-4" aria-hidden="true" />Subir</button>
+            <button type="button" role="menuitem" class="item" :disabled="!podeDescer" @click="moverImagem(1)"><ArrowDown class="h-4 w-4" aria-hidden="true" />Descer</button>
+            <button type="button" role="menuitemcheckbox" :aria-checked="String(atual.ampliar === 'sim')" class="item" @click="alternarAmpliar"><Maximize2 class="h-4 w-4" aria-hidden="true" />Ampliar ao clicar<span class="ml-auto">{{ atual.ampliar === 'sim' ? '✓' : '' }}</span></button>
+            <div class="border-t border-line" />
             <button type="button" role="menuitem" class="item" @click="abrirDescricao"><Type class="h-4 w-4" aria-hidden="true" />Editar descrição</button>
             <button type="button" role="menuitem" class="item" @click="abrirGaleria(true)"><Replace class="h-4 w-4" aria-hidden="true" />Trocar imagem</button>
             <button type="button" role="menuitem" class="item text-danger" @click="removerImagem"><Trash2 class="h-4 w-4" aria-hidden="true" />Remover</button>
@@ -384,7 +446,7 @@ const ativo = (b) => (b.ativo === null ? false : Array.isArray(b.ativo) ? editor
 .campo { @apply rounded-md border-line-input bg-surface text-sm text-fg placeholder:text-fg-subtle focus:border-line-strong focus:ring-2 focus:ring-accent-ring; }
 .acao { @apply inline-flex min-h-[36px] items-center rounded-md bg-accent px-3 font-semibold text-fg-on-accent; }
 .menu-rapido { @apply fixed z-40 w-56 overflow-hidden rounded-lg border border-line bg-surface pb-1 text-sm shadow-xl; }
-.menu-rapido .item { @apply flex w-full items-center gap-2 px-3 py-1.5 text-left text-fg hover:bg-surface-sunken focus-visible:bg-surface-sunken focus-visible:outline-none; }
+.menu-rapido .item { @apply flex w-full items-center gap-2 px-3 py-1.5 text-left text-fg hover:bg-surface-sunken focus-visible:bg-surface-sunken focus-visible:outline-none disabled:opacity-40 disabled:hover:bg-transparent; }
 .miniatura { @apply relative block aspect-[4/3] w-full overflow-hidden rounded-md border border-line bg-surface transition hover:border-line-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-ring; }
 .selo { @apply absolute bottom-1 left-1 rounded bg-surface/90 px-1.5 text-[11px] font-semibold text-fg; }
 .acao-sec { @apply inline-flex min-h-[36px] items-center px-2 text-fg-muted underline; }

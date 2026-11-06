@@ -273,6 +273,22 @@ it('tamanho e alinhamento da imagem passam, valor inventado sai', function () {
         ->not->toContain('<img');
 });
 
+it('ampliar ao clicar: só "sim" passa e o site leva a caixa da foto grande', function () {
+    $saneador = app(\App\Blog\SaneadorDeTexto::class);
+
+    expect($saneador->limpar('<img src="/img/guias/deploy.jpg" alt="a" data-ampliar="sim">'))->toContain('data-ampliar="sim"')
+        ->and($saneador->limpar('<img src="/img/guias/deploy.jpg" alt="a" data-ampliar="javascript:x">'))->not->toContain('data-ampliar');
+
+    $this->actingAs(contaDoBlog())->post('/painel/blog/textos', textoValido([
+        'corpo_html' => '<p>Antes.</p><img src="/img/guias/deploy.jpg" alt="O deploy" data-ampliar="sim"><p>Depois.</p>',
+    ]));
+
+    $this->get('/blog/como-escolher-um-sistema')->assertOk()
+        ->assertSee('data-ampliar="sim"', false)
+        ->assertSee('id="foto-ampliada"', false)
+        ->assertSee('img[data-ampliar="sim"]', false);
+});
+
 it('a capa sai recortada em 1200×630', function () {
     $this->actingAs(contaDoBlog())
         ->post('/painel/blog/imagens', ['arquivo' => fotoComExif(1000, 1000), 'capa' => '1'], ['Accept' => 'application/json'])

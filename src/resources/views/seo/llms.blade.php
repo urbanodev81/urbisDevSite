@@ -4,13 +4,20 @@
 
 Fazemos o código, o servidor e o acompanhamento depois de publicado. Todo projeto passa por testes automatizados, revisão de segurança, acessibilidade desde o desenho e cuidado com a LGPD.
 
+@php
+    // Site › Serviços (bloco 4b). Texto puro (text/plain + nosniff): `{!! !!}`
+    // para o apóstrofo não virar &#039;.
+    $servicos = \App\Support\ServicosDoSite::lista();
+@endphp
+@if ($servicos)
 ## O que fazemos
 
-- Imobiliárias (no ar): o [USI](https://usi.urbisdev.tech), nosso sistema imobiliário, com site de busca de imóveis, fichas de lançamento e blog, e a gestão do acervo e dos contatos dos interessados, com a marca da imobiliária.
-- Sites com painel próprio (no ar): para bandas, artistas, oficinas e profissionais; o cliente troca agenda, fotos, vídeos e textos pelo painel, sem depender de ninguém.
-- Clínicas de terapia (em construção): gestão da clínica com agenda, evolução de cada paciente e cuidado com o dado de saúde.
-- Sindicatos e associações (em construção): cadastro de associados, mensalidades, comunicação com a base e votações.
+@foreach ($servicos as $s)
+- {!! $s['titulo'] !!} ({{ mb_strtolower($s['situacao_rotulo']) }}): {!! $s['texto'] !!}@if ($s['link_url']) [{!! $s['link_rotulo'] !!}]({!! $s['link_url'] !!})@endif
 
+@endforeach
+
+@endif
 ## Contato
 
 - E-mail: {{ $site('contato.email') }}

@@ -15,6 +15,13 @@ lançou. Não crie número de versão nem date release por conta própria.
 ## [Não lançado]
 
 ### Adicionado
+- **Serviços da home no painel** (06/11/2026, bloco 4b). Em Site › Serviços o
+  administrador adiciona, edita, oculta, remove e reordena as frentes de "O que
+  fazemos": título, etiqueta, texto, ícone e cor (de listas fechadas), selo "No
+  ar"/"Em construção" e um link opcional. A mesma lista alimenta os cartões da
+  home, o catálogo de serviços do JSON-LD e o `llms.txt`, que antes tinham três
+  redações diferentes. Nasce com os 4 cartões de sempre; com o banco fora, o
+  site mostra esses 4.
 - **Configuração do site no painel** (06/11/2026, bloco 4a). Em Site ›
   Configurações o administrador troca o e-mail, o WhatsApp e a mensagem pronta,
   o Instagram e o LinkedIn (o ícone só aparece com o endereço preenchido), a

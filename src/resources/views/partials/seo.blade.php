@@ -47,17 +47,14 @@
             'telephone' => $telefone,
             'availableLanguage' => 'Portuguese',
         ],
-        'hasOfferCatalog' => [
+        // A mesma lista dos cartões da home (Site › Serviços, bloco 4b).
+        'hasOfferCatalog' => ($ofertas = \App\Support\ServicosDoSite::paraOCatalogo()) ? [
             '@type' => 'OfferCatalog',
             'name' => 'O que fazemos',
-            'itemListElement' => collect([
-                ['USI: site e sistema de gestão para imobiliárias', 'Site com busca de imóveis, fichas de lançamento e blog, e o sistema de gestão do acervo e dos contatos, com a marca da imobiliária.', 'https://usi.urbisdev.tech'],
-                ['Sites com painel próprio', 'Site para bandas, artistas, oficinas e profissionais, com painel para o próprio cliente trocar agenda, fotos, vídeos e textos.'],
-                ['Sistema de gestão para clínicas de terapia', 'Agenda, evolução de cada paciente e cuidado com o dado de saúde desde o desenho. Em construção.'],
-                ['Sistema para sindicatos e associações', 'Cadastro de associados, mensalidades, comunicação com a base e votações. Em construção.'],
-            ])->map(fn ($s) => ['@type' => 'Offer', 'itemOffered' => array_filter(['@type' => 'Service', 'name' => $s[0], 'description' => $s[1], 'url' => $s[2] ?? null])])->all(),
-        ],
+            'itemListElement' => $ofertas,
+        ] : null,
     ];
+    $casa = array_filter($casa, fn ($v) => $v !== null);
 
     $grafo = [
         $casa,

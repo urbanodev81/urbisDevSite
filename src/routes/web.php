@@ -16,6 +16,7 @@ use App\Http\Controllers\Painel\BlogPreviaController;
 use App\Http\Controllers\Painel\TextoController;
 use App\Http\Controllers\Painel\ContatoController;
 use App\Http\Controllers\Painel\ConfiguracaoController;
+use App\Http\Controllers\Painel\ServicoController;
 use App\Http\Controllers\Painel\PainelController;
 use App\Http\Controllers\Painel\UsuarioController;
 use App\Http\Controllers\ProfileController;
@@ -256,6 +257,15 @@ Route::middleware('auth')->prefix('painel')->group(function () {
         Route::put('configuracoes', [ConfiguracaoController::class, 'update'])->name('update');
         Route::post('configuracoes/imagem/{chave}', [ConfiguracaoController::class, 'imagem'])
             ->middleware('throttle:20,1')->name('imagem');
+    });
+
+    // Serviços de "O que fazemos" (bloco 4b, 06/11/2026). Mesma permissão.
+    Route::middleware('can:configuracoes.gerenciar')->prefix('site')->name('painel.servicos.')->group(function () {
+        Route::get('servicos', [ServicoController::class, 'index'])->name('index');
+        Route::post('servicos', [ServicoController::class, 'store'])->name('store');
+        Route::put('servicos/{servico}', [ServicoController::class, 'update'])->whereNumber('servico')->name('update');
+        Route::delete('servicos/{servico}', [ServicoController::class, 'destroy'])->whereNumber('servico')->name('destroy');
+        Route::post('servicos/{servico}/mover', [ServicoController::class, 'mover'])->whereNumber('servico')->name('mover');
     });
 
     Route::get('auditoria', AuditoriaController::class)

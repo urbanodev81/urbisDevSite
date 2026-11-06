@@ -96,8 +96,8 @@ cartão de imobiliárias, no rodapé, no `OfferCatalog` e no `llms.txt`. Logo de
 lançamentos (`config/lancamentos.php`, capturas em `public/lancamentos/`, passagem
 em `public/lancamentos.js`): só o que já foi lançado, e é o único lugar da home
 que cita cliente pelo nome (Imóveis Jacob, pedido dele em 30/10/2026). A home do
-USI aponta de volta para cá. Mudou uma
-frente da home? Mude junto o `OfferCatalog` do partial e o `seo/llms.blade.php`.
+USI aponta de volta para cá. As frentes
+da home, o `OfferCatalog` e o `llms.txt` saem de uma lista só desde 06/11 (ver "Serviços" abaixo).
 Escrever `@context` dentro de `{!! !!}` vira a diretiva do Laravel 12: monte o
 JSON no `@php`. A 404 é `errors/404.blade.php`, que estende o layout.
 **Acabamento de 06/11/2026 (auditoria em `Arquivos/analise/relatorios/urbisdev/AUDITORIA-SEO-GEO.md`):** tag, seção e mês do blog são `noindex, follow` pelo próprio partial e saem do sitemap (`PaginasPublicas`); o texto é `og:type=article` com a trilha pelo Blog; texto do painel sem autor assina `config('blog.autor_padrao')`; o `<title>` do layout acrescenta "— UrbisDev" quando a página não traz a marca. Diretiva Blade colada em palavra (`UrbisDev@endunless`) não é lida: derruba o layout inteiro.
@@ -170,6 +170,14 @@ o do molde "site pequeno" (Duo/Girls/WJ), e o painel veio de lá:
   na home? Ponha no catálogo com o texto atual como `padrao`, não no Blade.
   Fica literal de propósito: `errors/500` (página de erro não lê banco) e o
   e-mail de aviso do `ContactController`.
+- **Serviços (bloco 4b, 06/11/2026).** As frentes de "O que fazemos" são a
+  tabela `servicos`, lida só por `App\Support\ServicosDoSite::lista()` (cache,
+  limpo pelo próprio model ao gravar). Home, `OfferCatalog` do `partials/seo` e
+  `seo/llms` leem a mesma lista: **mudar uma frente é pela tela Site › Serviços,
+  não pelo Blade.** Ícone e cor são chaves de listas fechadas no mesmo arquivo
+  (o banco não guarda SVG nem CSS); ícone novo = linha em `ICONES`. Banco fora →
+  `PADRAO` (os 4 de 06/11, também a semente da migration); nenhum ativo → a
+  seção e o catálogo somem.
 - Por blocos (6.4 do estudo): 1 Fundação ✅ · 2 Contatos ✅ (lado do Sócrates
   pendente) · 3 Blog no banco ✅ (3a editor, 3b leitores) · 4 Configurações, serviços e lançamentos ·
   5 Produção ✅ (05/11/2026; o bloco 4 vem depois, direto em produção).

@@ -2,7 +2,7 @@
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import {
-    ChartColumn, Inbox, LayoutDashboard, MessagesSquare, Newspaper, UserCog, ScrollText, Settings, X,
+    Briefcase, ChartColumn, Inbox, LayoutDashboard, MessagesSquare, Newspaper, UserCog, ScrollText, Settings, X,
 } from 'lucide-vue-next';
 
 defineProps({ aberta: Boolean });
@@ -23,7 +23,7 @@ const permissoes = computed(() => pagina.props.auth?.permissoes ?? {});
  * bater num 403 todo dia.
  */
 // Por blocos da 246: Contatos desde o bloco 2 (04/11/2026), Blog no 3 e o
-// grupo "Site" no 4 (06/11/2026: Configurações; Serviços, Lançamentos e
+// grupo "Site" no 4 (06/11/2026: Configurações e Serviços; Lançamentos e
 // Perguntas entram nele a seguir, com a mesma permissão).
 const grupos = [
     {
@@ -40,6 +40,7 @@ const grupos = [
         titulo: 'Site',
         itens: [
             { rotulo: 'Configurações', rota: 'painel.configuracoes.edit', icone: Settings, permissao: 'configuracoes' },
+            { rotulo: 'Serviços', rota: 'painel.servicos.index', icone: Briefcase, permissao: 'configuracoes' },
         ],
     },
     {

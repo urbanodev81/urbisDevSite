@@ -202,48 +202,36 @@
         </section>
 
         {{-- O que fazemos --}}
+        {{-- As frentes vêm de Site › Serviços (App\Support\ServicosDoSite, bloco 4b,
+             06/11/2026); banco fora, os 4 de sempre. Sem nome de produto e sem
+             dizer para quem é a obra (decisão de 18/10/2026); a exceção é o USI,
+             lançado, com endereço público (30/10/2026). Nenhum serviço ativo:
+             a seção não existe. --}}
+        @php($servicos = \App\Support\ServicosDoSite::lista())
+        @if ($servicos)
         <section id="fazemos">
             <div class="container">
                 <div class="section-head reveal">
                     <span class="eyebrow">{{ $site('home.fazemos_etiqueta') }}</span>
                     <h2>{{ $site('home.fazemos_titulo') }}</h2>
                 </div>
-                {{-- Quatro frentes: duas no ar, duas em construção. Sem nome de produto e
-                     sem dizer para quem é a obra (decisão de 18/10/2026). A exceção é
-                     o USI, que já foi lançado e tem endereço público (30/10/2026). --}}
                 <div class="districts">
-                    <div class="district reveal" style="--dc:var(--d-urb)">
-                        <span class="tag">Frente · <b>Imobiliário</b></span>
-                        <svg class="card-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-4h6v4"/><path d="M9 10h.01"/><path d="M15 10h.01"/><path d="M9 14h.01"/><path d="M15 14h.01"/></svg>
-                        <h3>Imobiliárias</h3>
-                        <p>O USI é o nosso sistema imobiliário: site com busca de imóveis, fichas de lançamento e blog, e a gestão por trás, com cadastro do acervo, contatos dos interessados e a sua marca em tudo.</p>
-                        <a class="district-link" href="https://usi.urbisdev.tech">Conhecer o USI&nbsp;&rarr;</a>
-                        <span class="chip">No ar</span>
+                    @foreach ($servicos as $servico)
+                    <div class="district reveal" style="--dc:{{ $servico['cor_css'] }}">
+                        <span class="tag">Frente · <b>{{ $servico['frente'] }}</b></span>
+                        <svg class="card-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{!! $servico['svg'] !!}</svg>
+                        <h3>{{ $servico['titulo'] }}</h3>
+                        <p>{{ $servico['texto'] }}</p>
+                        @if ($servico['link_url'])
+                        <a class="district-link" href="{{ $servico['link_url'] }}">{{ $servico['link_rotulo'] }}&nbsp;&rarr;</a>
+                        @endif
+                        <span @class(['chip', 'chip--dev' => $servico['situacao'] === 'em_construcao'])>{{ $servico['situacao_rotulo'] }}</span>
                     </div>
-                    <div class="district reveal" style="--dc:var(--amber-500)">
-                        <span class="tag">Frente · <b>Sites com painel</b></span>
-                        <svg class="card-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/><path d="M8 14h4"/><path d="M8 17h8"/></svg>
-                        <h3>Sites que você mesmo atualiza</h3>
-                        <p>Para bandas, artistas, oficinas e profissionais: agenda, fotos, vídeos e textos trocados pelo painel, sem depender de ninguém, com o site rápido e acessível.</p>
-                        <span class="chip">No ar</span>
-                    </div>
-                    <div class="district reveal" style="--dc:var(--d-synapse)">
-                        <span class="tag">Frente · <b>Saúde</b></span>
-                        <svg class="card-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-                        <h3>Clínicas de terapia</h3>
-                        <p>Gestão da clínica com agenda, evolução de cada paciente e cuidado com o dado de saúde desde o desenho.</p>
-                        <span class="chip chip--dev">Em construção</span>
-                    </div>
-                    <div class="district reveal" style="--dc:var(--d-ssb)">
-                        <span class="tag">Frente · <b>Associações</b></span>
-                        <svg class="card-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                        <h3>Sindicatos e associações</h3>
-                        <p>Cadastro de associados, mensalidades, comunicação com a base e votações, num sistema só.</p>
-                        <span class="chip chip--dev">Em construção</span>
-                    </div>
+                    @endforeach
                 </div>
             </div>
         </section>
+        @endif
 
         {{-- Tipos de site: um trabalho de cada categoria do portfólio, que vem do
              Sócrates (App\Support\Portfolio). Sem nenhum marcado lá, a seção

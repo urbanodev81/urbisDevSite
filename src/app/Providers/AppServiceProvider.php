@@ -19,6 +19,11 @@ class AppServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
+        // A configuração do site nas views: `{{ $site('contato.email') }}`.
+        // É um objeto que só consulta quando chamado, então o painel e o console
+        // não pagam a leitura (bloco 4a, 06/11/2026).
+        \Illuminate\Support\Facades\View::share('site', new \App\Support\ConfiguracaoDoSite);
+
         // Conta travada por senha errada (LoginRequest): um aviso ao operador
         // por e-mail+IP a cada 15 min. Pode ser o dono esquecido — ou força bruta.
         Event::listen(Lockout::class, function (Lockout $e) {

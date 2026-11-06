@@ -83,8 +83,9 @@ por `textContent`. O formulário de contato das duas demonstrações com
 `pede_contato` é um só: `partials/demo-porta.blade.php`.
 
 **SEO e GEO (desde 18/10/2026)** moram em `partials/seo.blade.php`, incluído
-pelo layout: canônico, Open Graph (imagem única `public/og-urbisdev.png`) e o
-JSON-LD da casa (o que ela faz, contato). Página nova não mexe nisso: só define
+pelo layout: canônico, Open Graph e o
+JSON-LD da casa (o que ela faz, contato). Contato, redes, descrição, imagem OG e os
+textos da home vêm do painel desde 06/11/2026 (ver "Configuração do site" abaixo). Página nova não mexe nisso: só define
 `titulo` e `descricao`, e `@section('robots', 'noindex, follow')` quando não deve
 ir ao buscador. `/sitemap.xml` e `/llms.txt` saem de `App\Support\PaginasPublicas`,
 que lê `config/demonstracoes.php` e o portfólio; `public/robots.txt` deixa os
@@ -156,6 +157,19 @@ o do molde "site pequeno" (Duo/Girls/WJ), e o painel veio de lá:
   Banco fora: a contagem vira no-op, e os comentários e os mais lidos somem
   sem derrubar a página. Retenção: `comentario` (recusado/arquivado) e `voto`,
   24 meses.
+- **Configuração do site (bloco 4a, 06/11/2026).** Catálogo em
+  `App\Support\ConfiguracaoDoSite` (veio do Duo): chave fora dele não existe.
+  Nas views, `{{ $site('contato.email') }}` (compartilhado no
+  `AppServiceProvider`); o telefone escrito sai do WhatsApp (`::telefone()`),
+  o título do topo aceita `*destaque*` (`::comEnfase()`, que escapa antes).
+  **O `padrao` de cada chave é o texto de antes**: vale com a chave vazia e com o
+  banco fora (`todas()` engole a exceção e não guarda cache). Tela em
+  Site › Configurações (`configuracoes.gerenciar`, só administrador), auditada.
+  Imagem OG: `App\Support\ImagemDoSite` recorta o centro em JPEG e grava em
+  `storage/app/public/site/` (no backup da VPS junto com o `blog/`). Texto novo
+  na home? Ponha no catálogo com o texto atual como `padrao`, não no Blade.
+  Fica literal de propósito: `errors/500` (página de erro não lê banco) e o
+  e-mail de aviso do `ContactController`.
 - Por blocos (6.4 do estudo): 1 Fundação ✅ · 2 Contatos ✅ (lado do Sócrates
   pendente) · 3 Blog no banco ✅ (3a editor, 3b leitores) · 4 Configurações, serviços e lançamentos ·
   5 Produção ✅ (05/11/2026; o bloco 4 vem depois, direto em produção).

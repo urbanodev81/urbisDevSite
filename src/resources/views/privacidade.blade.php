@@ -48,7 +48,7 @@
                     </p>
                     <p>
                         O controlador responsável pelo tratamento dos dados é a <strong>UrbisDev</strong>. Em caso de dúvidas
-                        ou solicitações, o canal de contato oficial é: <a href="mailto:contato@urbisdev.tech">contato@urbisdev.tech</a>.
+                        ou solicitações, o canal de contato oficial é: <a href="mailto:{{ $site('contato.email') }}">{{ $site('contato.email') }}</a>.
                     </p>
 
                     <h2 id="dados">1. Dados coletados e finalidades</h2>
@@ -114,7 +114,7 @@
                     </ul>
 
                     <h2 id="direitos">6. Direitos do titular dos dados</h2>
-                    <p>Nos termos da LGPD, o titular pode, a qualquer momento, exercer os seguintes direitos mediante solicitação ao e-mail <a href="mailto:contato@urbisdev.tech">contato@urbisdev.tech</a>:</p>
+                    <p>Nos termos da LGPD, o titular pode, a qualquer momento, exercer os seguintes direitos mediante solicitação ao e-mail <a href="mailto:{{ $site('contato.email') }}">{{ $site('contato.email') }}</a>:</p>
                     <ul>
                         <li>Confirmação da existência de tratamento de dados.</li>
                         <li>Acesso aos dados pessoais armazenados.</li>

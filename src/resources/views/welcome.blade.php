@@ -143,9 +143,10 @@
         <section class="hero" aria-label="Apresentação">
             <div class="citygrid" id="citygrid" aria-hidden="true"></div>
             <div class="container hero-inner">
-                <span class="eyebrow">Sites · Sistemas · Aplicativos</span>
-                <h1>Software que resolve <em>problemas reais</em>.</h1>
-                <p>Sites com painel próprio e sistemas de gestão para imobiliárias, clínicas, sindicatos, oficinas e artistas — do primeiro esboço ao app no celular.</p>
+                {{-- Os textos da home vêm do painel, Configurações (bloco 4a, 06/11/2026). --}}
+                <span class="eyebrow">{{ $site('home.hero_etiqueta') }}</span>
+                <h1>{!! \App\Support\ConfiguracaoDoSite::comEnfase('home.hero_titulo') !!}</h1>
+                <p>{{ $site('home.hero_texto') }}</p>
                 <div class="hero-ctas">
                     <a class="btn btn-primary" href="#contato">Fale conosco
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -204,8 +205,8 @@
         <section id="fazemos">
             <div class="container">
                 <div class="section-head reveal">
-                    <span class="eyebrow">O que fazemos</span>
-                    <h2>Soluções digitais sob medida para o seu negócio.</h2>
+                    <span class="eyebrow">{{ $site('home.fazemos_etiqueta') }}</span>
+                    <h2>{{ $site('home.fazemos_titulo') }}</h2>
                 </div>
                 {{-- Quatro frentes: duas no ar, duas em construção. Sem nome de produto e
                      sem dizer para quem é a obra (decisão de 18/10/2026). A exceção é
@@ -251,9 +252,9 @@
         <section id="trabalhos">
             <div class="container">
                 <div class="section-head reveal">
-                    <span class="eyebrow">Trabalhos</span>
-                    <h2>Cada tipo de site, com um exemplo que já fizemos.</h2>
-                    <p>Um de cada tipo. Os outros estão na página de trabalhos.</p>
+                    <span class="eyebrow">{{ $site('home.trabalhos_etiqueta') }}</span>
+                    <h2>{{ $site('home.trabalhos_titulo') }}</h2>
+                    @if ($site('home.trabalhos_texto'))<p>{{ $site('home.trabalhos_texto') }}</p>@endif
                 </div>
                 <div class="trabalhos reveal">
                     @foreach ($trabalhos as $categoria)
@@ -276,9 +277,9 @@
         <section id="demonstracoes">
             <div class="container">
                 <div class="section-head reveal">
-                    <span class="eyebrow">Demonstrações</span>
-                    <h2>Veja funcionando antes de pedir.</h2>
-                    <p>Painéis de verdade, com dados inventados. Clique, filtre e imagine com os números do seu negócio.</p>
+                    <span class="eyebrow">{{ $site('home.demonstracoes_etiqueta') }}</span>
+                    <h2>{{ $site('home.demonstracoes_titulo') }}</h2>
+                    @if ($site('home.demonstracoes_texto'))<p>{{ $site('home.demonstracoes_texto') }}</p>@endif
                 </div>
                 <div class="demos-home reveal">
                     @foreach (collect($demos ?? [])->where('pronta', true)->take(3) as $slug => $demo)
@@ -298,12 +299,12 @@
         <section id="contato" class="contact">
             <div class="container contact-grid">
                 <div class="contact-info reveal">
-                    <span class="eyebrow">Contato</span>
-                    <h2 style="margin-top:16px">Tem um projeto em mente? Vamos conversar.</h2>
-                    <p>Conte pra gente o que você precisa. Preencha o formulário e retornamos o contato.</p>
-                    <a class="contact-line" href="mailto:contato@urbisdev.tech">
+                    <span class="eyebrow">{{ $site('home.contato_etiqueta') }}</span>
+                    <h2 style="margin-top:16px">{{ $site('home.contato_titulo') }}</h2>
+                    @if ($site('home.contato_texto'))<p>{{ $site('home.contato_texto') }}</p>@endif
+                    <a class="contact-line" href="mailto:{{ $site('contato.email') }}">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-                        contato@urbisdev.tech
+                        {{ $site('contato.email') }}
                     </a>
                     <a class="contact-line" href="https://urbisdev.tech">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>

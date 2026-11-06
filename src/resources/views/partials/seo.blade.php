@@ -4,7 +4,7 @@
     - Endereço canônico sem query: `?demo=` da home e afins não viram páginas
       duplicadas para o buscador.
     - Open Graph e Twitter: o cartão que aparece quando o link é colado no
-      WhatsApp, no LinkedIn ou num chat. A imagem é uma só (`og-urbisdev.png`).
+      WhatsApp, no LinkedIn ou num chat. A imagem da casa vem do painel (Configurações › Empresa; reserva `og-urbisdev.png`).
     - JSON-LD: quem é a casa (`Organization` + `ProfessionalService`), o que
       ela faz (`OfferCatalog`, as frentes da home) e onde se está no site
       (`BreadcrumbList`). É o que buscador e assistente de IA leem para
@@ -23,7 +23,8 @@
     $canonico = url()->current();
     // Página com imagem própria (a capa de um texto do blog) troca a da casa na prévia.
     $imagemPropria = html_entity_decode(trim($__env->yieldContent('og_imagem')), ENT_QUOTES);
-    $imagem = $imagemPropria ?: asset('og-urbisdev.png');
+    $imagem = $imagemPropria ?: \App\Support\ConfiguracaoDoSite::imagemOg();
+    $telefone = \App\Support\ConfiguracaoDoSite::telefone();
     $raiz = url('/');
 
     $casa = [
@@ -33,17 +34,17 @@
         'url' => $raiz,
         'logo' => asset('favicon.svg'),
         'image' => $imagem,
-        'email' => 'contato@urbisdev.tech',
-        'telephone' => '+55 11 97686-2551',
-        'description' => 'Sites com painel próprio e sistemas de gestão para imobiliárias, clínicas, sindicatos, oficinas e artistas, do primeiro esboço ao app no celular.',
+        'email' => $site('contato.email'),
+        'telephone' => $telefone,
+        'description' => $site('empresa.descricao'),
         'areaServed' => ['@type' => 'Country', 'name' => 'Brasil'],
         'knowsLanguage' => 'pt-BR',
-        'sameAs' => ['https://wa.me/'.config('site.whatsapp')],
+        'sameAs' => ['https://wa.me/'.$site('contato.whatsapp'), ...\App\Support\ConfiguracaoDoSite::perfis()],
         'contactPoint' => [
             '@type' => 'ContactPoint',
             'contactType' => 'comercial',
-            'email' => 'contato@urbisdev.tech',
-            'telephone' => '+55 11 97686-2551',
+            'email' => $site('contato.email'),
+            'telephone' => $telefone,
             'availableLanguage' => 'Portuguese',
         ],
         'hasOfferCatalog' => [

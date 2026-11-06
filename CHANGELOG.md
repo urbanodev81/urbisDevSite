@@ -4,6 +4,25 @@ Todas as mudanças relevantes deste projeto.
 
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 **Estamos pré-v1**: tudo vive em `## [Não lançado]` até o Ricardo dizer que
+lançou. Não crie número de versão nem date release por conta própria.
+
+> Este arquivo nasceu em 21/09/2026, reconstruído a partir do histórico —
+> o repositório tinha dezessete commits de `feat`/`fix` e nenhum changelog,
+> enquanto o `.githooks/commit-msg` daqui (idêntico ao dos irmãos) já exigia
+> um no commit que fecha um grupo. Daqui para a frente ele cresce pelo fluxo
+> normal: marque `[changelog]` no assunto do commit que FECHA o grupo.
+
+## [Não lançado]
+
+### Adicionado
+- **Configuração do site no painel** (06/11/2026, bloco 4a). Em Site ›
+  Configurações o administrador troca o e-mail, o WhatsApp e a mensagem pronta,
+  o Instagram e o LinkedIn (o ícone só aparece com o endereço preenchido), a
+  descrição da empresa, a imagem de compartilhamento (recortada em 1200×630) e
+  os textos do topo e das seções da home. Salvou, está no ar: na home, no
+  rodapé, na política de privacidade, no botão do blog, no JSON-LD e no
+  `llms.txt`, que antes repetiam o e-mail em 7 lugares. Campo vazio volta ao
+  texto de sempre, e com o banco fora o site mostra o texto de sempre.
 
 ### Alterado
 - **Foto ao lado do texto e "ampliar ao clicar" agora vêm do pacote
@@ -20,15 +39,6 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
   navegador ganha "— UrbisDev" no blog e nos textos. As páginas de tag, seção e
   mês saem do índice e do sitemap (são só listas de títulos); o sitemap passa a
   dizer a data da última mudança de cada texto.
-lançou. Não crie número de versão nem date release por conta própria.
-
-> Este arquivo nasceu em 21/09/2026, reconstruído a partir do histórico —
-> o repositório tinha dezessete commits de `feat`/`fix` e nenhum changelog,
-> enquanto o `.githooks/commit-msg` daqui (idêntico ao dos irmãos) já exigia
-> um no commit que fecha um grupo. Daqui para a frente ele cresce pelo fluxo
-> normal: marque `[changelog]` no assunto do commit que FECHA o grupo.
-
-## [Não lançado]
 
 - **Mover a foto no texto e ampliar ao clicar** (06/11/2026). A imagem
   selecionada ganhou Subir e Descer (na barra e no menu do botão direito): passa

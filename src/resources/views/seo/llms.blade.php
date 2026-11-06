@@ -1,6 +1,6 @@
 # UrbisDev
 
-> Sites com painel próprio e sistemas de gestão para imobiliárias, clínicas, sindicatos, oficinas e artistas, do primeiro esboço ao app no celular. Empresa brasileira, atende todo o Brasil, em português.
+> {{ $site('empresa.descricao') }} Empresa brasileira, atende todo o Brasil, em português.
 
 Fazemos o código, o servidor e o acompanhamento depois de publicado. Todo projeto passa por testes automatizados, revisão de segurança, acessibilidade desde o desenho e cuidado com a LGPD.
 
@@ -13,8 +13,8 @@ Fazemos o código, o servidor e o acompanhamento depois de publicado. Todo proje
 
 ## Contato
 
-- E-mail: contato@urbisdev.tech
-- WhatsApp: +55 11 97686-2551
+- E-mail: {{ $site('contato.email') }}
+- WhatsApp: {{ \App\Support\ConfiguracaoDoSite::telefone() }}
 - Formulário: {{ url('/#contato') }}
 
 ## Páginas

@@ -15,6 +15,7 @@ use App\Http\Controllers\Painel\AuditoriaController;
 use App\Http\Controllers\Painel\BlogPreviaController;
 use App\Http\Controllers\Painel\TextoController;
 use App\Http\Controllers\Painel\ContatoController;
+use App\Http\Controllers\Painel\ConfiguracaoController;
 use App\Http\Controllers\Painel\PainelController;
 use App\Http\Controllers\Painel\UsuarioController;
 use App\Http\Controllers\ProfileController;
@@ -247,6 +248,14 @@ Route::middleware('auth')->prefix('painel')->group(function () {
             ->whereUuid('usuario')->name('usuarios.restaurar');
         Route::delete('usuarios/{usuario}/dois-fatores', [UsuarioController::class, 'desligarSegundoFator'])
             ->middleware('throttle:6,1,desligar-2fa')->name('usuarios.dois-fatores.desligar');
+    });
+
+    // Configuração do site (bloco 4a, 06/11/2026). Só o administrador.
+    Route::middleware('can:configuracoes.gerenciar')->prefix('site')->name('painel.configuracoes.')->group(function () {
+        Route::get('configuracoes', [ConfiguracaoController::class, 'edit'])->name('edit');
+        Route::put('configuracoes', [ConfiguracaoController::class, 'update'])->name('update');
+        Route::post('configuracoes/imagem/{chave}', [ConfiguracaoController::class, 'imagem'])
+            ->middleware('throttle:20,1')->name('imagem');
     });
 
     Route::get('auditoria', AuditoriaController::class)

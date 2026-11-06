@@ -2,7 +2,7 @@
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import {
-    ChartColumn, Inbox, LayoutDashboard, MessagesSquare, Newspaper, UserCog, ScrollText, X,
+    ChartColumn, Inbox, LayoutDashboard, MessagesSquare, Newspaper, UserCog, ScrollText, Settings, X,
 } from 'lucide-vue-next';
 
 defineProps({ aberta: Boolean });
@@ -22,9 +22,9 @@ const permissoes = computed(() => pagina.props.auth?.permissoes ?? {});
  * erro clássico. Proteger e ainda assim mostrar o link é só deixar alguém
  * bater num 403 todo dia.
  */
-// Por blocos da 246: Contatos desde o bloco 2 (04/11/2026); Blog e
-// Configuração do site entram nos blocos 3 e 4, cada um com a sua permissão
-// (as permissões já nascem no PerfisESeguranca).
+// Por blocos da 246: Contatos desde o bloco 2 (04/11/2026), Blog no 3 e o
+// grupo "Site" no 4 (06/11/2026: Configurações; Serviços, Lançamentos e
+// Perguntas entram nele a seguir, com a mesma permissão).
 const grupos = [
     {
         titulo: null,
@@ -34,6 +34,12 @@ const grupos = [
             { rotulo: 'Blog', rota: 'painel.blog.textos.index', icone: Newspaper, permissao: 'blog' },
             { rotulo: 'Comentários', rota: 'painel.blog.comentarios.index', icone: MessagesSquare, permissao: 'blog' },
             { rotulo: 'Leitores do blog', rota: 'painel.blog.leitores.index', icone: ChartColumn, permissao: 'blog' },
+        ],
+    },
+    {
+        titulo: 'Site',
+        itens: [
+            { rotulo: 'Configurações', rota: 'painel.configuracoes.edit', icone: Settings, permissao: 'configuracoes' },
         ],
     },
     {

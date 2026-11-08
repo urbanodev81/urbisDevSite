@@ -10,17 +10,17 @@ imagem_credito: Foto: Hystiff, Wikimedia Commons (CC0)
 tags: backup, segurança da informação, continuidade de negócios, pequenas empresas
 ---
 
-Nosso backup rodava todo dia e nunca falhava. E, se o servidor morresse, ele morreria junto.
+Nosso backup rodava todo dia e nunca falhava. O problema é que, se o servidor morresse, ele ia junto.
 
 ## Como percebemos
 
-Fizemos uma pergunta incômoda: se perdêssemos amanhã uma ferramenta de que dependemos, seguiríamos trabalhando? A revisão mostrou que as cópias estavam no mesmo disco que os dados, e que nunca tínhamos escrito como restaurá-las.
+Fizemos uma pergunta incômoda: se perdêssemos amanhã uma ferramenta de que dependemos, conseguiríamos continuar trabalhando? A revisão mostrou duas falhas graves: as cópias estavam guardadas no mesmo disco que os dados e, pior, nunca tínhamos testado como restaurá-las.
 
 ## Os três testes que recomendamos
 
-1. **Onde está a cópia?** Se está na mesma máquina ou na mesma conta, ela não cobre o pior caso.
-2. **Ela abre?** Backup só está provado depois de restaurado. Restaure num ambiente descartável e confira os dados.
-3. **Está tudo nela?** O banco sem as fotos devolve um cadastro sem imagens. Sem a chave da aplicação, campos cifrados viram lixo.
+1. **Onde está a cópia?** Se ela mora na mesma máquina ou na mesma conta de nuvem, ela não te protege contra o pior cenário.
+2. **Ela abre de verdade?** Backup só existe depois de restaurado. Jogue a cópia num ambiente descartável e confira se os dados estão intactos.
+3. **O pacote está completo?** Um banco de dados sem as imagens associadas devolve cadastros vazios. Sem a chave da aplicação, campos cifrados viram lixo inútil.
 
 ## O que levar daqui
 

@@ -37,4 +37,4 @@ Fico curioso: quem mais aí usa IA no dia a dia de dev, onde vocês traçaram es
 
 ---
 
-**Parte 2, na quinta-feira (05/11):** avaliamos sete ferramentas de IA para programar, ficamos com uma, e a própria IA deu um alarme falso no caminho.
+**Parte 2:** [avaliamos sete ferramentas de IA para programar](/blog/avaliamos-sete-ferramentas-de-ia), ficamos com uma, e a própria IA deu um alarme falso no caminho.

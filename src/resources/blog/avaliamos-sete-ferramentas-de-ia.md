@@ -44,7 +44,7 @@ Durante a varredura, a IA apontou com convicção uma falha grave: um administra
 
 Antes de corrigir, fomos conferir. A rota fica no painel central, que só a nossa equipe acessa e que já tem uma guarda própria e um teste provando que usuário de cliente nem chega lá. O código "suspeito" fazia exatamente o que devia.
 
-A falha não existia, e quase gastamos uma correção nela. É por isso que a regra do texto anterior desta seção não é enfeite: **a IA encontra, a gente confere.** A mesma IA que descobriu um problema verdadeiro na mesma tarde inventou um falso com a mesma segurança na voz. Quem decide é quem lê o código.
+A falha não existia, e quase gastamos uma correção nela. É por isso que a regra do texto anterior desta série, revisão antes de qualquer merge, não é enfeite: **a IA encontra, a gente confere.** A mesma IA que descobriu um problema verdadeiro na mesma tarde inventou um falso com a mesma segurança na voz. Quem decide é quem lê o código.
 
 E o alarme falso ainda deixou uma lição prática: o arquivo de regras do revisor agora diz, com todas as letras, que o painel central é uma exceção legítima. Sem isso, a ferramenta erraria do mesmo jeito.
 

@@ -152,7 +152,7 @@ const campoClasse = 'w-full rounded-md border-line-input bg-surface text-sm text
             </div>
 
             <div class="mt-4">
-                <CampoDeImagem v-model="imagem" :rotulo="editando ? 'Imagem (escolha outra só para trocar)' : 'Imagem'" perfil="lancamento" obrigatorio
+                <CampoDeImagem v-model="imagem" :rotulo="editando ? 'Imagem (escolha outra só para trocar)' : 'Imagem'" perfil="lancamento" :proporcao="`${largura} / ${altura}`" obrigatorio
                     :url-lista="route('painel.imagens')" :url-envio="route('painel.midia.enviar')"
                     :erro="form.errors.imagem_uuid"
                     :ajuda="`JPG, PNG ou WebP, até 8 MB, com pelo menos ${largura}×${altura}. O centro é recortado nessa proporção. Uma captura de tela do site do lançamento costuma servir.`" />

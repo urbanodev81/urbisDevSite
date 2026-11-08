@@ -77,7 +77,7 @@ const erro = (chave) => form.errors[`valores.${chave}`];
             >
                 <div v-for="campo in campos" :key="campo.chave">
                     <template v-if="campo.tipo === 'imagem'">
-                        <CampoDeImagem :model-value="{ uuid: null, url: campo.url, descricao: '' }" :rotulo="campo.rotulo" perfil="capa" obrigatorio
+                        <CampoDeImagem :model-value="{ uuid: null, url: campo.url, descricao: '' }" :rotulo="campo.rotulo" perfil="capa" proporcao="1200 / 630" obrigatorio
                             :url-lista="route('painel.imagens')" :url-envio="route('painel.midia.enviar')"
                             :erro="imagem.errors.uuid" ajuda="Recortada no centro em 1200×630, o tamanho da prévia no LinkedIn e no WhatsApp."
                             @update:model-value="trocarImagem(campo.chave, $event)" />

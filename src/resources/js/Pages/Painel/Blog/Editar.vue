@@ -147,7 +147,7 @@ const capa = computed({
 
             <section class="rounded-lg border border-line bg-surface p-5">
                 <h2 class="mb-4 font-display text-xl font-bold text-fg">Capa</h2>
-                <CampoDeImagem v-model="capa" rotulo="Imagem da capa" perfil="capa"
+                <CampoDeImagem v-model="capa" rotulo="Imagem da capa" perfil="capa" proporcao="1200 / 630"
                     :url-lista="route('painel.imagens')" :url-envio="route('painel.midia.enviar')"
                     ajuda="Recortada no centro em 1200×630, o tamanho da prévia no LinkedIn e no WhatsApp." />
                 <div v-if="form.imagem" class="mt-4 grid gap-4 sm:grid-cols-2">

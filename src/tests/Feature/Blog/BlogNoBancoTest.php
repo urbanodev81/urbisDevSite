@@ -16,7 +16,8 @@ use Illuminate\Support\Facades\Storage;
  * - o servidor saneia o corpo, porque o editor não é barreira;
  * - texto do painel segue as mesmas regras de rascunho e data que o .md segue;
  * - o banco ganha do .md com o mesmo slug, e sem banco os .md seguem no ar;
- * - a imagem é reencodada: sem EXIF, reduzida, e a capa sai 1200×630;
+ * - a imagem é reencodada pelo pacote urbanodev/midia: sem EXIF, reduzida, e a
+ *   capa sai 1200×630 em JPEG; o uso fica registrado (255, 07/11/2026);
  * - o endereço trava depois de ir ao ar.
  */
 
@@ -200,55 +201,75 @@ it('na trilha, mudar o corpo registra que mudou, sem copiar o texto', function (
     expect($linha->de)->toBeNull()->and($linha->para)->toBeNull();
 });
 
-it('quem não tem o blog não entra', function () {
+it('quem não tem o blog nem o site não entra, nem na galeria', function () {
     $this->actingAs(contaDoBlog(null))->get('/painel/blog/textos')->assertForbidden();
-    $this->post('/painel/blog/imagens', ['arquivo' => fotoComExif(400, 300)])->assertForbidden();
+    $this->post('/painel/midia/imagens', ['arquivo' => fotoComExif(400, 300)], ['Accept' => 'application/json'])->assertForbidden();
+    $this->getJson('/painel/imagens')->assertForbidden();
 });
 
-it('a imagem sai em WebP, sem EXIF e com no máximo 1600 px', function () {
+it('a imagem sai em WebP, sem EXIF, com no máximo 1600 px e endereço relativo', function () {
     $resposta = $this->actingAs(contaDoBlog())
-        ->post('/painel/blog/imagens', ['arquivo' => fotoComExif(3200, 1800)], ['Accept' => 'application/json'])
+        ->post('/painel/midia/imagens', ['arquivo' => fotoComExif(3200, 1800), 'perfil' => 'foto'], ['Accept' => 'application/json'])
         ->assertCreated()
         ->assertJson(['largura' => 1600, 'altura' => 900]);
 
-    $caminho = substr($resposta->json('url'), strlen('/storage/'));
-    expect($caminho)->toMatch('~^blog/\d{4}/\d{2}/[0-9a-f-]{36}\.webp$~');
+    expect($resposta->json('url'))->toMatch('~^/storage/midias/\d{4}/\d{2}/[0-9a-f-]{36}\.webp$~');
 
-    $bytes = Storage::disk('public')->get($caminho);
+    $bytes = Storage::disk('public')->get(substr($resposta->json('url'), strlen('/storage/')));
     expect(substr($bytes, 0, 4))->toBe('RIFF')->and(substr($bytes, 8, 4))->toBe('WEBP')
         ->and($bytes)->not->toContain('GPS-SEGREDO')->not->toContain('Exif');
 });
 
-it('a galeria lista as imagens já enviadas, da mais nova para a mais velha', function () {
+it('a galeria lista as imagens já enviadas, da mais nova para a mais velha, e filtra pelo perfil', function () {
     $conta = contaDoBlog();
-    $primeira = $this->actingAs($conta)->post('/painel/blog/imagens', ['arquivo' => fotoComExif(800, 600)], ['Accept' => 'application/json'])->json('url');
-    $segunda = $this->post('/painel/blog/imagens', ['arquivo' => fotoComExif(1000, 1000), 'capa' => '1'], ['Accept' => 'application/json'])->json('url');
+    $primeira = $this->actingAs($conta)->post('/painel/midia/imagens', ['arquivo' => fotoComExif(800, 600)], ['Accept' => 'application/json'])->json('url');
+    $segunda = $this->post('/painel/midia/imagens', ['arquivo' => fotoComExif(1300, 700), 'perfil' => 'capa'], ['Accept' => 'application/json'])->json('url');
 
-    $this->getJson('/painel/blog/imagens')
+    $this->getJson('/painel/imagens')
         ->assertOk()
         ->assertJsonPath('imagens.0.url', $segunda)
-        ->assertJsonPath('imagens.0.capa', true)
+        ->assertJsonPath('imagens.0.selo', 'capa')
         ->assertJsonPath('imagens.1.url', $primeira)
         ->assertJsonPath('imagens.1.largura', 800);
 
-    $this->actingAs(contaDoBlog(null))->getJson('/painel/blog/imagens')->assertForbidden();
+    // Campo de capa: só capa, e sem as ilustrações dos guias.
+    $this->getJson('/painel/imagens?perfil=capa')->assertOk()
+        ->assertJsonCount(1, 'imagens')->assertJsonPath('imagens.0.url', $segunda);
 });
 
-it('a galeria junta as ilustrações dos guias, as capas e as imagens de dentro dos textos, com onde foram usadas', function () {
+it('a galeria junta as ilustrações dos guias, com onde foram usadas e a última descrição', function () {
     $conta = contaDoBlog();
-    $url = $this->actingAs($conta)->post('/painel/blog/imagens', ['arquivo' => fotoComExif(800, 600)], ['Accept' => 'application/json'])->json('url');
+    $url = $this->actingAs($conta)->post('/painel/midia/imagens', ['arquivo' => fotoComExif(800, 600)], ['Accept' => 'application/json'])->json('url');
     $this->post('/painel/blog/textos', textoValido([
         'titulo' => 'Texto com as duas',
         'imagem' => '/img/guias/backup.jpg', 'imagem_alt' => 'Servidor e backup',
         'corpo_html' => '<p>Oi.</p><img src="'.$url.'" alt="Gráfico do mês" data-tamanho="media" data-alinhar="direita">',
-    ]));
+    ]))->assertRedirect();
 
-    $imagens = collect($this->getJson('/painel/blog/imagens')->assertOk()->json('imagens'))->keyBy('url');
+    $imagens = collect($this->getJson('/painel/imagens')->assertOk()->json('imagens'))->keyBy('url');
 
-    expect($imagens['/img/guias/backup.jpg'])->toMatchArray(['capa' => true, 'usos' => ['Texto com as duas'], 'alt' => 'Servidor e backup'])
+    expect($imagens['/img/guias/backup.jpg'])->toMatchArray(['uuid' => null, 'selo' => 'guia', 'usos' => ['Texto com as duas (capa)'], 'descricao' => 'Servidor e backup'])
         ->and($imagens['/img/guias/backup.jpg']['largura'])->toBeGreaterThan(0)
-        ->and($imagens[$url])->toMatchArray(['usos' => ['Texto com as duas'], 'alt' => 'Gráfico do mês'])
+        ->and($imagens[$url])->toMatchArray(['usos' => ['Texto com as duas'], 'descricao' => 'Gráfico do mês'])
         ->and($imagens->keys())->toContain('/img/guias/captcha.jpg');
+});
+
+it('o uso da imagem fica registrado: arquivar mantém, e a faxina não leva o que está num texto', function () {
+    $conta = contaDoBlog();
+    $capa = $this->actingAs($conta)->post('/painel/midia/imagens', ['arquivo' => fotoComExif(1300, 700), 'perfil' => 'capa'], ['Accept' => 'application/json'])->json('url');
+    $solta = $this->post('/painel/midia/imagens', ['arquivo' => fotoComExif(800, 600)], ['Accept' => 'application/json'])->json('url');
+    $this->post('/painel/blog/textos', textoValido(['imagem' => $capa, 'imagem_alt' => 'A capa']))->assertRedirect();
+
+    $texto = Texto::sole();
+    expect($texto->usosDeMidia()->where('campo', 'capa')->count())->toBe(1);
+
+    $this->delete('/painel/blog/textos/'.$texto->uuid);
+    expect($texto->usosDeMidia()->count())->toBe(1);
+
+    $this->travel(3)->hours();
+    $this->artisan('midia:faxinar', ['--executar' => true])->assertSuccessful();
+    expect(\UrbanoDev\Midia\Models\Midia::query()->where('uuid', \UrbanoDev\Midia\Models\Midia::uuidDe($capa))->value('quarentena_em'))->toBeNull()
+        ->and(\UrbanoDev\Midia\Models\Midia::query()->where('uuid', \UrbanoDev\Midia\Models\Midia::uuidDe($solta))->value('quarentena_em'))->not->toBeNull();
 });
 
 it('a imagem pequena à direita chega ao site com o atributo e o estilo', function () {
@@ -290,22 +311,33 @@ it('ampliar ao clicar: só "sim" passa e o site leva a caixa da foto grande', fu
         ->assertSee('id="blog-foto-ampliada"', false);
 });
 
-it('a capa sai recortada em 1200×630', function () {
+it('a capa sai em JPEG recortada em 1200×630, e foto pequena demais para capa é recusada', function () {
     $this->actingAs(contaDoBlog())
-        ->post('/painel/blog/imagens', ['arquivo' => fotoComExif(1000, 1000), 'capa' => '1'], ['Accept' => 'application/json'])
+        ->post('/painel/midia/imagens', ['arquivo' => fotoComExif(1300, 1000), 'perfil' => 'capa'], ['Accept' => 'application/json'])
         ->assertCreated()
-        ->assertJson(['largura' => 1200, 'altura' => 630]);
+        ->assertJson(['largura' => 1200, 'altura' => 630])
+        ->assertJsonPath('url', fn (string $u) => str_ends_with($u, '.jpg'));
+
+    $this->post('/painel/midia/imagens', ['arquivo' => fotoComExif(800, 500), 'perfil' => 'capa'], ['Accept' => 'application/json'])
+        ->assertUnprocessable()->assertJsonValidationErrors('arquivo');
 });
 
 it('recusa imagem acima de 25 megapixels sem tentar abrir', function () {
+    // Paleta (1 byte por pixel) e PNG: cabe na memória do teste; o pacote nem abre.
+    $img = imagecreate(6000, 5000);
+    imagecolorallocate($img, 10, 10, 10);
+    $caminho = tempnam(sys_get_temp_dir(), 'gigante').'.png';
+    imagepng($img, $caminho, 9);
+    imagedestroy($img);
+
     $this->actingAs(contaDoBlog())
-        ->post('/painel/blog/imagens', ['arquivo' => fotoComExif(6000, 5000)], ['Accept' => 'application/json'])
+        ->post('/painel/midia/imagens', ['arquivo' => new UploadedFile($caminho, 'gigante.png', 'image/png', null, true)], ['Accept' => 'application/json'])
         ->assertUnprocessable()->assertJsonValidationErrors('arquivo');
 });
 
 it('recusa arquivo que não é imagem', function () {
     $this->actingAs(contaDoBlog())
-        ->post('/painel/blog/imagens', ['arquivo' => UploadedFile::fake()->create('virus.php', 10, 'application/x-php')], ['Accept' => 'application/json'])
+        ->post('/painel/midia/imagens', ['arquivo' => UploadedFile::fake()->create('virus.php', 10, 'application/x-php')], ['Accept' => 'application/json'])
         ->assertUnprocessable();
 });
 

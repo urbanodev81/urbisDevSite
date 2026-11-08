@@ -6,7 +6,6 @@ namespace App\Http\Controllers\Painel;
 
 use App\Http\Controllers\Controller;
 use App\Models\Lancamento;
-use App\Support\ImagemDoSite;
 use App\Support\LancamentosDoSite;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,17 +14,18 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
-use RuntimeException;
+use UrbanoDev\Midia\Models\Midia;
 
 /**
  * Site › Lançamentos: os slides do banner logo depois do hero (bloco 4c da
  * 246, 06/11/2026). Mesmo desenho de Site › Serviços: um formulário para
  * adicionar e editar, Ocultar/Mostrar, Subir/Descer e remover.
  *
- * A imagem vem no mesmo formulário (multipart) e é recortada no centro em
- * 1200×750 por `ImagemDoSite`. Obrigatória ao adicionar; ao editar, sem
- * arquivo novo fica a de antes. Trocar ou remover apaga a anterior do disco
- * (as duas capturas de `public/lancamentos/` nunca são apagadas).
+ * A imagem sobe antes, pela galeria do pacote urbanodev/midia (perfil
+ * `lancamento`, recorte 1200×750 JPEG), e o formulário manda só o
+ * `imagem_uuid` (255, 07/11/2026). Obrigatória ao adicionar; ao editar, sem
+ * uuid fica a de antes. Nada é apagado do disco: a imagem que perde o uso
+ * vai para a quarentena pela faxina do pacote.
  */
 class LancamentoController extends Controller
 {
@@ -44,30 +44,20 @@ class LancamentoController extends Controller
         ]);
     }
 
-    public function store(Request $request, ImagemDoSite $imagens): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         $dados = $this->validar($request, novo: true);
-        $dados['imagem'] = $this->recortar($request, $imagens);
 
         Lancamento::create([...$dados, 'ordem' => (int) Lancamento::max('ordem') + 1]);
 
         return back()->with('sucesso', 'Lançamento adicionado. Ele já está no banner da home.');
     }
 
-    public function update(Request $request, Lancamento $lancamento, ImagemDoSite $imagens): RedirectResponse
+    public function update(Request $request, Lancamento $lancamento): RedirectResponse
     {
         $dados = $this->validar($request, novo: false);
 
-        $anterior = null;
-        if ($request->hasFile('arquivo')) {
-            $anterior = $lancamento->imagem;
-            $dados['imagem'] = $this->recortar($request, $imagens);
-        }
-
         $lancamento->update($dados);
-        if ($anterior !== null && $anterior !== $lancamento->imagem) {
-            LancamentosDoSite::apagarImagem($anterior);
-        }
 
         return back()->with('sucesso', 'Lançamento salvo. A home já mostra a nova versão.');
     }
@@ -109,8 +99,6 @@ class LancamentoController extends Controller
     /** @return array<string, mixed> */
     private function validar(Request $request, bool $novo): array
     {
-        [$largura, $altura] = LancamentosDoSite::MEDIDA;
-
         $dados = $request->validate([
             'etiqueta' => ['required', 'string', 'max:60'],
             'titulo' => ['required', 'string', 'max:120'],
@@ -121,19 +109,22 @@ class LancamentoController extends Controller
             'secundario' => ['nullable', 'required_with:secundario_url', 'string', 'max:40'],
             'nota' => ['nullable', 'string', 'max:120'],
             'ativo' => ['boolean'],
-            'arquivo' => [$novo ? 'required' : 'nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:8192',
-                "dimensions:min_width={$largura},min_height={$altura},max_width=8000,max_height=8000"],
+            'imagem_uuid' => [$novo ? 'required' : 'nullable', 'uuid'],
         ], [
             'url.url' => 'Use o endereço completo, começando por https://.',
             'secundario_url.url' => 'Use o endereço completo, começando por https://.',
             'secundario.required_with' => 'Com o segundo link, escreva também o texto dele.',
-            'arquivo.required' => 'Envie a imagem do slide.',
-            'arquivo.mimes' => 'Envie uma imagem em JPG, PNG ou WebP.',
-            'arquivo.max' => 'A imagem passa de 8 MB.',
-            'arquivo.dimensions' => "A imagem precisa ter pelo menos {$largura}×{$altura}.",
+            'imagem_uuid.required' => 'Escolha a imagem do slide.',
             '*.max' => 'Passou do limite de :max letras.',
         ]);
-        unset($dados['arquivo']);
+        if ($uuid = $dados['imagem_uuid'] ?? null) {
+            $midia = Midia::query()->daGaleria()->where('uuid', $uuid)->where('perfil', 'lancamento')->first();
+            if ($midia === null) {
+                throw ValidationException::withMessages(['imagem_uuid' => 'Essa imagem não serve aqui: escolha ou suba uma no tamanho do banner.']);
+            }
+            $dados['imagem'] = $midia->caminho;
+        }
+        unset($dados['imagem_uuid']);
 
         // Sem o segundo link, o texto dele não tem onde aparecer.
         if (empty($dados['secundario_url'])) {
@@ -143,14 +134,5 @@ class LancamentoController extends Controller
         $dados['nota'] = ($dados['nota'] ?? null) ?: null;
 
         return $dados;
-    }
-
-    private function recortar(Request $request, ImagemDoSite $imagens): string
-    {
-        try {
-            return $imagens->recortar($request->file('arquivo'), ...LancamentosDoSite::MEDIDA);
-        } catch (RuntimeException $e) {
-            throw ValidationException::withMessages(['arquivo' => $e->getMessage()]);
-        }
     }
 }

@@ -8,6 +8,7 @@ import InputError from '@/Components/InputError.vue';
 import TextInput from '@/Components/TextInput.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import CampoDeImagem from '../../../../../vendor/urbanodev/midia/resources/js/CampoDeImagem.vue';
 
 const props = defineProps({
     grupos: { type: Object, required: true },
@@ -17,7 +18,8 @@ const props = defineProps({
 /*
  * A tela inteira se desenha do catálogo do servidor (veio do Duo, 06/11/2026).
  * Nenhum campo é escrito à mão aqui: chave nova aparece sozinha, já validada.
- * Imagem não entra no formulário de texto: sobe na hora, pela própria rota.
+ * Imagem não entra no formulário de texto: escolhida (ou subida) na galeria do
+ * pacote urbanodev/midia, perfil `capa`, e gravada na hora pelo uuid (255).
  */
 const valores = {};
 for (const campos of Object.values(props.grupos)) {
@@ -31,15 +33,11 @@ const abaAtiva = ref(Object.keys(props.grupos)[0]);
 
 const salvar = () => form.put(route('painel.configuracoes.update'), { preserveScroll: true });
 
-const imagem = useForm({ arquivo: null });
-const enviarImagem = (chave, evento) => {
-    imagem.arquivo = evento.target.files[0] ?? null;
-    if (! imagem.arquivo) return;
-    imagem.post(route('painel.configuracoes.imagem', chave), {
-        preserveScroll: true,
-        forceFormData: true,
-        onFinish: () => { evento.target.value = ''; },
-    });
+const imagem = useForm({ uuid: null });
+const trocarImagem = (chave, escolhida) => {
+    if (! escolhida?.uuid) return;
+    imagem.uuid = escolhida.uuid;
+    imagem.post(route('painel.configuracoes.imagem', chave), { preserveScroll: true });
 };
 const removerImagem = (chave) => router.post(route('painel.configuracoes.imagem', chave), { remover: true }, { preserveScroll: true });
 
@@ -79,16 +77,13 @@ const erro = (chave) => form.errors[`valores.${chave}`];
             >
                 <div v-for="campo in campos" :key="campo.chave">
                     <template v-if="campo.tipo === 'imagem'">
-                        <p class="text-sm font-semibold text-fg">{{ campo.rotulo }}</p>
-                        <img :src="campo.url" alt="Imagem atual de compartilhamento" class="mt-2 w-full max-w-md rounded-md border border-line" width="1200" height="630">
-                        <div class="mt-3 flex flex-wrap items-center gap-3">
-                            <label class="inline-flex min-h-[44px] cursor-pointer items-center rounded-md border border-line px-4 text-sm font-semibold text-fg hover:bg-surface-sunken focus-within:ring-2 focus-within:ring-accent-ring">
-                                {{ imagem.processing ? 'Enviando…' : 'Trocar imagem' }}
-                                <input type="file" accept="image/jpeg,image/png,image/webp" class="sr-only" :disabled="imagem.processing" @change="enviarImagem(campo.chave, $event)">
-                            </label>
-                            <SecondaryButton v-if="campo.valor" type="button" @click="removerImagem(campo.chave)">Voltar à imagem de sempre</SecondaryButton>
+                        <CampoDeImagem :model-value="{ uuid: null, url: campo.url, descricao: '' }" :rotulo="campo.rotulo" perfil="capa" obrigatorio
+                            :url-lista="route('painel.imagens')" :url-envio="route('painel.midia.enviar')"
+                            :erro="imagem.errors.uuid" ajuda="Recortada no centro em 1200×630, o tamanho da prévia no LinkedIn e no WhatsApp."
+                            @update:model-value="trocarImagem(campo.chave, $event)" />
+                        <div v-if="campo.valor" class="mt-3">
+                            <SecondaryButton type="button" :disabled="imagem.processing" @click="removerImagem(campo.chave)">Voltar à imagem de sempre</SecondaryButton>
                         </div>
-                        <InputError :message="imagem.errors.arquivo" />
                     </template>
 
                     <template v-else>

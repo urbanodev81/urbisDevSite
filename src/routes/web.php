@@ -14,6 +14,7 @@ use App\Http\Controllers\DemoLeadController;
 use App\Http\Controllers\Painel\AuditoriaController;
 use App\Http\Controllers\Painel\BlogPreviaController;
 use App\Http\Controllers\Painel\TextoController;
+use App\Http\Controllers\Painel\ImagensController;
 use App\Http\Controllers\Painel\ContatoController;
 use App\Http\Controllers\Painel\ConfiguracaoController;
 use App\Http\Controllers\Painel\LancamentoController;
@@ -225,9 +226,13 @@ Route::middleware('auth')->prefix('painel')->group(function () {
         Route::delete('textos/{texto}', [TextoController::class, 'destroy'])->name('destroy');
         Route::patch('textos/{texto}/restaurar', [TextoController::class, 'restaurar'])->name('restaurar');
         Route::get('textos/{texto}/previa', [BlogPreviaController::class, 'doBanco'])->name('previa');
-        Route::get('imagens', [TextoController::class, 'imagens'])->name('imagens');
-        Route::post('imagens', [TextoController::class, 'imagem'])->middleware('throttle:30,1')->name('imagem');
     });
+
+    // Imagens (255, 07/11/2026): o pacote urbanodev/midia trata, guarda e
+    // registra o uso. Envio pelo pacote (`painel.midia.enviar`); a lista é a do
+    // site, que junta as ilustrações dos guias. Gate `midia.usar` = blog OU site.
+    Route::name('painel.')->group(fn () => \UrbanoDev\Midia\Midia::rotas());
+    Route::get('imagens', [ImagensController::class, 'index'])->middleware('can:midia.usar')->name('painel.imagens');
 
     // Leitores (04/11/2026, bloco 3b): moderar comentários e ver o que foi lido.
     Route::middleware('can:blog.gerenciar')->prefix('blog')->name('painel.blog.')->group(function () {

@@ -40,6 +40,18 @@ lançou. Não crie número de versão nem date release por conta própria.
   texto de sempre, e com o banco fora o site mostra o texto de sempre.
 
 ### Alterado
+- **Imagens do painel pelo pacote `urbanodev/midia`** (07–08/11/2026, pendência
+  255, etapa 3). O blog (imagem no texto e capa), a imagem de compartilhamento
+  e os slides de lançamento passam a ser enviados, tratados e guardados pelo
+  pacote (`^0.2.2`). Todos usam a mesma galeria: escolher uma imagem que já
+  existe ou subir uma nova, que vem com a medida certa para cada uso (foto WebP
+  1600, capa JPEG 1200×630, slide JPEG 1200×750). O pacote anota onde cada
+  imagem é usada. Trocar a imagem não apaga mais o arquivo: a imagem que fica
+  sem uso vai para a quarentena pela faxina (`midia:faxinar`, que só lista sem
+  `--executar`). As imagens de antes foram registradas no pacote sem mover nem
+  reescrever nada (migration `registra_imagens_antigas_no_pacote`). As
+  ilustrações dos guias continuam na galeria do editor. Saíram
+  `GuardaImagens`, `ImagemDoSite`, `ImagemDoBlog` e a galeria própria do painel.
 - **Foto ao lado do texto e "ampliar ao clicar" agora vêm do pacote
   `urbanodev/blog` v0.7.0** (06/11/2026). O site não muda: o estilo e o script
   saíram de `views/blog/imagens.blade.php` (apagada) para o pacote, e qualquer

@@ -7,18 +7,20 @@ namespace App\Models;
 use App\Support\Auditoria\Auditable;
 use App\Support\LancamentosDoSite;
 use Illuminate\Database\Eloquent\Model;
+use UrbanoDev\Midia\Concerns\UsaMidias;
 
 /**
  * Um slide do banner de lançamentos (bloco 4c da 246, 06/11/2026).
  *
  * **Nenhuma view lê esta tabela direto.** Quem lê é `App\Support\LancamentosDoSite`,
  * que guarda no cache e devolve os slides de sempre quando o banco está fora.
- * Toda gravação limpa esse cache (`booted`), e remover apaga a imagem que a
- * tela subiu.
+ * Toda gravação limpa esse cache (`booted`) e registra o uso da imagem;
+ * remover solta o uso (o arquivo vai para a quarentena pela faxina, nunca é apagado).
  */
 class Lancamento extends Model
 {
     use Auditable;
+    use UsaMidias;
 
     protected $table = 'lancamentos';
 
@@ -33,10 +35,17 @@ class Lancamento extends Model
 
     protected static function booted(): void
     {
-        static::saved(fn () => LancamentosDoSite::esquecer());
-        static::deleted(function (Lancamento $lancamento) {
-            LancamentosDoSite::apagarImagem($lancamento->imagem);
+        // Uso da imagem no pacote urbanodev/midia (255): a captura antiga de
+        // `public/lancamentos/` não tem uuid e fica de fora, como deve.
+        static::saved(function (Lancamento $lancamento) {
+            $lancamento->sincronizarMidias('imagem', [$lancamento->imagem]);
             LancamentosDoSite::esquecer();
         });
+        static::deleted(fn () => LancamentosDoSite::esquecer());
+    }
+
+    public function rotuloParaMidia(string $campo): string
+    {
+        return 'Lançamento: '.$this->titulo;
     }
 }

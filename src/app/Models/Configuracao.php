@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Support\Auditoria\Auditable;
+use UrbanoDev\Midia\Concerns\UsaMidias;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -18,10 +19,16 @@ use Illuminate\Database\Eloquent\Model;
 class Configuracao extends Model
 {
     use Auditable;
+    use UsaMidias;
 
     protected $table = 'configuracoes';
 
     protected $guarded = ['id'];
 
     public $timestamps = true;
+
+    public function rotuloParaMidia(string $campo): string
+    {
+        return 'Configuração do site: '.(\App\Support\ConfiguracaoDoSite::CATALOGO[$this->chave]['rotulo'] ?? $this->chave);
+    }
 }

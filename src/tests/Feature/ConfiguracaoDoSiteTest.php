@@ -103,35 +103,35 @@ it('a redação não abre nem grava a configuração', function () {
     $this->actingAs($redacao)->put('/painel/site/configuracoes', ['valores' => ['contato.email' => 'x@y.com']])->assertForbidden();
 });
 
-it('a imagem de compartilhamento é recortada em 1200x630 e troca a do site', function () {
+it('a imagem de compartilhamento vem do pacote em 1200x630 e troca a do site; remover solta o uso sem apagar', function () {
     Storage::fake('public');
     $admin = contaDoSite(Perfis::ADMINISTRADOR);
 
-    $this->actingAs($admin)->post('/painel/site/configuracoes/imagem/empresa.imagem_og', [
-        'arquivo' => UploadedFile::fake()->image('og.png', 1600, 1200),
-    ])->assertSessionHasNoErrors();
+    $uuid = $this->actingAs($admin)->postJson('/painel/midia/imagens', ['arquivo' => UploadedFile::fake()->image('og.png', 1600, 1200), 'perfil' => 'capa'])
+        ->assertCreated()->json('uuid');
+    $this->post('/painel/site/configuracoes/imagem/empresa.imagem_og', ['uuid' => $uuid])->assertSessionHasNoErrors();
 
     $caminho = ConfiguracaoDoSite::valor('empresa.imagem_og');
-    expect($caminho)->toStartWith('site/')->toEndWith('.jpg');
-    Storage::disk('public')->assertExists($caminho);
+    expect($caminho)->toStartWith('midias/')->toEndWith('.jpg');
     [$largura, $altura] = getimagesizefromstring(Storage::disk('public')->get($caminho));
-    expect([$largura, $altura])->toBe([1200, 630]);
+    expect([$largura, $altura])->toBe([1200, 630])
+        ->and(\UrbanoDev\Midia\Models\MidiaUso::query()->count())->toBe(1);
     $this->get('/')->assertSee(Storage::disk('public')->url($caminho), false);
 
-    // Remover volta ao arquivo de sempre e apaga o enviado.
-    $this->actingAs($admin)->post('/painel/site/configuracoes/imagem/empresa.imagem_og', ['remover' => true]);
-    Storage::disk('public')->assertMissing($caminho);
+    // Remover volta ao arquivo de sempre; o enviado fica (a faxina decide).
+    $this->post('/painel/site/configuracoes/imagem/empresa.imagem_og', ['remover' => true]);
+    Storage::disk('public')->assertExists($caminho);
+    expect(\UrbanoDev\Midia\Models\MidiaUso::query()->count())->toBe(0);
     $this->get('/')->assertSee('og-urbisdev.png', false);
 });
 
-it('imagem pequena demais ou chave que não é imagem são recusadas', function () {
+it('imagem que não é de compartilhamento ou chave que não é imagem são recusadas', function () {
     Storage::fake('public');
     $admin = contaDoSite(Perfis::ADMINISTRADOR);
 
-    $this->actingAs($admin)->post('/painel/site/configuracoes/imagem/empresa.imagem_og', [
-        'arquivo' => UploadedFile::fake()->image('og.png', 600, 300),
-    ])->assertSessionHasErrors('arquivo');
-    $this->actingAs($admin)->post('/painel/site/configuracoes/imagem/contato.email', [
-        'arquivo' => UploadedFile::fake()->image('og.png', 1600, 1200),
-    ])->assertNotFound();
+    $foto = $this->actingAs($admin)->postJson('/painel/midia/imagens', ['arquivo' => UploadedFile::fake()->image('og.png', 1600, 1200), 'perfil' => 'foto'])
+        ->assertCreated()->json('uuid');
+    $this->post('/painel/site/configuracoes/imagem/empresa.imagem_og', ['uuid' => $foto])->assertSessionHasErrors('uuid');
+    $this->post('/painel/site/configuracoes/imagem/empresa.imagem_og', [])->assertSessionHasErrors('uuid');
+    $this->post('/painel/site/configuracoes/imagem/contato.email', ['uuid' => $foto])->assertNotFound();
 });

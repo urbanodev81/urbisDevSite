@@ -31,9 +31,10 @@ class SaneadorDeTexto
     /**
      * Imagem que pode ficar no texto: a que o painel subiu (WebP sem EXIF) ou
      * uma das ilustrações dos guias que moram no próprio site (05/11/2026, a
-     * galeria deixa reusar as duas). Endereço de fora não entra.
+     * galeria deixa reusar as duas). Endereço de fora não entra. Desde 07/11/2026
+     * (255) a imagem nova vem do pacote urbanodev/midia, em `midias/`.
      */
-    public const IMAGEM = '~^(/storage/blog/\d{4}/\d{2}/[0-9a-f-]{36}\.webp|/img/guias/[a-z0-9-]+\.(jpe?g|png|webp))$~';
+    public const IMAGEM = '~^(/storage/blog/\d{4}/\d{2}/[0-9a-f-]{36}\.webp|/storage/midias/\d{4}/\d{2}/[0-9a-f-]{36}\.(webp|jpg|png)|/img/guias/[a-z0-9-]+\.(jpe?g|png|webp))$~';
 
     /** Tamanho e alinhamento da imagem no texto (05/11/2026): só estes valores. */
     public const TAMANHOS = ['pequena', 'media', 'inteira'];

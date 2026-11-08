@@ -11,6 +11,8 @@ use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use UrbanoDev\Blog\Post;
+use UrbanoDev\Midia\Concerns\UsaMidias;
+use UrbanoDev\Midia\Models\Midia;
 
 /**
  * Texto do blog escrito no painel (bloco 3a da 246, 04/11/2026). Vira o mesmo
@@ -27,12 +29,55 @@ class Texto extends Model
     }
     use SoftDeletes;
     use TemUuid;
+    use UsaMidias;
 
     public const SITUACOES = ['rascunho' => 'Rascunho', 'agendado' => 'Agendado', 'publicado' => 'Publicado'];
 
     protected $table = 'textos';
 
     protected $guarded = ['id'];
+
+    /**
+     * Imagens (255, 07/11/2026): a cada gravação, registra no pacote onde cada
+     * imagem é usada (a faxina nunca leva o que está num texto, nem arquivado)
+     * e guarda a última descrição dada a ela, que a galeria oferece na próxima vez.
+     */
+    protected static function booted(): void
+    {
+        static::saved(fn (Texto $texto) => $texto->registrarMidias());
+    }
+
+    /** Também usado pela migration que registrou as imagens de antes do pacote. */
+    public function registrarMidias(): void
+    {
+        $this->sincronizarMidias('capa', [$this->imagem]);
+        $this->sincronizarMidias('corpo', Midia::uuidsNoTexto($this->corpo_html));
+        $this->lembrarDescricoes();
+    }
+
+    public function rotuloParaMidia(string $campo): string
+    {
+        return $campo === 'capa' ? $this->titulo.' (capa)' : $this->titulo;
+    }
+
+    private function lembrarDescricoes(): void
+    {
+        $descricoes = [];
+        if ($this->imagem && $this->imagem_alt && ($uuid = Midia::uuidDe($this->imagem))) {
+            $descricoes[$uuid] = $this->imagem_alt;
+        }
+        preg_match_all('~<img\b[^>]*>~i', (string) $this->corpo_html, $tags);
+        foreach ($tags[0] as $tag) {
+            if (preg_match('~\ssrc="([^"]+)"~', $tag, $src) === 1 && preg_match('~\salt="([^"]+)"~', $tag, $alt) === 1
+                && ($uuid = Midia::uuidsNoTexto(html_entity_decode($src[1]))[0] ?? null)) {
+                $descricoes[$uuid] = mb_substr(html_entity_decode($alt[1]), 0, 300);
+            }
+        }
+        foreach ($descricoes as $uuid => $descricao) {
+            Midia::query()->where('uuid', $uuid)->where(fn ($q) => $q->whereNull('descricao')->orWhere('descricao', '!=', $descricao))
+                ->update(['descricao' => $descricao]);
+        }
+    }
 
     protected function casts(): array
     {

@@ -7,7 +7,7 @@
  * próprio blog e o cartão de vídeo `<figure data-video data-id>`. O editor
  * NÃO é a barreira — o servidor limpa de novo, sempre. Aqui é conforto.
  *
- * Imagem: escolhida na galeria (`GaleriaDeImagens`, modal com tudo o que o
+ * Imagem: escolhida na galeria (`GaleriaDeImagens` do pacote urbanodev/midia, com tudo o que o
  * sistema tem + "Subir nova") e só entra com a descrição preenchida — quem usa
  * leitor de tela depende dela. Tamanho (pequena/média/inteira) e posição
  * (esquerda/centro/direita, com o texto ao lado) viram `data-tamanho` e
@@ -27,7 +27,9 @@ import { NodeSelection } from '@tiptap/pm/state';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import { Placeholder } from '@tiptap/extensions';
-import GaleriaDeImagens from '@/Components/Painel/GaleriaDeImagens.vue';
+// A galeria é a do pacote urbanodev/midia (255, 07/11/2026); tamanho e posição
+// entram pelo slot `passo2` dela.
+import GaleriaDeImagens from '../../../../vendor/urbanodev/midia/resources/js/GaleriaDeImagens.vue';
 import { lerVideo } from '@/Composables/lerVideo';
 import {
     Bold, Italic, Strikethrough, Heading2, Heading3, List, ListOrdered, Quote,
@@ -195,10 +197,25 @@ const altRef = ref(null);
 const imagemSelecionada = computed(() => !!editor.value?.isActive('image'));
 const atual = computed(() => (imagemSelecionada.value ? editor.value.getAttributes('image') : {}));
 
+const TAMANHOS_GALERIA = [
+    { valor: 'pequena', rotulo: 'Pequena' },
+    { valor: 'media', rotulo: 'Média' },
+    { valor: 'inteira', rotulo: 'Inteira' },
+];
+const ALINHAMENTOS_GALERIA = [
+    { valor: 'esquerda', rotulo: 'À esquerda, texto ao lado' },
+    { valor: 'centro', rotulo: 'No centro' },
+    { valor: 'direita', rotulo: 'À direita, texto ao lado' },
+];
+const novoTamanho = ref('inteira');
+const novoAlinhar = ref('centro');
+
 function abrirGaleria(trocar = false) {
     modo.value = null;
     menu.value = null;
     trocando.value = trocar;
+    novoTamanho.value = 'inteira';
+    novoAlinhar.value = 'centro';
     galeriaAberta.value = true;
 }
 
@@ -215,10 +232,10 @@ function aoEscolher(img) {
         editor.value.chain().focus().updateAttributes('image', { src: img.url, width: img.largura, height: img.altura }).run();
         return;
     }
-    const tamanho = img.tamanho === 'inteira' ? null : img.tamanho;
-    const alinhar = tamanho ? img.alinhar : null;
+    const tamanho = novoTamanho.value === 'inteira' ? null : novoTamanho.value;
+    const alinhar = tamanho ? novoAlinhar.value : null;
     editor.value.chain().focus()
-        .insertContent([{ type: 'image', attrs: { src: img.url, alt: img.alt, width: img.largura, height: img.altura, tamanho, alinhar } }, { type: 'paragraph' }])
+        .insertContent([{ type: 'image', attrs: { src: img.url, alt: img.descricao, width: img.largura, height: img.altura, tamanho, alinhar } }, { type: 'paragraph' }])
         .run();
 }
 
@@ -435,7 +452,30 @@ const ativo = (b) => (b.ativo === null ? false : Array.isArray(b.ativo) ? editor
             <button type="button" role="menuitem" class="item text-danger" @click="removerImagem"><Trash2 class="h-4 w-4" aria-hidden="true" />Remover</button>
         </div>
 
-        <GaleriaDeImagens :show="galeriaAberta" :trocar="trocando" @close="galeriaAberta = false; voltarAoTexto()" @escolher="aoEscolher" />
+        <GaleriaDeImagens :aberto="galeriaAberta" :url-lista="route('painel.imagens')" :url-envio="route('painel.midia.enviar')" perfil="foto"
+            :pedir-descricao="!trocando" :titulo="trocando ? 'Trocar a imagem' : 'Imagens'" titulo-passo2="Como a imagem entra no texto" rotulo-usar="Inserir no texto"
+            @fechar="galeriaAberta = false; voltarAoTexto()" @escolher="aoEscolher">
+            <template #passo2>
+                <fieldset class="mt-5 text-sm">
+                    <legend class="font-semibold text-fg">Tamanho</legend>
+                    <div class="mt-2 flex flex-wrap gap-2">
+                        <label v-for="t in TAMANHOS_GALERIA" :key="t.valor" class="opcao" :class="{ marcada: novoTamanho === t.valor }">
+                            <input v-model="novoTamanho" type="radio" name="galeria-tamanho" :value="t.valor" class="sr-only" />{{ t.rotulo }}
+                        </label>
+                    </div>
+                </fieldset>
+                <fieldset class="mt-5 text-sm" :disabled="novoTamanho === 'inteira'">
+                    <legend class="font-semibold text-fg">Posição</legend>
+                    <div class="mt-2 flex flex-wrap gap-2" :class="{ 'opacity-50': novoTamanho === 'inteira' }">
+                        <label v-for="a in ALINHAMENTOS_GALERIA" :key="a.valor" class="opcao" :class="{ marcada: novoAlinhar === a.valor && novoTamanho !== 'inteira' }">
+                            <input v-model="novoAlinhar" type="radio" name="galeria-alinhar" :value="a.valor" class="sr-only" />{{ a.rotulo }}
+                        </label>
+                    </div>
+                    <p v-if="novoTamanho === 'inteira'" class="mt-1 text-fg-subtle">A imagem inteira ocupa a largura do texto.</p>
+                    <p v-else class="mt-1 text-fg-subtle">No celular ela sempre fica sozinha na linha, sem texto ao lado.</p>
+                </fieldset>
+            </template>
+        </GaleriaDeImagens>
     </div>
 </template>
 
@@ -450,6 +490,9 @@ const ativo = (b) => (b.ativo === null ? false : Array.isArray(b.ativo) ? editor
 .miniatura { @apply relative block aspect-[4/3] w-full overflow-hidden rounded-md border border-line bg-surface transition hover:border-line-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-ring; }
 .selo { @apply absolute bottom-1 left-1 rounded bg-surface/90 px-1.5 text-[11px] font-semibold text-fg; }
 .acao-sec { @apply inline-flex min-h-[36px] items-center px-2 text-fg-muted underline; }
+.opcao { @apply inline-flex min-h-[40px] cursor-pointer items-center rounded-md border border-line px-3 text-fg-muted transition hover:border-line-strong; }
+.opcao.marcada { @apply border-accent bg-surface-sunken font-semibold text-fg ring-1 ring-accent; }
+.opcao:focus-within { @apply ring-2 ring-accent-ring; }
 
 :deep(.texto-do-blog) { min-height: 22rem; padding: 1rem 1.25rem; outline: none; line-height: 1.7; }
 :deep(.texto-do-blog:focus-visible) { box-shadow: inset 0 0 0 2px currentColor; }

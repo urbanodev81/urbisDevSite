@@ -4,21 +4,16 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Painel;
 
-use App\Blog\GuardaImagens;
 use App\Blog\SaneadorDeTexto;
 use App\Http\Controllers\Controller;
-use App\Models\ImagemDoBlog;
 use App\Models\Texto;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
-use RuntimeException;
 use UrbanoDev\Blog\Blog;
 use UrbanoDev\Blog\FonteDeArquivos;
 use UrbanoDev\Blog\Post;
@@ -35,9 +30,6 @@ use UrbanoDev\Blog\Post;
  */
 class TextoController extends Controller
 {
-    /** Quantas imagens a galeria do editor mostra (as mais novas). */
-    private const GALERIA = 120;
-
     private const IMAGEM_OU_ENDERECO = '~^(https://|/(?!/))~i';
 
     public function index(Request $request, Blog $blog, FonteDeArquivos $arquivos): Response
@@ -170,109 +162,6 @@ class TextoController extends Controller
         $t->restore();
 
         return redirect()->route('painel.blog.textos.edit', $t)->with('sucesso', $this->mensagem($t, 'Texto restaurado'));
-    }
-
-    /**
-     * A galeria do editor (05/11/2026): TODA imagem que o sistema tem, para
-     * reusar sem subir de novo — as que o painel subiu, as capas, as que já
-     * estão dentro de algum texto e as ilustrações dos guias em
-     * `public/img/guias`. Uma por endereço, com onde já foi usada e a última
-     * descrição dada a ela. Arquivo que sumiu do disco não entra.
-     */
-    public function imagens(): JsonResponse
-    {
-        /** @var array<string, array<string, mixed>> $todas */
-        $todas = [];
-        $anotar = function (string $url, array $dados = []) use (&$todas): void {
-            if (preg_match(SaneadorDeTexto::IMAGEM, $url) !== 1) {
-                return;
-            }
-            $todas[$url] ??= ['url' => $url, 'largura' => null, 'altura' => null, 'capa' => false, 'nome' => basename($url), 'em' => null, 'ordem' => 0, 'usos' => [], 'alt' => null];
-            foreach ($dados as $chave => $valor) {
-                if ($valor === null) {
-                    continue;
-                }
-                $todas[$url][$chave] = match ($chave) {
-                    'usos' => array_values(array_unique([...$todas[$url]['usos'], ...$valor])),
-                    'capa' => $todas[$url]['capa'] || $valor,
-                    default => $valor,
-                };
-            }
-        };
-
-        // Sem GLOB_BRACE: o PHP do Alpine (musl) não tem.
-        foreach (preg_grep('~\.(jpe?g|png|webp)$~i', glob(public_path('img/guias/*')) ?: []) as $arquivo) {
-            $anotar('/img/guias/'.basename($arquivo), ['ordem' => filemtime($arquivo) ?: 0]);
-        }
-
-        Texto::withTrashed()->get(['titulo', 'imagem', 'imagem_alt', 'corpo_html'])->each(function (Texto $t) use ($anotar) {
-            if ($t->imagem) {
-                $anotar($t->imagem, ['capa' => true, 'usos' => [$t->titulo], 'alt' => $t->imagem_alt]);
-            }
-            preg_match_all('~<img\b[^>]*>~i', (string) $t->corpo_html, $tags);
-            foreach ($tags[0] as $tag) {
-                if (preg_match('~\ssrc="([^"]+)"~', $tag, $src) === 1) {
-                    preg_match('~\salt="([^"]*)"~', $tag, $alt);
-                    $anotar(html_entity_decode($src[1]), ['usos' => [$t->titulo], 'alt' => isset($alt[1]) && $alt[1] !== '' ? html_entity_decode($alt[1]) : null]);
-                }
-            }
-        });
-
-        ImagemDoBlog::query()->latest('id')->limit(self::GALERIA)->get()->each(fn (ImagemDoBlog $i) => $anotar($i->url(), [
-            'largura' => $i->largura,
-            'altura' => $i->altura,
-            'capa' => $i->tipo === 'capa',
-            'nome' => $i->nome_original,
-            'em' => $i->created_at?->format('d/m/Y'),
-            'ordem' => ($i->created_at?->getTimestamp() ?? 0) + $i->id / 1_000_000,
-        ]));
-
-        $imagens = collect($todas)
-            ->map(function (array $i) {
-                $arquivo = str_starts_with($i['url'], '/storage/')
-                    ? Storage::disk('public')->path(substr($i['url'], strlen('/storage/')))
-                    : public_path(ltrim($i['url'], '/'));
-                if (! is_file($arquivo)) {
-                    return null;
-                }
-                if ($i['largura'] === null && ($medidas = @getimagesize($arquivo))) {
-                    [$i['largura'], $i['altura']] = $medidas;
-                }
-
-                return $i;
-            })
-            ->filter()
-            ->sortByDesc('ordem')
-            ->take(self::GALERIA)
-            ->map(fn (array $i) => collect($i)->except('ordem')->all())
-            ->values();
-
-        return response()->json(['imagens' => $imagens]);
-    }
-
-    /** Imagem do editor ou da capa. Devolve o endereço para o editor pôr no texto. */
-    public function imagem(Request $request, GuardaImagens $guarda): JsonResponse
-    {
-        $request->validate([
-            'arquivo' => ['required', 'file', 'mimes:jpg,jpeg,png,webp', 'max:8192', 'dimensions:min_width=200,min_height=100,max_width=8000,max_height=8000'],
-            'capa' => ['sometimes', 'boolean'],
-        ], [
-            'arquivo.mimes' => 'Envie uma foto em JPG, PNG ou WebP.',
-            'arquivo.max' => 'A imagem passa de 8 MB.',
-            'arquivo.dimensions' => 'A imagem precisa ter pelo menos 200×100 e no máximo 8000 px de lado.',
-        ]);
-
-        try {
-            $imagem = $guarda->guardar($request->file('arquivo'), $request->boolean('capa'), $request->user()?->getKey());
-        } catch (RuntimeException $e) {
-            throw ValidationException::withMessages(['arquivo' => $e->getMessage()]);
-        }
-
-        return response()->json([
-            'url' => $imagem->url(),
-            'largura' => $imagem->largura,
-            'altura' => $imagem->altura,
-        ], 201);
     }
 
     /** @return array<string, mixed> */

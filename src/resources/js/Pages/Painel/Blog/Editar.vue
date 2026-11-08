@@ -7,8 +7,7 @@
  * no ar (hoje ou antes: já; futuro: agendado, entra sozinho no dia).
  */
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
-import axios from 'axios';
+import { computed } from 'vue';
 import { ExternalLink, Eye } from 'lucide-vue-next';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageHeader from '@/Components/PageHeader.vue';
@@ -20,6 +19,7 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TwoStepConfirm from '@/Components/TwoStepConfirm.vue';
 import Chip from '@/Components/Chip.vue';
 import EditorDeTexto from '@/Components/Painel/EditorDeTexto.vue';
+import CampoDeImagem from '../../../../../vendor/urbanodev/midia/resources/js/CampoDeImagem.vue';
 import { situacoes } from './situacoes';
 
 const props = defineProps({
@@ -69,27 +69,16 @@ function salvar() {
 
 const arquivar = () => router.delete(route('painel.blog.textos.destroy', props.texto.uuid));
 
-// Capa: sobe, o servidor recorta 1200×630 no centro, e o endereço vem para o campo.
-const capaErro = ref('');
-const capaEnviando = ref(false);
-async function enviarCapa(evento) {
-    const arquivo = evento.target.files?.[0];
-    evento.target.value = '';
-    if (!arquivo) return;
-    capaErro.value = '';
-    capaEnviando.value = true;
-    try {
-        const dados = new FormData();
-        dados.append('arquivo', arquivo);
-        dados.append('capa', '1');
-        const { data } = await axios.post(route('painel.blog.textos.imagem'), dados);
-        form.imagem = data.url;
-    } catch (e) {
-        capaErro.value = e.response?.data?.errors?.arquivo?.[0] ?? 'A capa não subiu. Tente de novo.';
-    } finally {
-        capaEnviando.value = false;
-    }
-}
+// Capa (255, 07/11/2026): escolhida ou subida na galeria do pacote, perfil
+// `capa` (JPEG 1200×630). O texto guarda o endereço; a descrição da galeria
+// vira a descrição da capa, que continua editável aqui embaixo.
+const capa = computed({
+    get: () => (form.imagem ? { uuid: null, url: form.imagem, descricao: form.imagem_alt } : null),
+    set: (v) => {
+        form.imagem = v?.url ?? '';
+        form.imagem_alt = v ? (v.descricao || form.imagem_alt) : '';
+    },
+});
 </script>
 
 <template>
@@ -158,18 +147,9 @@ async function enviarCapa(evento) {
 
             <section class="rounded-lg border border-line bg-surface p-5">
                 <h2 class="mb-4 font-display text-xl font-bold text-fg">Capa</h2>
-                <div class="flex flex-wrap items-start gap-4">
-                    <img v-if="form.imagem" :src="form.imagem" alt="" class="h-[105px] w-[200px] rounded-md border border-line object-cover" />
-                    <div class="space-y-2">
-                        <label class="inline-flex min-h-[44px] cursor-pointer items-center rounded-md border border-line px-4 text-sm font-medium text-fg hover:bg-surface-sunken focus-within:ring-2 focus-within:ring-accent-ring">
-                            {{ capaEnviando ? 'Enviando…' : form.imagem ? 'Trocar capa' : 'Enviar capa' }}
-                            <input type="file" accept="image/jpeg,image/png,image/webp" class="sr-only" :disabled="capaEnviando" @change="enviarCapa" />
-                        </label>
-                        <button v-if="form.imagem" type="button" class="ml-2 text-sm text-fg-muted underline" @click="form.imagem = ''; form.imagem_alt = ''">Tirar capa</button>
-                        <p class="text-xs text-fg-subtle">Recortada no centro em 1200×630, o tamanho da prévia no LinkedIn e no WhatsApp.</p>
-                        <p v-if="capaErro" class="text-sm text-danger" role="alert">{{ capaErro }}</p>
-                    </div>
-                </div>
+                <CampoDeImagem v-model="capa" rotulo="Imagem da capa" perfil="capa"
+                    :url-lista="route('painel.imagens')" :url-envio="route('painel.midia.enviar')"
+                    ajuda="Recortada no centro em 1200×630, o tamanho da prévia no LinkedIn e no WhatsApp." />
                 <div v-if="form.imagem" class="mt-4 grid gap-4 sm:grid-cols-2">
                     <div>
                         <InputLabel for="imagem_alt" value="Descrição da capa" obrigatorio />

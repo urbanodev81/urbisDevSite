@@ -10,12 +10,16 @@ use App\Support\Perfis;
 use Database\Seeders\PerfisESeguranca;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use UrbanoDev\Midia\Acoes\GuardarImagem;
+use UrbanoDev\Midia\Models\Midia;
 
 /**
  * Banner de lançamentos (bloco 4c da 246, 06/11/2026). O que se prova: a
  * migration semeia os 2 slides de sempre e a home sai igual; o que se grava
- * (com a imagem recortada em 1200×750) aparece na home; trocar e remover
- * apagam a imagem anterior, mas nunca as capturas de `public/lancamentos/`;
+ * (com a imagem recortada em 1200×750 pelo pacote urbanodev/midia) aparece
+ * na home; trocar e remover soltam o uso da imagem anterior sem apagar nada
+ * (a faxina do pacote é quem põe na quarentena, 255) e nunca mexem nas
+ * capturas de `public/lancamentos/`;
  * oculto some; nenhum ativo tira o banner; link e imagem fora da regra são
  * recusados; só o administrador mexe; tudo vai para a trilha; banco fora
  * mostra os 2 de sempre.
@@ -52,9 +56,15 @@ function lancamentoValido(array $troca = []): array
         'secundario' => '',
         'nota' => '',
         'ativo' => true,
-        'arquivo' => UploadedFile::fake()->image('captura.png', 1600, 1200),
+        'imagem_uuid' => imagemDoBanner()->uuid,
         ...$troca,
     ];
+}
+
+/** Imagem já tratada pelo pacote, como a galeria entrega ao formulário. */
+function imagemDoBanner(string $perfil = 'lancamento', int $largura = 1600, int $altura = 1200): Midia
+{
+    return app(GuardarImagem::class)(UploadedFile::fake()->image('captura.png', $largura, $altura), perfil: $perfil);
 }
 
 it('a migration semeia os 2 slides de sempre, e a home sai como antes', function () {
@@ -82,7 +92,8 @@ it('o administrador adiciona com imagem, e o slide aparece na home recortado em 
     $novo = Lancamento::where('titulo', 'Oficina Exemplo, um site com painel.')->firstOrFail();
     expect($novo->ordem)->toBe(3)
         ->and($novo->secundario_url)->toBeNull()->and($novo->nota)->toBeNull()
-        ->and($novo->imagem)->toStartWith('site/')->toEndWith('.jpg');
+        ->and($novo->imagem)->toStartWith('midias/')->toEndWith('.jpg')
+        ->and($novo->usosDeMidia()->where('campo', 'imagem')->count())->toBe(1);
     Storage::disk('public')->assertExists($novo->imagem);
     expect(getimagesizefromstring(Storage::disk('public')->get($novo->imagem)))->toMatchArray([0 => 1200, 1 => 750]);
 
@@ -104,36 +115,35 @@ it('sem segundo link, o botão fantasma não aparece', function () {
     expect($banner[0])->not->toContain('btn-ghost')->not->toContain('lanc-controles');
 });
 
-it('editar sem arquivo mantém a imagem; trocar apaga a anterior', function () {
+it('editar sem imagem nova mantém a de antes; trocar e remover soltam o uso sem apagar o arquivo', function () {
     $admin = contaDosLancamentos(Perfis::ADMINISTRADOR);
     $this->actingAs($admin)->post('/painel/site/lancamentos', lancamentoValido())->assertSessionHasNoErrors();
     $novo = Lancamento::latest('id')->firstOrFail();
     $primeira = $novo->imagem;
 
-    $this->actingAs($admin)->post("/painel/site/lancamentos/{$novo->id}", [...lancamentoValido(['titulo' => 'Título novo']), 'arquivo' => null, '_method' => 'put'])
+    $this->actingAs($admin)->put("/painel/site/lancamentos/{$novo->id}", [...lancamentoValido(['titulo' => 'Título novo']), 'imagem_uuid' => null])
         ->assertSessionHasNoErrors();
     expect($novo->fresh()->imagem)->toBe($primeira)->and($novo->fresh()->titulo)->toBe('Título novo');
 
-    $this->actingAs($admin)->post("/painel/site/lancamentos/{$novo->id}", [...lancamentoValido(), '_method' => 'put'])
-        ->assertSessionHasNoErrors();
+    $this->actingAs($admin)->put("/painel/site/lancamentos/{$novo->id}", lancamentoValido())->assertSessionHasNoErrors();
     $segunda = $novo->fresh()->imagem;
-    expect($segunda)->not->toBe($primeira);
-    Storage::disk('public')->assertMissing($primeira);
+    expect($segunda)->not->toBe($primeira)
+        ->and($novo->usosDeMidia()->with('midia')->get()->pluck('midia.caminho')->all())->toBe([$segunda]);
+    Storage::disk('public')->assertExists($primeira);
     Storage::disk('public')->assertExists($segunda);
 
-    // Remover apaga a imagem que a tela subiu.
     $this->actingAs($admin)->delete("/painel/site/lancamentos/{$novo->id}")->assertRedirect();
-    Storage::disk('public')->assertMissing($segunda);
+    Storage::disk('public')->assertExists($segunda);
+    expect(\UrbanoDev\Midia\Models\MidiaUso::query()->count())->toBe(0);
 });
 
 it('trocar a imagem de um slide semeado não apaga a captura de public/lancamentos', function () {
     $admin = contaDosLancamentos(Perfis::ADMINISTRADOR);
     $usi = Lancamento::where('imagem', '/lancamentos/usi.jpg')->firstOrFail();
 
-    $this->actingAs($admin)->post("/painel/site/lancamentos/{$usi->id}", [...lancamentoValido(), '_method' => 'put'])
-        ->assertSessionHasNoErrors();
+    $this->actingAs($admin)->put("/painel/site/lancamentos/{$usi->id}", lancamentoValido())->assertSessionHasNoErrors();
 
-    expect($usi->fresh()->imagem)->toStartWith('site/')
+    expect($usi->fresh()->imagem)->toStartWith('midias/')
         ->and(file_exists(public_path('lancamentos/usi.jpg')))->toBeTrue();
 
     $jacob = Lancamento::where('imagem', '/lancamentos/imoveis-jacob.jpg')->firstOrFail();
@@ -182,12 +192,19 @@ it('recusa link sem https, segundo link sem texto e imagem pequena, fora do form
     $this->actingAs($admin)->post('/painel/site/lancamentos', lancamentoValido(['secundario_url' => 'https://exemplo.com']))
         ->assertSessionHasErrors('secundario');
 
-    $this->actingAs($admin)->post('/painel/site/lancamentos', lancamentoValido(['arquivo' => UploadedFile::fake()->image('p.png', 800, 500)]))
-        ->assertSessionHasErrors('arquivo');
-    $this->actingAs($admin)->post('/painel/site/lancamentos', lancamentoValido(['arquivo' => UploadedFile::fake()->create('x.svg', 10, 'image/svg+xml')]))
-        ->assertSessionHasErrors('arquivo');
-    $this->actingAs($admin)->post('/painel/site/lancamentos', lancamentoValido(['arquivo' => null]))
-        ->assertSessionHasErrors('arquivo');
+    // Imagem de outro perfil (sem o recorte do banner), uuid que não existe, ou nenhuma.
+    $this->actingAs($admin)->post('/painel/site/lancamentos', lancamentoValido(['imagem_uuid' => imagemDoBanner('foto')->uuid]))
+        ->assertSessionHasErrors('imagem_uuid');
+    $this->actingAs($admin)->post('/painel/site/lancamentos', lancamentoValido(['imagem_uuid' => '0196f3a1-0000-7000-8000-000000000001']))
+        ->assertSessionHasErrors('imagem_uuid');
+    $this->actingAs($admin)->post('/painel/site/lancamentos', lancamentoValido(['imagem_uuid' => null]))
+        ->assertSessionHasErrors('imagem_uuid');
+
+    // O pacote recusa a imagem pequena demais para o banner e o SVG.
+    $this->actingAs($admin)->postJson('/painel/midia/imagens', ['arquivo' => UploadedFile::fake()->image('p.png', 800, 500), 'perfil' => 'lancamento'])
+        ->assertUnprocessable()->assertJsonValidationErrors('arquivo');
+    $this->actingAs($admin)->postJson('/painel/midia/imagens', ['arquivo' => UploadedFile::fake()->createWithContent('x.svg', '<svg xmlns="http://www.w3.org/2000/svg"/>'), 'perfil' => 'lancamento'])
+        ->assertUnprocessable()->assertJsonValidationErrors('arquivo');
 
     expect(Lancamento::count())->toBe(2);
 });

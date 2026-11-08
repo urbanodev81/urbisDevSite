@@ -1,7 +1,7 @@
 <script setup>
 import { Head, router, useForm } from '@inertiajs/vue3';
-import { computed, nextTick, onBeforeUnmount, ref } from 'vue';
-import { ArrowDown, ArrowUp, EyeOff, ImageUp, Plus } from 'lucide-vue-next';
+import { computed, nextTick, ref } from 'vue';
+import { ArrowDown, ArrowUp, EyeOff, Plus } from 'lucide-vue-next';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 import EstadoVazio from '@/Components/EstadoVazio.vue';
@@ -12,6 +12,7 @@ import Checkbox from '@/Components/Checkbox.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TwoStepConfirm from '@/Components/TwoStepConfirm.vue';
+import CampoDeImagem from '../../../../../vendor/urbanodev/midia/resources/js/CampoDeImagem.vue';
 
 const props = defineProps({
     lancamentos: { type: Array, default: () => [] },
@@ -20,52 +21,33 @@ const props = defineProps({
 
 /*
  * Site › Lançamentos (bloco 4c, 06/11/2026). Mesmo desenho de Site › Serviços:
- * um formulário só, no topo, para adicionar e para editar. A imagem vai no
- * mesmo envio (multipart); ao editar, o envio é POST com `_method: put`,
- * porque o PHP não lê arquivo em PUT. O servidor recorta o centro na medida.
+ * um formulário só, no topo, para adicionar e para editar. A imagem é
+ * escolhida ou subida na galeria do pacote urbanodev/midia (perfil
+ * `lancamento`, recortada no centro na medida) e o formulário manda só o
+ * `imagem_uuid` (255, 07/11/2026). Ao editar, sem imagem nova fica a de antes.
  */
 const vazio = () => ({
     etiqueta: '', titulo: '', texto: '', url: '', chamada: '',
-    secundario_url: '', secundario: '', nota: '', ativo: true, arquivo: null,
+    secundario_url: '', secundario: '', nota: '', ativo: true,
 });
 
 const form = useForm(vazio());
 const editando = ref(null);
 const caixa = ref(null);
-const entrada = ref(null);
-const imagemAtual = ref(null);
-const previa = ref(null);
+const imagem = ref(null);
 
 const [largura, altura] = props.medida;
 const titulo = computed(() => (editando.value ? 'Editar lançamento' : 'Novo lançamento'));
-const imagemNaTela = computed(() => previa.value ?? imagemAtual.value);
-
-function limparPrevia() {
-    if (previa.value) URL.revokeObjectURL(previa.value);
-    previa.value = null;
-    if (entrada.value) entrada.value.value = '';
-}
-onBeforeUnmount(limparPrevia);
-
-function escolherArquivo(evento) {
-    // Lê o arquivo ANTES de soltar a prévia antiga: `limparPrevia()` esvazia o campo.
-    const arquivo = evento.target.files[0] ?? null;
-    if (previa.value) URL.revokeObjectURL(previa.value);
-    form.arquivo = arquivo;
-    previa.value = arquivo ? URL.createObjectURL(arquivo) : null;
-}
 
 async function editar(item) {
     editando.value = item.id;
     form.clearErrors();
-    limparPrevia();
     Object.assign(form, {
         ...vazio(),
         ...Object.fromEntries(Object.entries(item).map(([k, v]) => [k, v ?? ''])),
         ativo: item.ativo,
-        arquivo: null,
     });
-    imagemAtual.value = item.imagem_url;
+    imagem.value = item.imagem_url ? { uuid: null, url: item.imagem_url, descricao: '' } : null;
     await nextTick();
     caixa.value?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     caixa.value?.querySelector('input')?.focus();
@@ -73,20 +55,18 @@ async function editar(item) {
 
 function cancelar() {
     editando.value = null;
-    imagemAtual.value = null;
-    limparPrevia();
+    imagem.value = null;
     form.clearErrors();
     Object.assign(form, vazio());
 }
 
 function salvar() {
-    const opcoes = { preserveScroll: true, forceFormData: true, onSuccess: cancelar };
+    const opcoes = { preserveScroll: true, onSuccess: cancelar };
+    form.transform((d) => ({ ...d, imagem_uuid: imagem.value?.uuid ?? null }));
     if (editando.value) {
-        form.transform((d) => ({ ...d, ativo: d.ativo ? 1 : 0, _method: 'put' }))
-            .post(route('painel.lancamentos.update', editando.value), opcoes);
+        form.put(route('painel.lancamentos.update', editando.value), opcoes);
     } else {
-        form.transform((d) => ({ ...d, ativo: d.ativo ? 1 : 0 }))
-            .post(route('painel.lancamentos.store'), opcoes);
+        form.post(route('painel.lancamentos.store'), opcoes);
     }
 }
 
@@ -172,25 +152,10 @@ const campoClasse = 'w-full rounded-md border-line-input bg-surface text-sm text
             </div>
 
             <div class="mt-4">
-                <InputLabel for="l-arquivo" :value="editando ? 'Imagem (envie outra só para trocar)' : 'Imagem'" :obrigatorio="! editando" />
-                <img
-                    v-if="imagemNaTela"
-                    :src="imagemNaTela"
-                    :alt="previa ? 'Imagem escolhida, antes do recorte' : 'Imagem atual do slide'"
-                    class="mt-2 aspect-[8/5] w-full max-w-md rounded-md border border-line object-cover"
-                    :width="largura"
-                    :height="altura"
-                >
-                <label class="mt-2 inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-md border border-line-input bg-surface px-4 text-sm font-semibold text-fg hover:bg-surface-sunken focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent-ring">
-                    <ImageUp class="h-4 w-4" aria-hidden="true" />
-                    {{ form.arquivo ? 'Escolher outra' : 'Escolher imagem' }}
-                    <input id="l-arquivo" ref="entrada" type="file" accept="image/jpeg,image/png,image/webp" class="sr-only" :aria-invalid="!! form.errors.arquivo" @change="escolherArquivo">
-                </label>
-                <p class="mt-1 text-sm text-fg-subtle">
-                    JPG, PNG ou WebP, até 8 MB, com pelo menos {{ largura }}×{{ altura }}. O centro é recortado nessa proporção
-                    (a prévia acima já mostra o corte). Uma captura de tela do site do lançamento costuma servir.
-                </p>
-                <InputError :message="form.errors.arquivo" />
+                <CampoDeImagem v-model="imagem" :rotulo="editando ? 'Imagem (escolha outra só para trocar)' : 'Imagem'" perfil="lancamento" obrigatorio
+                    :url-lista="route('painel.imagens')" :url-envio="route('painel.midia.enviar')"
+                    :erro="form.errors.imagem_uuid"
+                    :ajuda="`JPG, PNG ou WebP, até 8 MB, com pelo menos ${largura}×${altura}. O centro é recortado nessa proporção. Uma captura de tela do site do lançamento costuma servir.`" />
             </div>
 
             <div class="mt-5 flex flex-wrap items-center gap-4">

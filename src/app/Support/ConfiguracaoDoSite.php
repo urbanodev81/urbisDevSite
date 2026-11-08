@@ -267,16 +267,16 @@ final class ConfiguracaoDoSite
         self::esquecer();
     }
 
-    /** Grava o caminho de uma imagem já guardada e apaga a anterior. */
+    /**
+     * Grava o caminho de uma imagem já guardada pelo pacote urbanodev/midia e
+     * registra o uso. A anterior NÃO é apagada (255, 07/11/2026): sem uso, a
+     * faxina do pacote a põe na quarentena.
+     */
     public static function gravarImagem(string $chave, ?string $caminho): void
     {
-        $anterior = self::valor($chave);
         self::gravarUma($chave, $caminho);
+        Configuracao::query()->where('chave', $chave)->first()?->sincronizarMidias('valor', [$caminho]);
         self::esquecer();
-
-        if ($anterior && $anterior !== $caminho && str_starts_with($anterior, self::PASTA_IMAGENS.'/')) {
-            Storage::disk('public')->delete($anterior);
-        }
     }
 
     private static function gravarUma(string $chave, ?string $valor): void

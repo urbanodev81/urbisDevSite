@@ -24,6 +24,10 @@ class AppServiceProvider extends ServiceProvider
         // não pagam a leitura (bloco 4a, 06/11/2026).
         \Illuminate\Support\Facades\View::share('site', new \App\Support\ConfiguracaoDoSite);
 
+        // Imagens pelo pacote urbanodev/midia (255, 07/11/2026): a galeria e o
+        // envio servem o Blog e o Site, então vale quem edita um ou outro.
+        \Illuminate\Support\Facades\Gate::define('midia.usar', fn (User $u) => $u->can('blog.gerenciar') || $u->can('configuracoes.gerenciar'));
+
         // Conta travada por senha errada (LoginRequest): um aviso ao operador
         // por e-mail+IP a cada 15 min. Pode ser o dono esquecido — ou força bruta.
         Event::listen(Lockout::class, function (Lockout $e) {

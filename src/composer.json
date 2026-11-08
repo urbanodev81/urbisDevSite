@@ -11,7 +11,8 @@
         "spatie/laravel-permission": "^8.3",
         "symfony/html-sanitizer": "^7.3 || ^8.0",
         "tightenco/ziggy": "^2.0",
-        "urbanodev/blog": "^0.7"
+        "urbanodev/blog": "^0.7",
+        "urbanodev/midia": "^0.2.2"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -42,6 +43,11 @@
             "name": "blog",
             "type": "vcs",
             "url": "https://github.com/urbanodev81/blog"
+        },
+        {
+            "name": "midia",
+            "type": "vcs",
+            "url": "https://github.com/urbanodev81/midia"
         }
     ],
     "autoload-dev": {

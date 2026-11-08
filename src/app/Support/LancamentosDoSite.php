@@ -20,8 +20,8 @@ use Throwable;
  * próxima requisição tentar de novo (`SitePublicoSemBancoTest`). Nenhum ativo
  * é escolha de quem editou: o banner some da home.
  *
- * `imagem` guarda um de dois formatos: caminho no disco `public` (`site/…jpg`,
- * o que a tela sobe, recortado em 1200×750 por `ImagemDoSite`) ou endereço do
+ * `imagem` guarda um de dois formatos: caminho no disco `public` (`site/…jpg` antigo ou `midias/…jpg`,
+ * o que a tela sobe pelo pacote urbanodev/midia, perfil `lancamento`, 1200×750) ou endereço do
  * próprio site começando por `/` (as duas capturas de sempre, que seguem em
  * `public/lancamentos/`). `url()` resolve os dois.
  */
@@ -104,14 +104,6 @@ final class LancamentosDoSite
         }
 
         return str_starts_with($imagem, '/') ? $imagem : Storage::disk('public')->url($imagem);
-    }
-
-    /** Apaga do disco uma imagem que a tela subiu; as de `public/lancamentos/` ficam. */
-    public static function apagarImagem(?string $imagem): void
-    {
-        if ($imagem && str_starts_with($imagem, ConfiguracaoDoSite::PASTA_IMAGENS.'/')) {
-            Storage::disk('public')->delete($imagem);
-        }
     }
 
     /** @param array<string, mixed> $l */

@@ -38,13 +38,13 @@ A escolhida foi um revisor de segurança que analisa cada alteração enquanto a
 
 O que pesou na decisão foi um detalhe prático: ela consegue ler um arquivo do nosso próprio projeto com as **nossas** regras. Com isso, conseguimos ensinar à ferramenta que, se o cliente não estiver explicitamente definido, a consulta vai enxergar tudo — o que aciona o alerta.
 
-Colocamos a solução em piloto por uma semana em apenas um sistema. Como ela faz uma chamada extra ao modelo a cada resposta e a cada commit, queremos medir o custo real antes de expandir para o restante do time.
+Colocamos a solução em piloto por uma semana em apenas um sistema. Como ela faz uma chamada extra ao modelo a cada resposta e a cada commit, queremos medir o custo real antes de levar para os outros sistemas.
 
 ## O alarme falso
 
 Durante a varredura, a IA cravou com total convicção que havíamos deixado passar uma falha gravíssima: segundo ela, um administrador conseguiria alterar o papel de um usuário pertencente a outro cliente. Ela indicou o arquivo exato, a linha e nos deu uma explicação detalhada. Parecia 100% real.
 
-Antes de sair correndo para alterar o código, fomos conferir. A rota em questão ficava no painel central, uma área restrita que apenas a nossa própria equipe acessa, protegida por uma barreira de segurança dedicada e testes automatizados que impedem a chegada de usuários comuns. O código "suspeito" estava absolutamente correto e fazia exatamente o que devia.
+Antes de sair correndo para alterar o código, fomos conferir. A rota em questão ficava no painel central, uma área restrita que apenas a nossa própria equipe acessa, protegida por uma barreira de segurança dedicada e por testes automatizados que provam que usuários comuns não chegam lá. O código "suspeito" estava absolutamente correto e fazia exatamente o que devia.
 
 A falha nunca existiu, e por pouco não gastamos tempo corrigindo algo que estava certo. É por isso que a regra que mencionamos na parte anterior desta série não é enfeite: **a IA aponta, mas quem confere é a gente.** A mesma inteligência artificial que encontrou um problema real naquela mesma tarde inventou um erro fantasioso com a mesma segurança na voz. No fim das contas, quem decide é quem lê o código.
 

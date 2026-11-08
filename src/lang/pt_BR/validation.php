@@ -174,6 +174,7 @@ return [
         'frente' => 'frente',
         'pergunta' => 'pergunta',
         'resposta' => 'resposta',
+        'explicacao' => 'explicação',
         'texto' => 'texto',
         'nota' => 'nota',
         'url' => 'endereço',

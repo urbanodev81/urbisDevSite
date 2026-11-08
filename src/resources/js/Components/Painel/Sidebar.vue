@@ -2,7 +2,7 @@
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed, reactive } from 'vue';
 import {
-    Briefcase, ChartColumn, ChevronDown, GalleryHorizontal, Inbox, LayoutDashboard, MessagesSquare, Newspaper, NotebookPen, UserCog, ScrollText, Settings, X,
+    Briefcase, ChartColumn, ChevronDown, GalleryHorizontal, MessageCircleQuestion, Inbox, LayoutDashboard, MessagesSquare, Newspaper, NotebookPen, UserCog, ScrollText, Settings, X,
 } from 'lucide-vue-next';
 
 defineProps({ aberta: Boolean });
@@ -51,6 +51,7 @@ const grupos = [
             { rotulo: 'Configurações', rota: 'painel.configuracoes.edit', icone: Settings, permissao: 'configuracoes' },
             { rotulo: 'Serviços', rota: 'painel.servicos.index', icone: Briefcase, permissao: 'configuracoes' },
             { rotulo: 'Lançamentos', rota: 'painel.lancamentos.index', icone: GalleryHorizontal, permissao: 'configuracoes' },
+            { rotulo: 'Perguntas', rota: 'painel.perguntas.index', icone: MessageCircleQuestion, permissao: 'configuracoes' },
         ],
     },
     {

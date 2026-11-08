@@ -15,6 +15,13 @@ lançou. Não crie número de versão nem date release por conta própria.
 ## [Não lançado]
 
 ### Adicionado
+- **Perguntas de "Como trabalhamos" no painel** (08/11/2026, bloco 4d). Em
+  Site › Perguntas o administrador adiciona, edita, oculta, remove e reordena
+  as perguntas para fazer a qualquer fornecedor (pergunta e a linha do "por
+  que perguntar", opcional). O título da seção conta sozinho ("Sete
+  perguntas…", "Oito perguntas…"). Nasce com as 7 de sempre, e a página saiu
+  idêntica à de antes; com o banco fora, valem essas 7. Sem nenhuma ativa, a
+  seção some. Sem `FAQPage` no JSON-LD, como decidido em 06/11.
 - **Lançamentos da home no painel** (06/11/2026, bloco 4c). Em Site ›
   Lançamentos o administrador adiciona, edita, oculta, remove e reordena os
   slides do banner logo depois do topo: etiqueta, título, texto, botão
@@ -183,6 +190,10 @@ lançou. Não crie número de versão nem date release por conta própria.
   não levavam a lugar nenhum. Voltam quando houver perfil.
 
 ### Corrigido
+- **Login e validação do painel em português** (08/11/2026). O idioma era
+  `pt_BR`, mas faltava a pasta `lang/`, e o login respondia "These credentials
+  do not match our records". Veio a tradução do molde (Duo e WJ), com os nomes
+  dos campos daqui.
 - **Demos de lançamento assinam "Urbis Dev"** no rodapé, no lugar de "Urbano Dev".
 - **Contato não dá mais 500 quando o e-mail não sai.** Com o SMTP recusando
   a senha, a pessoa preenchia tudo e caía numa tela de erro. Agora o recado

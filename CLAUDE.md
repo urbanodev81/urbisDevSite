@@ -188,8 +188,16 @@ o do molde "site pequeno" (Duo/Girls/WJ), e o painel veio de lá:
   A coluna `imagem` aceita os dois formatos: `site/…jpg` (disco `public`) ou
   `/lancamentos/…jpg` (as capturas de `public/`, que nunca são apagadas).
   Trocar ou remover apaga do disco só a imagem que a tela subiu.
+- **Perguntas (bloco 4d, 08/11/2026).** As perguntas de "Como trabalhamos" são
+  a tabela `perguntas`, lida só por `App\Support\PerguntasDoSite::lista()`
+  (mesmo desenho dos Serviços: cache limpo pelo model, `PADRAO` = as 7 de
+  sempre com o banco fora, nenhuma ativa → a seção some). O título conta sozinho
+  (`quantasPorExtenso`). **Sem `FAQPage`**, decisão dele de 06/11. Tela em
+  Site › Perguntas.
+- **Idioma:** `lang/pt_BR` (desde 08/11/2026, veio do molde). Campo novo com
+  nome de coluna feio? Ponha a linha em `attributes` de `lang/pt_BR/validation.php`.
 - Por blocos (6.4 do estudo): 1 Fundação ✅ · 2 Contatos ✅ (lado do Sócrates
-  pendente) · 3 Blog no banco ✅ (3a editor, 3b leitores) · 4 Configurações, serviços e lançamentos (4a–4c ✅; 4d Perguntas a seguir) ·
+  pendente) · 3 Blog no banco ✅ (3a editor, 3b leitores) · 4 Configurações, serviços, lançamentos e perguntas (4a–4d ✅) ·
   5 Produção ✅ (05/11/2026; o bloco 4 vem depois, direto em produção).
   **O painel está em produção** (`urbisdev.tech/painel`). O urbisdev **só tem
   produção** (decisão dele, 05/11): texto novo se confere pela **Prévia** do

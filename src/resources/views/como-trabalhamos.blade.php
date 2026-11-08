@@ -294,11 +294,13 @@
             </div>
         </section>
 
-        {{-- Perguntas --}}
+        {{-- Perguntas: a lista sai de Site › Perguntas (bloco 4d, 08/11/2026) --}}
+        @php($perguntas = \App\Support\PerguntasDoSite::lista())
+        @if ($perguntas)
         <section id="perguntas">
             <div class="container">
                 <div class="section-head">
-                    <span class="eyebrow">Sete perguntas para fazer a qualquer fornecedor</span>
+                    <span class="eyebrow">{{ \App\Support\PerguntasDoSite::quantasPorExtenso(count($perguntas)) }} para fazer a qualquer fornecedor</span>
                     <h2>Inclusive a nós.</h2>
                     <p>
                         São as perguntas cujas respostas separam um sistema que envelhece bem
@@ -306,16 +308,13 @@
                     </p>
                 </div>
                 <div class="perguntas">
-                    <div class="pergunta"><div class="pergunta-n">01</div><p>Como vocês descobrem que o sistema caiu?<span>Se a resposta for “o cliente avisa”, o custo da queda é seu.</span></p></div>
-                    <div class="pergunta"><div class="pergunta-n">02</div><p>O que acontece se a pessoa que fez isto sair amanhã?<span>A resposta está na documentação, não na confiança.</span></p></div>
-                    <div class="pergunta"><div class="pergunta-n">03</div><p>Onde está escrito por que essa decisão foi tomada?<span>O código conta o quê; quase nunca conta o porquê.</span></p></div>
-                    <div class="pergunta"><div class="pergunta-n">04</div><p>Quais dados pessoais o sistema guarda, e por quanto tempo?<span>Dado sem prazo é dado guardado para sempre por omissão.</span></p></div>
-                    <div class="pergunta"><div class="pergunta-n">05</div><p>Como se prova que um cliente não enxerga o dado do outro?<span>“O sistema foi feito assim” não é prova. Teste é.</span></p></div>
-                    <div class="pergunta"><div class="pergunta-n">06</div><p>A tela funciona para quem enxerga pouco?<span>Acessibilidade depois da entrega custa a reescrita da interface.</span></p></div>
-                    <div class="pergunta"><div class="pergunta-n">07</div><p>Se eu quiser trocar de fornecedor, o que sai comigo?<span>Código, dados e documentação — ou dependência.</span></p></div>
+                    @foreach ($perguntas as $p)
+                    <div class="pergunta"><div class="pergunta-n">{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</div><p>{{ $p['pergunta'] }}@if ($p['explicacao'])<span>{{ $p['explicacao'] }}</span>@endif</p></div>
+                    @endforeach
                 </div>
             </div>
         </section>
+        @endif
 
         {{-- Chamada final --}}
         <section class="fecho">

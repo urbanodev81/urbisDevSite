@@ -18,6 +18,7 @@ use App\Http\Controllers\Painel\ImagensController;
 use App\Http\Controllers\Painel\ContatoController;
 use App\Http\Controllers\Painel\ConfiguracaoController;
 use App\Http\Controllers\Painel\LancamentoController;
+use App\Http\Controllers\Painel\PerguntaController;
 use App\Http\Controllers\Painel\ServicoController;
 use App\Http\Controllers\Painel\PainelController;
 use App\Http\Controllers\Painel\UsuarioController;
@@ -284,6 +285,15 @@ Route::middleware('auth')->prefix('painel')->group(function () {
             ->middleware('throttle:20,1')->name('update');
         Route::delete('lancamentos/{lancamento}', [LancamentoController::class, 'destroy'])->whereNumber('lancamento')->name('destroy');
         Route::post('lancamentos/{lancamento}/mover', [LancamentoController::class, 'mover'])->whereNumber('lancamento')->name('mover');
+    });
+
+    // Perguntas de "Como trabalhamos" (bloco 4d, 08/11/2026). Mesma permissão.
+    Route::middleware('can:configuracoes.gerenciar')->prefix('site')->name('painel.perguntas.')->group(function () {
+        Route::get('perguntas', [PerguntaController::class, 'index'])->name('index');
+        Route::post('perguntas', [PerguntaController::class, 'store'])->name('store');
+        Route::put('perguntas/{pergunta}', [PerguntaController::class, 'update'])->whereNumber('pergunta')->name('update');
+        Route::delete('perguntas/{pergunta}', [PerguntaController::class, 'destroy'])->whereNumber('pergunta')->name('destroy');
+        Route::post('perguntas/{pergunta}/mover', [PerguntaController::class, 'mover'])->whereNumber('pergunta')->name('mover');
     });
 
     Route::get('auditoria', AuditoriaController::class)

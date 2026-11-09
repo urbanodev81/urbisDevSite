@@ -54,10 +54,13 @@ Route::get('/', function () {
             default => '',
         },
     ]);
-});
+})->name('site.home');
 
-Route::get('/como-trabalhamos', fn () => view('como-trabalhamos'));
-Route::get('/privacidade', fn () => view('privacidade'));
+// As páginas têm nome `site.*` desde 09/11/2026: é por ele que o contador de
+// visitas (urbanodev/visitas, config/visitas.php) sabe o que é página do site.
+// Página pública nova sem `site.` no nome não é contada.
+Route::get('/como-trabalhamos', fn () => view('como-trabalhamos'))->name('site.como-trabalhamos');
+Route::get('/privacidade', fn () => view('privacidade'))->name('site.privacidade');
 
 // "Guias" virou "Blog" em 03/11/2026 (pendência 247). Link antigo, de busca ou
 // já compartilhado, cai no mesmo lugar do endereço novo, com 301 e a query junto.
@@ -76,7 +79,7 @@ Route::get('/trabalhos', function (Portfolio $portfolio) {
     abort_unless($portfolio->temItens(), 404);
 
     return view('trabalhos', ['categorias' => $portfolio->porCategoria()]);
-});
+})->name('site.trabalhos');
 
 // A cópia local das capturas. O nome é o que o Sócrates gerou (20 caracteres
 // ao acaso) e muda a cada troca de imagem: pode ficar guardado para sempre.
@@ -92,14 +95,14 @@ Route::get('/trabalhos/capturas/{arquivo}', function (string $arquivo) {
 // SEO e GEO (18/10/2026): a lista vem de `App\Support\PaginasPublicas`.
 Route::get('/sitemap.xml', fn (PaginasPublicas $paginas) => response()
     ->view('seo.sitemap', ['paginas' => array_keys($paginas->todas()), 'datas' => $paginas->ultimasMudancas()])
-    ->header('Content-Type', 'application/xml; charset=UTF-8'));
+    ->header('Content-Type', 'application/xml; charset=UTF-8'))->name('site.sitemap');
 
 // Para assistentes de IA (a convenção de llmstxt.org): quem é a casa, o que
 // faz e onde está cada coisa, em texto corrido. Mesmo conteúdo do JSON-LD do
 // `partials/seo`, sem nome de produto nem de cliente.
 Route::get('/llms.txt', fn (PaginasPublicas $paginas) => response()
     ->view('seo.llms', ['paginas' => $paginas->todas()])
-    ->header('Content-Type', 'text/plain; charset=UTF-8'));
+    ->header('Content-Type', 'text/plain; charset=UTF-8'))->name('site.llms');
 
 // `throttle` não é sobre o duplo clique (isso é assunto do
 // ContactController, que descarta recado idêntico): é o teto para quem
@@ -111,7 +114,7 @@ Route::get('/llms.txt', fn (PaginasPublicas $paginas) => response()
  * `config/demonstracoes.php`; slug que não está lá (ou que ainda não está
  * pronta) responde 404 — o endereço nunca escolhe um arquivo de view.
  */
-Route::get('/demonstracoes', fn () => view('demonstracoes.index', ['demos' => config('demonstracoes')]));
+Route::get('/demonstracoes', fn () => view('demonstracoes.index', ['demos' => config('demonstracoes')]))->name('site.demonstracoes');
 Route::get('/demonstracoes/{slug}', function (string $slug) {
     $demo = config('demonstracoes.'.$slug);
 
@@ -126,7 +129,7 @@ Route::get('/demonstracoes/{slug}', function (string $slug) {
         // Só a demonstração de IA mostra a tabela que manda ao modelo.
         'dados' => $slug === PergunteAosDados::DEMO ? PergunteAosDados::dados() : null,
     ]);
-})->where('slug', '[a-z0-9-]+');
+})->where('slug', '[a-z0-9-]+')->name('site.demonstracao');
 
 // Dado público para as demonstrações (20/10/2026): CEP, CNPJ e feriados, pelo
 // servidor e com cache (`App\Support\DadosPublicos`). Antes da rota `{slug}`
@@ -236,6 +239,10 @@ Route::middleware('auth')->prefix('painel')->group(function () {
     Route::get('imagens', [ImagensController::class, 'index'])->middleware('can:midia.usar')->name('painel.imagens');
 
     // Leitores (04/11/2026, bloco 3b): moderar comentários e ver o que foi lido.
+    // Visitas do site (09/11/2026, pendência 263), pelo pacote urbanodev/visitas.
+    Route::get('visitas', \App\Http\Controllers\Painel\VisitasController::class)
+        ->middleware('can:visitas.ver')->name('painel.visitas');
+
     Route::middleware('can:blog.gerenciar')->prefix('blog')->name('painel.blog.')->group(function () {
         Route::get('comentarios', [ComentarioController::class, 'index'])->name('comentarios.index');
         Route::put('comentarios/{comentario}', [ComentarioController::class, 'update'])->name('comentarios.update');

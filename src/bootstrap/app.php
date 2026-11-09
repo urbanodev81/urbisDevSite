@@ -30,6 +30,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             HandleInertiaRequests::class,
             ExigirSegundoFator::class,
+            // Visitas do site (09/11/2026, pendência 263): conta só as rotas de
+            // config/visitas.php, de quem não está logado, sem cookie nem IP
+            // guardado. Grava depois de a página sair; banco fora não derruba nada.
+            \UrbanoDev\Visitas\Http\ContarVisita::class,
         ]);
 
         $middleware->redirectGuestsTo('/painel/login');

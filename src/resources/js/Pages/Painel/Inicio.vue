@@ -12,6 +12,7 @@ import PageHeader from '@/Components/PageHeader.vue';
 
 defineProps({
     contatos: { type: Object, default: null },
+    visitas: { type: Object, default: null },
     blog: { type: Object, required: true },
     atividade: { type: Array, default: null },
 });
@@ -55,6 +56,24 @@ defineProps({
                 <p v-else class="mt-2 text-sm text-fg-muted">Ninguém esperando. Contato novo aparece aqui sozinho.</p>
 
                 <Link :href="route('painel.contatos.index')" class="mt-4 inline-block text-sm text-accent underline">Abrir a caixa de contatos</Link>
+            </section>
+
+            <section v-if="visitas !== null" class="rounded-card border border-line bg-surface p-6" aria-labelledby="titulo-visitas">
+                <h2 id="titulo-visitas" class="font-display text-lg font-bold text-fg">Visitas do site</h2>
+
+                <p class="mt-3 text-3xl font-bold tabular-nums text-fg">
+                    {{ visitas.atual.visitantes.toLocaleString('pt-BR') }}
+                    <span class="text-base font-normal text-fg-muted">
+                        {{ visitas.atual.visitantes === 1 ? 'visita' : 'visitas' }} nos últimos 7 dias
+                    </span>
+                </p>
+                <p class="mt-2 text-sm text-fg-muted">
+                    {{ visitas.atual.visualizacoes.toLocaleString('pt-BR') }} {{ visitas.atual.visualizacoes === 1 ? 'página aberta' : 'páginas abertas' }};
+                    nos 7 dias antes, {{ visitas.anterior.visitantes.toLocaleString('pt-BR') }} {{ visitas.anterior.visitantes === 1 ? 'visita' : 'visitas' }}.
+                </p>
+                <p v-if="!visitas.desde" class="mt-2 text-sm text-fg-muted">A contagem começa na primeira visita depois da publicação.</p>
+
+                <Link :href="route('painel.visitas')" class="mt-4 inline-block text-sm text-accent underline">Ver dia a dia e as páginas mais abertas</Link>
             </section>
 
             <section class="rounded-card border border-line bg-surface p-6" aria-labelledby="titulo-blog">

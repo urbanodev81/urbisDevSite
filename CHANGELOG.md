@@ -15,6 +15,13 @@ lançou. Não crie número de versão nem date release por conta própria.
 ## [Não lançado]
 
 ### Adicionado
+- **Visitas do site no painel** (09/11/2026, pendência 263). O site passa a
+  contar quantas visitas recebe e quais páginas são abertas, pelo pacote
+  `urbanodev/visitas`: sem Google Analytics, sem cookie e sem guardar o IP de
+  ninguém. Robôs (Google, prévia de link do WhatsApp) e quem está logado no
+  painel ficam de fora. A tela Visitas mostra os últimos 30 dias, dia a dia,
+  com a comparação com os 30 anteriores e as páginas mais abertas; o Início
+  mostra a semana.
 - **Perguntas de "Como trabalhamos" no painel** (08/11/2026, bloco 4d). Em
   Site › Perguntas o administrador adiciona, edita, oculta, remove e reordena
   as perguntas para fazer a qualquer fornecedor (pergunta e a linha do "por

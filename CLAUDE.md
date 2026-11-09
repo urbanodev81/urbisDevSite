@@ -157,6 +157,17 @@ o do molde "site pequeno" (Duo/Girls/WJ), e o painel veio de lá:
   Banco fora: a contagem vira no-op, e os comentários e os mais lidos somem
   sem derrubar a página. Retenção: `comentario` (recusado/arquivado) e `voto`,
   24 meses.
+- **Visitas do site (09/11/2026, pendência 263).** Pacote `urbanodev/visitas`
+  (`../../pacotes/visitas`, público): o middleware `ContarVisita` está no grupo
+  `web` (`bootstrap/app.php`) e conta só as rotas de `config/visitas.php` —
+  as páginas do site têm nome **`site.*`** em `routes/web.php` e o blog
+  `blog.*`. **Página pública nova sem `site.` no nome não é contada**; o
+  `php artisan visitas:conferir` lista as que são. Sem cookie, sem IP guardado
+  (marca do dia com sal que se apaga no dia seguinte), robô vira número à
+  parte, logado não conta, banco fora não derruba página (grava no
+  `terminate`). Tela em Visitas (`visitas.ver` = quem vê contatos ou o site) e
+  cartão no Início. A contagem de leitura do blog (`blog_leituras`) segue à
+  parte: ela mede quem ficou 4 s no texto, e a visita mede a página aberta.
 - **Configuração do site (bloco 4a, 06/11/2026).** Catálogo em
   `App\Support\ConfiguracaoDoSite` (veio do Duo): chave fora dele não existe.
   Nas views, `{{ $site('contato.email') }}` (compartilhado no

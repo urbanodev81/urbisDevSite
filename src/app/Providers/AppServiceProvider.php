@@ -28,6 +28,10 @@ class AppServiceProvider extends ServiceProvider
         // envio servem o Blog e o Site, então vale quem edita um ou outro.
         \Illuminate\Support\Facades\Gate::define('midia.usar', fn (User $u) => $u->can('blog.gerenciar') || $u->can('configuracoes.gerenciar'));
 
+        // Visitas do site (263, 09/11/2026): número agregado, sem dado de
+        // ninguém. Vê quem cuida dos contatos ou do site — os dois perfis.
+        \Illuminate\Support\Facades\Gate::define('visitas.ver', fn (User $u) => $u->can('leads.ver') || $u->can('configuracoes.gerenciar'));
+
         // Conta travada por senha errada (LoginRequest): um aviso ao operador
         // por e-mail+IP a cada 15 min. Pode ser o dono esquecido — ou força bruta.
         Event::listen(Lockout::class, function (Lockout $e) {

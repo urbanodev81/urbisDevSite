@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Auditoria;
 use App\Models\BlogComentario;
 use App\Models\Contato;
+use App\Support\VisitasDoSite;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -23,7 +24,7 @@ use UrbanoDev\Blog\Post;
  */
 class PainelController extends Controller
 {
-    public function index(Request $request, Blog $blog): Response
+    public function index(Request $request, Blog $blog, VisitasDoSite $visitas): Response
     {
         $usuario = $request->user();
 
@@ -50,6 +51,9 @@ class PainelController extends Controller
                         ])->all(),
                 ]
                 : null,
+
+            // Visitas do site (263, 09/11/2026): a semana contra a anterior.
+            'visitas' => $usuario?->can('visitas.ver') ? $visitas->daSemana() : null,
 
             'blog' => [
                 'publicados' => count($blog->publicados()),

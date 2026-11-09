@@ -2,7 +2,7 @@
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed, reactive } from 'vue';
 import {
-    Briefcase, ChartColumn, ChevronDown, GalleryHorizontal, MessageCircleQuestion, Inbox, LayoutDashboard, MessagesSquare, Newspaper, NotebookPen, UserCog, ScrollText, Settings, X,
+    Briefcase, ChartColumn, ChartLine, ChevronDown, GalleryHorizontal, MessageCircleQuestion, Inbox, LayoutDashboard, MessagesSquare, Newspaper, NotebookPen, UserCog, ScrollText, Settings, X,
 } from 'lucide-vue-next';
 
 defineProps({ aberta: Boolean });
@@ -31,6 +31,8 @@ const grupos = [
         itens: [
             { rotulo: 'Início', rota: 'painel.inicio', icone: LayoutDashboard, permissao: null },
             { rotulo: 'Contatos', rota: 'painel.contatos.index', icone: Inbox, permissao: 'leads' },
+            // Visitas do site (09/11/2026, 263): quantos vieram e o que abriram.
+            { rotulo: 'Visitas', rota: 'painel.visitas', icone: ChartLine, permissao: 'visitas' },
             // Blog com subitens (06/11/2026): textos, comentários e leitores
             // são a mesma frente; soltos, ocupavam três linhas da raiz.
             {

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0ef8c2a738f619ae8a86f6dcdc9c3b5e",
+    "content-hash": "d81a67ee594badd994d3e94ab4708599",
     "packages": [
         {
             "name": "altcha-org/altcha",
@@ -6870,6 +6870,59 @@
                 "issues": "https://github.com/urbanodev81/midia/issues"
             },
             "time": "2026-11-08T04:42:17+00:00"
+        },
+        {
+            "name": "urbanodev/visitas",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/urbanodev81/visitas.git",
+                "reference": "8e793f7c3b6cec8cf88006b76aef9fbae8544486"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/urbanodev81/visitas/zipball/8e793f7c3b6cec8cf88006b76aef9fbae8544486",
+                "reference": "8e793f7c3b6cec8cf88006b76aef9fbae8544486",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/console": "^12.0 || ^13.0",
+                "illuminate/database": "^12.0 || ^13.0",
+                "illuminate/http": "^12.0 || ^13.0",
+                "illuminate/support": "^12.0 || ^13.0",
+                "php": "^8.3"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^10.0 || ^11.0",
+                "phpunit/phpunit": "^11.0 || ^12.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "UrbanoDev\\Visitas\\VisitasServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "UrbanoDev\\Visitas\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "UrbanoDev\\Visitas\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Contador de visitas da casa para site público Laravel: sem cookie, sem IP guardado, robô e prefetch fora, visitante do dia por marca com sal que se apaga sozinho.",
+            "support": {
+                "source": "https://github.com/urbanodev81/visitas/tree/v0.1.0",
+                "issues": "https://github.com/urbanodev81/visitas/issues"
+            },
+            "time": "2026-11-09T02:58:46+00:00"
         },
         {
             "name": "vlucas/phpdotenv",

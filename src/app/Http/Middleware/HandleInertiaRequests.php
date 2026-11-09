@@ -68,6 +68,7 @@ class HandleInertiaRequests extends Middleware
                     'configuracoes' => (bool) $usuario?->can('configuracoes.gerenciar'),
                     'usuarios' => (bool) $usuario?->can('usuarios.ver'),
                     'auditoria' => (bool) $usuario?->can('auditoria.ver'),
+                    'visitas' => (bool) $usuario?->can('visitas.ver'),
                 ],
             ],
 

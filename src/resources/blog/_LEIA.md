@@ -5,13 +5,13 @@ vira página.
 
 ## Pelo site do GitHub, inclusive pelo celular
 
-1. Abra `src/resources/blog` no github.com, na branch `pre-prod` (é ela que publica o site).
+1. Abra `src/resources/blog` no github.com, na branch `prod` (é ela que publica o site desde 06/11/2026).
 2. **Add file → Create new file.**
 3. Dê o nome em minúsculas, sem acento e com hífen: `quanto-custa-um-sistema.md`.
    Esse nome é o endereço da página.
 4. Copie o conteúdo de `_MODELO.md` e escreva. Troque a `data`.
 5. Para publicar, apague a linha `rascunho: sim`.
-6. **Commit changes**, espere até uns 2 minutos e abra `urbisdev.tech/blog/<nome>`.
+6. **Commit changes**, espere uns 5 minutos (a VPS confere a cada 2 e depois constrói) e abra `urbisdev.tech/blog/<nome>`. Não apareceu? Veja `ssh urbisdev-vps 'tail ~/publicacoes/vigia.log'`.
 
 ## Pelo terminal
 

@@ -3,6 +3,23 @@
 Cada arquivo `.md` desta pasta é uma página. Arquivo que começa com `_` não
 vira página.
 
+> **Desde 04/11/2026 o painel é o caminho principal** (urbisdev.tech/painel,
+> Blog › Textos). Os textos desta pasta foram copiados para o banco, e **o
+> banco ganha do `.md` com o mesmo nome**: mudar aqui um texto que já está no
+> painel NÃO muda o site (o `.md` só volta a valer se o banco cair). Para
+> revisar um texto publicado, edite no painel.
+>
+> Se a revisão já foi feita no `.md` (aconteceu em 08/11), leve para o banco,
+> na VPS, primeiro olhando e depois gravando:
+>
+> ```bash
+> ssh urbisdev-vps 'cd /home/urbisdev/site && docker compose exec -T -u www-data app php artisan blog:importar --atualizar=<nome>'
+> ssh urbisdev-vps 'cd /home/urbisdev/site && docker compose exec -T -u www-data app php artisan blog:importar --atualizar=<nome> --executar'
+> ```
+>
+> Ele recusa texto que alguém já editou no painel, para não apagar a edição.
+> Texto NOVO criado aqui continua indo ao ar pelo `.md`, como abaixo.
+
 ## Pelo site do GitHub, inclusive pelo celular
 
 1. Abra `src/resources/blog` no github.com, na branch `prod` (é ela que publica o site desde 06/11/2026).

@@ -102,7 +102,7 @@ Escrever `@context` dentro de `{!! !!}` vira a diretiva do Laravel 12: monte o
 JSON no `@php`. A 404 é `errors/404.blade.php`, que estende o layout.
 **Acabamento de 06/11/2026 (auditoria em `Arquivos/analise/relatorios/urbisdev/AUDITORIA-SEO-GEO.md`):** tag, seção e mês do blog são `noindex, follow` pelo próprio partial e saem do sitemap (`PaginasPublicas`); o texto é `og:type=article` com a trilha pelo Blog; texto do painel sem autor assina `config('blog.autor_padrao')`; o `<title>` do layout acrescenta "— UrbisDev" quando a página não traz a marca. Diretiva Blade colada em palavra (`UrbisDev@endunless`) não é lida: derruba o layout inteiro.
 
-**Guias (desde 31/10/2026)** são o pacote `urbanodev/blog` (`../../pacotes/blog`, público). Cada texto é um `.md` em `src/resources/blog`; o passo a passo está em `_LEIA.md` e dá para publicar pelo github.com, na `pre-prod`. A configuração mora em `config/blog.php`. Sem texto publicado, o link do menu não existe.
+**Guias (desde 31/10/2026)** são o pacote `urbanodev/blog` (`../../pacotes/blog`, público). Cada texto é um `.md` em `src/resources/blog`; o passo a passo está em `_LEIA.md` e dá para publicar texto NOVO pelo github.com, na `prod`. **Texto já importado para o banco (04/11) se revisa no painel**: o banco ganha do `.md` com o mesmo slug, e editar o arquivo não muda o site (custou três revisões em 08/11). Revisão já feita no `.md`: `blog:importar --atualizar=<slug>` (recusa se houver edição do painel, salvo `--forcar`). A configuração mora em `config/blog.php`. Sem texto publicado, o link do menu não existe.
 
 **O painel (desde 03/11/2026, pendência 246; estudo em
 `../../Arquivos/analise/em-voo/urbisdev-admin.md`).** Até aqui o site era, de

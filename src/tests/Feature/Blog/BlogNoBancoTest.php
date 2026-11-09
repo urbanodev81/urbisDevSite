@@ -159,6 +159,34 @@ it('não deixa criar texto com o endereço de um .md, mas o importado ganha do a
     expect(Texto::count())->toBe(1);
 });
 
+it('--atualizar reescreve do .md o texto importado, mas não pisa em edição do painel', function () {
+    $this->artisan('blog:importar', ['--executar' => true])->assertSuccessful();
+    $texto = Texto::sole();
+
+    file_put_contents($this->pasta.'/do-arquivo.md', "---\ntitulo: Do Arquivo, revisado\ndescricao: Texto que mora no md.\ndata: 2026-01-10\ntags: docker\n---\n\nCorpo **revisado**.\n");
+    $this->get('/blog/do-arquivo')->assertSee('Do Arquivo')->assertDontSee('revisado');
+
+    $this->artisan('blog:importar', ['--atualizar' => ['do-arquivo']])->expectsOutputToContain('muda titulo, corpo_html')->assertSuccessful();
+    expect($texto->fresh()->titulo)->toBe('Do Arquivo');
+
+    $this->artisan('blog:importar', ['--atualizar' => ['do-arquivo'], '--executar' => true])->assertSuccessful();
+    expect($texto->fresh()->corpo_html)->toContain('<strong>revisado</strong>');
+    $this->get('/blog/do-arquivo')->assertSee('Do Arquivo, revisado');
+    expect(Auditoria::where('auditavel_id', $texto->id)->where('evento', 'alterado')->exists())->toBeTrue();
+
+    $this->artisan('blog:importar', ['--atualizar' => ['do-arquivo'], '--executar' => true])->expectsOutputToContain('já está igual');
+    $this->artisan('blog:importar', ['--atualizar' => ['nao-existe']])->assertFailed();
+
+    $this->actingAs(contaDoBlog())->put('/painel/blog/textos/'.$texto->uuid, textoValido(['slug' => 'do-arquivo', 'titulo' => 'Mexido no painel']))->assertSessionHasNoErrors();
+    file_put_contents($this->pasta.'/do-arquivo.md', "---\ntitulo: De novo no md\ndescricao: Texto que mora no md.\ndata: 2026-01-10\n---\n\nOutro corpo.\n");
+
+    $this->artisan('blog:importar', ['--atualizar' => ['do-arquivo'], '--executar' => true])->expectsOutputToContain('editado no painel')->assertFailed();
+    expect($texto->fresh()->titulo)->toBe('Mexido no painel');
+
+    $this->artisan('blog:importar', ['--atualizar' => ['do-arquivo'], '--executar' => true, '--forcar' => true])->assertSuccessful();
+    expect($texto->fresh()->titulo)->toBe('De novo no md');
+});
+
 it('o endereço trava depois de ir ao ar', function () {
     $conta = contaDoBlog();
     $this->actingAs($conta)->post('/painel/blog/textos', textoValido(['rascunho' => true]));

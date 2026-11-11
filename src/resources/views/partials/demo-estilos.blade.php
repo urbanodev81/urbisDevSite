@@ -79,4 +79,45 @@
     .ug-dica p { display: flex; align-items: center; gap: 8px; }
     .ug-dica i { width: 10px; height: 10px; border-radius: 2px; flex: none; }
     .ug-dica b { margin-left: auto; padding-left: 14px; color: var(--fg); font-variant-numeric: tabular-nums; }
+    /* ---- movimento (10/11/2026) ----
+       Entrada das peças do graficos.js e das tabelas. Fica parada até a peça
+       aparecer na tela (`ug-visto`, posto pelo graficos.js). Com menos
+       movimento, crescer/desenhar/subir TROCAM por acender, no mesmo ritmo
+       (regra da casa: nunca desligar). "Pausar animações" do widget encurta
+       tudo para o estado final. */
+    @keyframes ug-cresce-y { from { transform: scaleY(0); } }
+    @keyframes ug-cresce-x { from { transform: scaleX(0); } }
+    @keyframes ug-desenha { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+    @keyframes ug-acende { from { opacity: 0; } }
+    @keyframes ug-sobe { from { opacity: 0; transform: translateY(8px); } }
+    .ug-cresce-y, .ug-cresce-x { transform-box: fill-box; animation: ug-cresce-y .75s cubic-bezier(.2, .75, .25, 1) both; animation-delay: calc(var(--i, 0) * 70ms); }
+    .ug-cresce-y { transform-origin: 50% 100%; }
+    .ug-cresce-x { transform-origin: 0 50%; animation-name: ug-cresce-x; }
+    .ug-desenha { stroke-dasharray: 1; animation: ug-desenha 1.2s cubic-bezier(.4, 0, .2, 1) both; }
+    .ug-acende { animation: ug-acende .6s ease-out both; animation-delay: calc(var(--i, 0) * 45ms); }
+    .ug-acende.ug-depois { animation-delay: calc(500ms + var(--i, 0) * 70ms); }
+    .ug-desenha ~ .ug-depois { animation-delay: 1.1s; }
+    .ug:not(.ug-visto) :is(.ug-cresce-y, .ug-cresce-x, .ug-desenha, .ug-acende) { animation-play-state: paused; }
+    .ug-quieto :is(.ug-cresce-y, .ug-cresce-x, .ug-desenha, .ug-acende) { animation: none; }
+    .demo-tabela tbody tr { animation: ug-sobe .45s ease-out both; }
+    .demo-tabela tbody tr:nth-child(2) { animation-delay: 45ms; }
+    .demo-tabela tbody tr:nth-child(3) { animation-delay: 90ms; }
+    .demo-tabela tbody tr:nth-child(4) { animation-delay: 135ms; }
+    .demo-tabela tbody tr:nth-child(5) { animation-delay: 180ms; }
+    .demo-tabela tbody tr:nth-child(6) { animation-delay: 225ms; }
+    .demo-tabela tbody tr:nth-child(7) { animation-delay: 270ms; }
+    .demo-tabela tbody tr:nth-child(8) { animation-delay: 315ms; }
+    .demo-tabela tbody tr:nth-child(9) { animation-delay: 360ms; }
+    .demo-tabela tbody tr:nth-child(10) { animation-delay: 405ms; }
+    .demo-tabela tbody tr:nth-child(11) { animation-delay: 450ms; }
+    .demo-tabela tbody tr:nth-child(12) { animation-delay: 495ms; }
+    .demo-tabela:not(.ug-visto) tbody tr { animation-play-state: paused; }
+    .ug-acendeu { animation: ug-acende .5s ease-out; }
+    .demo-numero { transition: border-color .3s ease-out, box-shadow .3s ease-out; }
+    .demo-numero:hover { border-color: var(--accent); box-shadow: 0 6px 18px -10px color-mix(in srgb, var(--accent) 60%, transparent); }
+    @media (prefers-reduced-motion: reduce) {
+        .ug-cresce-y, .ug-cresce-x { transform: none; animation-name: ug-acende; }
+        .ug-desenha { stroke-dasharray: none; animation-name: ug-acende; }
+        .demo-tabela tbody tr { animation-name: ug-acende; }
+    }
 </style>

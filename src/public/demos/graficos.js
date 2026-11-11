@@ -97,20 +97,61 @@
     if ('ResizeObserver' in window) {
         new ResizeObserver(() => {
             clearTimeout(espera);
-            espera = setTimeout(() => vivos.forEach((h) => { if (h.isConnected && h.clientWidth !== h._ugLargura) h._ugDesenhar(); }), 120);
+            espera = setTimeout(() => vivos.forEach((h) => { if (h.isConnected && h.clientWidth !== h._ugLargura) h._ugDesenhar(true); }), 120);
         }).observe(document.documentElement);
     }
 
+    /*
+     * Movimento (10/11/2026, "mais vida nas demonstrações"). As peças nascem
+     * com uma classe de entrada (`ug-cresce-y`, `ug-cresce-x`, `ug-desenha`,
+     * `ug-acende`) e o CSS em `partials/demo-estilos` faz o resto. A entrada
+     * fica parada até o gráfico aparecer na tela (`ug-visto`) e não se repete
+     * quando o redesenho é só da largura mudando (`ug-quieto`). Com menos
+     * movimento, crescer e desenhar viram acender; "Pausar animações" para tudo.
+     */
+    const olho = 'IntersectionObserver' in window
+        ? new IntersectionObserver((entradas) => entradas.forEach((e) => {
+            if (!e.isIntersecting) return;
+            e.target.classList.add('ug-visto');
+            olho.unobserve(e.target);
+            if (e.target._ugAoVer) { e.target._ugAoVer(); e.target._ugAoVer = null; }
+        }), { threshold: 0.15 })
+        : null;
+
+    function vigiar(el) {
+        if (!olho) { el.classList.add('ug-visto'); return; }
+        if (!el.classList.contains('ug-visto')) olho.observe(el);
+    }
+
+    // Tabelas montadas pelas demos (`.demo-tabela`) também esperam aparecer.
+    if ('MutationObserver' in window) {
+        const procurar = (raiz) => {
+            if (raiz.nodeType !== 1) return;
+            if (raiz.matches('.demo-tabela')) vigiar(raiz);
+            raiz.querySelectorAll('.demo-tabela').forEach(vigiar);
+        };
+        const iniciar = () => {
+            procurar(document.body);
+            new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(procurar))).observe(document.body, { childList: true, subtree: true });
+        };
+        if (document.body) iniciar(); else document.addEventListener('DOMContentLoaded', iniciar);
+    }
+
     function montar(host, desenhar) {
-        host._ugDesenhar = function () {
+        host._ugDesenhar = function (soLargura) {
             host._ugLargura = host.clientWidth;
             host.replaceChildren();
             host.classList.add('ug');
+            host.classList.toggle('ug-quieto', soLargura === true);
             desenhar(Math.max(260, host.clientWidth));
         };
         vivos.add(host);
+        vigiar(host);
         host._ugDesenhar();
     }
+
+    /* Espaçamento da onda de entrada: a peça `i` entra `i` passos depois. */
+    function onda(el, i) { el.style.setProperty('--i', i); return el; }
 
     function legenda(host, series) {
         if (series.length < 2) return;
@@ -195,10 +236,10 @@
                     d += (aberto ? 'L' : 'M') + px(i).toFixed(1) + ' ' + py(v).toFixed(1);
                     aberto = true; ultimo = i;
                 });
-                const caminho = svg('path', { d, class: 'ug-linha' + (serie.tracejada ? ' ug-linha-meta' : '') }, s);
+                const caminho = svg('path', { d, pathLength: 1, class: 'ug-linha' + (serie.tracejada ? ' ug-linha-meta ug-acende' : ' ug-desenha') }, s);
                 caminho.style.stroke = serie.cor;
                 if (ultimo >= 0 && !serie.tracejada) {
-                    const p = svg('circle', { cx: px(ultimo), cy: py(serie.valores[ultimo]), r: 4.5, class: 'ug-ponto' }, s);
+                    const p = svg('circle', { cx: px(ultimo), cy: py(serie.valores[ultimo]), r: 4.5, class: 'ug-ponto ug-acende ug-depois' }, s);
                     p.style.fill = serie.cor;
                 }
             });
@@ -250,9 +291,10 @@
                 const comprimento = Math.max(2, (item.valor / max) * w);
                 // Ponta arredondada, base reta: a barra nasce da linha de base.
                 const r = Math.min(4, comprimento);
-                const b = svg('path', { d: `M${x0} ${y}h${comprimento - r}a${r} ${r} 0 0 1 ${r} ${r}v${grossura - 2 * r}a${r} ${r} 0 0 1 -${r} ${r}h-${comprimento - r}z`, class: 'ug-barra', tabindex: 0 }, s);
+                const b = svg('path', { d: `M${x0} ${y}h${comprimento - r}a${r} ${r} 0 0 1 ${r} ${r}v${grossura - 2 * r}a${r} ${r} 0 0 1 -${r} ${r}h-${comprimento - r}z`, class: 'ug-barra ug-cresce-x', tabindex: 0 }, s);
+                onda(b, i);
                 b.style.fill = item.cor || cfg.cor || 'var(--serie-1)';
-                texto(s, x0 + comprimento + 8, y + grossura / 2 + 4, f(item.valor), 'start', 'ug-valor');
+                onda(texto(s, x0 + comprimento + 8, y + grossura / 2 + 4, f(item.valor), 'start', 'ug-valor ug-acende ug-depois'), i);
                 const alvo = svg('rect', { x: 0, y: y - 8, width: L, height: passo, fill: 'transparent' }, s);
                 const dicas = [{ cor: item.cor || cfg.cor || 'var(--serie-1)', rotulo: (cfg.colunas || [])[1] || 'Valor', valor: f(item.valor) }];
                 if (item.detalhe) dicas.push({ rotulo: item.detalhe[0], valor: item.detalhe[1] });
@@ -285,11 +327,12 @@
             const maior = Math.max.apply(null, cfg.valores);
             cfg.valores.forEach((v, i) => {
                 const x = m.e + i * faixa + (faixa - grossura) / 2, alto = Math.max(2, (v / teto) * h), r = Math.min(4, alto);
-                const c = svg('path', { d: `M${x} ${m.c + h}v-${alto - r}a${r} ${r} 0 0 1 ${r} -${r}h${grossura - 2 * r}a${r} ${r} 0 0 1 ${r} ${r}v${alto - r}z`, class: 'ug-barra' }, s);
+                const c = svg('path', { d: `M${x} ${m.c + h}v-${alto - r}a${r} ${r} 0 0 1 ${r} -${r}h${grossura - 2 * r}a${r} ${r} 0 0 1 ${r} ${r}v${alto - r}z`, class: 'ug-barra ug-cresce-y' }, s);
+                onda(c, i);
                 c.style.fill = cfg.cor || 'var(--serie-1)';
                 texto(s, x + grossura / 2, A - 8, cfg.rotulos[i], 'middle');
                 // Rótulo só no maior: número em toda coluna ninguém lê.
-                if (v === maior) texto(s, x + grossura / 2, py(v) - 6, f(v), 'middle', 'ug-valor');
+                if (v === maior) onda(texto(s, x + grossura / 2, py(v) - 6, f(v), 'middle', 'ug-valor ug-acende ug-depois'), i);
                 const alvo = svg('rect', { x: m.e + i * faixa, y: m.c, width: faixa, height: h, fill: 'transparent' }, s);
                 alvo.addEventListener('mousemove', (ev) => mostrarDica(ev, cfg.rotulos[i], [{ cor: cfg.cor || 'var(--serie-1)', rotulo: (cfg.colunas || [])[1] || 'Valor', valor: f(v) }]));
                 alvo.addEventListener('mouseleave', esconderDica);
@@ -314,7 +357,8 @@
                 cfg.colunas.forEach((col, j) => {
                     const v = cfg.valores[i][j];
                     // 2px de fundo entre as células: quem separa é o vão, não uma borda.
-                    const q = svg('rect', { x: e + j * lado + 1, y: c + i * lado + 1, width: lado - 2, height: lado - 2, rx: 3, class: 'ug-celula' }, s);
+                    const q = svg('rect', { x: e + j * lado + 1, y: c + i * lado + 1, width: lado - 2, height: lado - 2, rx: 3, class: 'ug-celula ug-acende' }, s);
+                    onda(q, (i + j) / 2);
                     q.style.fillOpacity = (0.08 + 0.92 * (v / max)).toFixed(3);
                     q.addEventListener('mousemove', (ev) => mostrarDica(ev, r + ', ' + col, [{ rotulo: cfg.medida || 'Valor', valor: f(v) }]));
                     q.addEventListener('mouseleave', esconderDica);
@@ -337,10 +381,77 @@
         }));
     }
 
-    function preencher(seletor, valor) {
-        const e = document.querySelector(seletor);
-        if (e) e.textContent = valor;
+    /*
+     * Preenche um campo. Se o texto novo é um número ("R$ 48.915", "106%",
+     * "4,0", "103"), ele CONTA do valor anterior (ou de zero) até o novo, e só
+     * começa quando o campo aparece na tela. Texto que não é número acende.
+     * Dentro de uma região `aria-live`, a região fica `aria-busy` enquanto
+     * conta, para o leitor de tela ler só o valor final.
+     */
+    const NUMERO = /^(R\$\s)?(-?\d{1,3}(?:\.\d{3})*(?:,\d+)?|-?\d+(?:,\d+)?)(%)?$/;
+    const menosMovimento = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
+
+    function lerNumero(t) {
+        const m = NUMERO.exec(String(t).trim());
+        if (!m) return null;
+        const casas = (m[2].split(',')[1] || '').length;
+        return { prefixo: m[1] || '', valor: parseFloat(m[2].replace(/\./g, '').replace(',', '.')), casas, sufixo: m[3] || '' };
     }
 
-    window.UG = { linha, barras, colunas, calor, tabela, fmt, sorteio, filtro, preencher, html, svg, mostrarDica, esconderDica };
+    function acender(el) {
+        el.classList.remove('ug-acendeu');
+        void el.offsetWidth; // recomeça a animação
+        el.classList.add('ug-acendeu');
+    }
+
+    function contar(el, alvo, final) {
+        cancelAnimationFrame(el._ugQuadro);
+        const de = typeof el._ugValor === 'number' ? el._ugValor : 0;
+        el._ugValor = alvo.valor;
+        const pausado = document.documentElement.classList.contains('a11y-pause');
+        if (pausado || de === alvo.valor) { el.textContent = final; return; }
+        const vivo = el.closest('[aria-live]');
+        if (vivo) vivo.setAttribute('aria-busy', 'true');
+        const dur = menosMovimento.matches ? 450 : 900;
+        const escrever = (v) => {
+            el.textContent = alvo.prefixo + v.toLocaleString('pt-BR', { minimumFractionDigits: alvo.casas, maximumFractionDigits: alvo.casas }) + alvo.sufixo;
+        };
+        let t0 = null;
+        const passo = (ts) => {
+            if (t0 === null) t0 = ts;
+            const p = Math.min(1, (ts - t0) / dur);
+            const suave = 1 - Math.pow(1 - p, 3);
+            if (p < 1) { escrever(de + (alvo.valor - de) * suave); el._ugQuadro = requestAnimationFrame(passo); return; }
+            el.textContent = final; // o texto exato de quem chamou, sem arredondar de novo
+            if (vivo) vivo.removeAttribute('aria-busy');
+        };
+        el._ugQuadro = requestAnimationFrame(passo);
+    }
+
+    function preencher(seletor, valor) {
+        const e = typeof seletor === 'string' ? document.querySelector(seletor) : seletor;
+        if (!e) return;
+        const texto = String(valor);
+        if (e.textContent === texto && e._ugPreenchido) return;
+        const n = lerNumero(texto);
+        const primeira = !e._ugPreenchido;
+        e._ugPreenchido = true;
+        if (!n) {
+            e.textContent = texto;
+            if (!primeira) acender(e);
+            return;
+        }
+        if (primeira && olho && !e.classList.contains('ug-visto')) {
+            // Mostra o zero formatado até o campo aparecer; aí conta.
+            e.textContent = n.prefixo + (0).toLocaleString('pt-BR', { minimumFractionDigits: n.casas, maximumFractionDigits: n.casas }) + n.sufixo;
+            e._ugAoVer = () => { const alvo = lerNumero(e._ugAlvo); if (alvo) contar(e, alvo, e._ugAlvo); else e.textContent = e._ugAlvo; };
+            e._ugAlvo = texto;
+            vigiar(e);
+            return;
+        }
+        if (e._ugAoVer) { e._ugAlvo = texto; return; } // ainda fora da tela: guarda o último pedido
+        contar(e, n, texto);
+    }
+
+    window.UG = { linha, barras, colunas, calor, tabela, fmt, sorteio, filtro, preencher, acender, html, svg, mostrarDica, esconderDica };
 })();

@@ -237,8 +237,11 @@
            rolagem de navegação. */
         .reveal { opacity: 0; transform: translateY(12px); transition: opacity .5s ease-out, transform .5s ease-out; }
         .reveal.in { opacity: 1; transform: none; }
+        /* Menos movimento TROCA, não desliga (regra da casa, 10/11/2026): a peça
+           acende no mesmo ritmo, só sem subir. Quem para tudo é o "Pausar
+           animações" do widget. */
         @media (prefers-reduced-motion: reduce) {
-            .reveal { opacity: 1; transform: none; transition: none; }
+            .reveal { transform: none; transition: opacity .6s ease-out; }
             .citygrid i.lit::after { animation: none; opacity: .35; }
             .mobile-menu, .mobile-menu.open, .nav-toggle svg { transition: none; }
         }

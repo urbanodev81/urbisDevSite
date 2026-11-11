@@ -17,7 +17,7 @@
     }
 
     function paragrafo(host, partes) {
-        const p = html('p', null, null, host);
+        const p = html('p', 'ug-acendeu', null, host);
         partes.forEach((t) => (typeof t === 'string' ? p.appendChild(document.createTextNode(t)) : html('b', null, t[0], p)));
     }
 

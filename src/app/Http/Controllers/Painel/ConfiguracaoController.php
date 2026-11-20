@@ -38,6 +38,7 @@ class ConfiguracaoController extends Controller
             'valores.contato.email.email' => 'Esse e-mail não parece válido.',
             'valores.redes.instagram.url' => 'Use o endereço completo, começando por https://.',
             'valores.redes.linkedin.url' => 'Use o endereço completo, começando por https://.',
+            'valores.redes.youtube.url' => 'Use o endereço completo, começando por https://.',
             'valores.*.max' => 'Passou do limite de :max letras.',
         ]);
 

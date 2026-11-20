@@ -15,6 +15,10 @@ lançou. Não crie número de versão nem date release por conta própria.
 ## [Não lançado]
 
 ### Adicionado
+- **Canal do YouTube no site** (20/11/2026). O ícone do canal
+  [@urbisDevTech](https://www.youtube.com/@urbisDevTech) aparece no rodapé e na
+  pilha social, ao lado do WhatsApp, e o canal entra nos dados que o Google lê.
+  O endereço já vem preenchido e se troca em Configurações › Redes.
 - **Visitas do site no painel** (09/11/2026, pendência 263). O site passa a
   contar quantas visitas recebe e quais páginas são abertas, pelo pacote
   `urbanodev/visitas`: sem Google Analytics, sem cookie e sem guardar o IP de

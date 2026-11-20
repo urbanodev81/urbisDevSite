@@ -161,6 +161,7 @@ html.claro {
 :root {
     --marca-whatsapp: #25d366;
     --marca-linkedin: #0a66c2;
+    --marca-youtube: #ff0000;
     --marca-instagram: radial-gradient(circle at 30% 110%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285aeb 90%);
     --marca-sobre:    #fff;
 }

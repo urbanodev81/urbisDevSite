@@ -82,6 +82,12 @@ final class ConfiguracaoDoSite
             'ajuda' => 'Endereço completo da página. Vazio, o ícone não aparece.',
             'regras' => ['nullable', 'url:https', 'max:300'],
         ],
+        'redes.youtube' => [
+            'grupo' => 'redes', 'tipo' => 'url', 'rotulo' => 'YouTube',
+            'ajuda' => 'Endereço completo do canal. Vazio, o ícone não aparece.',
+            'padrao' => 'https://www.youtube.com/@urbisDevTech',
+            'regras' => ['nullable', 'url:https', 'max:300'],
+        ],
 
         // ---------------------------------------------------------- empresa
         'empresa.descricao' => [
@@ -250,6 +256,7 @@ final class ConfiguracaoDoSite
         return array_values(array_filter([
             self::valor('redes.instagram'),
             self::valor('redes.linkedin'),
+            self::valor('redes.youtube'),
         ]));
     }
 

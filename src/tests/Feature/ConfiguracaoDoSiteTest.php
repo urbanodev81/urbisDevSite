@@ -65,6 +65,7 @@ it('o administrador grava, e o valor aparece em todo lugar', function () {
     $home->assertSee('mailto:ola@exemplo.com', false)
         ->assertSee('wa.me/5521988887777', false)
         ->assertSee('https://instagram.com/urbisdev', false)
+        ->assertSee('https://www.youtube.com/@urbisDevTech', false)   // canal vem preenchido
         ->assertSee('+55 21 98888-7777')                       // JSON-LD
         ->assertSee('Descrição nova da casa.')
         // HTML digitado sai escapado; só o *destaque* vira <em>.

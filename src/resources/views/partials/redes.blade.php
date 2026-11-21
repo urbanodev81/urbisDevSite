@@ -23,6 +23,9 @@
         // YouTube entrou em 20/11/2026 (canal @urbisDevTech, doc 43 do Sócrates).
         ['classe' => 's-yt', 'rotulo' => 'YouTube', 'href' => $site('redes.youtube'), 'externo' => true,
          'svg' => '<path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/>'],
+        // Facebook entrou em 20/11/2026 (página da Focus Media vira UrbisDev, doc 44 do Sócrates).
+        ['classe' => 's-fb', 'rotulo' => 'Facebook', 'href' => $site('redes.facebook'), 'externo' => true,
+         'svg' => '<path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>'],
         ['classe' => 's-mail', 'rotulo' => 'E-mail', 'href' => 'mailto:'.$site('contato.email'), 'externo' => false,
          'svg' => '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>'],
     ];

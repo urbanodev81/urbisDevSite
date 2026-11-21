@@ -88,6 +88,13 @@ final class ConfiguracaoDoSite
             'padrao' => 'https://www.youtube.com/@urbisDevTech',
             'regras' => ['nullable', 'url:https', 'max:300'],
         ],
+        // Sem padrão de propósito: a página antiga da Focus Media está virando
+        // UrbisDev (doc 44 do Sócrates) e o @ novo só sai depois da análise do Meta.
+        'redes.facebook' => [
+            'grupo' => 'redes', 'tipo' => 'url', 'rotulo' => 'Facebook',
+            'ajuda' => 'Endereço completo da página (facebook.com/…). Vazio, o ícone não aparece.',
+            'regras' => ['nullable', 'url:https', 'max:300'],
+        ],
 
         // ---------------------------------------------------------- empresa
         'empresa.descricao' => [
@@ -257,6 +264,7 @@ final class ConfiguracaoDoSite
             self::valor('redes.instagram'),
             self::valor('redes.linkedin'),
             self::valor('redes.youtube'),
+            self::valor('redes.facebook'),
         ]));
     }
 

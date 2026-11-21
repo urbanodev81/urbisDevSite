@@ -188,6 +188,7 @@
         .s-ig { background: var(--marca-instagram) !important; border-color: transparent !important; color: var(--marca-sobre) !important; }
         .s-li { background: var(--marca-linkedin) !important; border-color: var(--marca-linkedin) !important; color: var(--marca-sobre) !important; }
         .s-yt { background: var(--marca-youtube) !important; border-color: var(--marca-youtube) !important; color: var(--marca-sobre) !important; }
+        .s-fb { background: var(--marca-facebook) !important; border-color: var(--marca-facebook) !important; color: var(--marca-sobre) !important; }
         .s-mail { background: var(--accent) !important; border-color: var(--accent) !important; color: var(--fg-on-accent) !important; }
 
         /* ---------- voltar ao topo ---------- */

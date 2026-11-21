@@ -42,7 +42,8 @@ it('sem nada gravado, o site mostra o texto de sempre', function () {
         ->assertSee('Software que resolve <em>problemas reais</em>.', false)
         ->assertSee('contato@urbisdev.tech')
         ->assertSee('wa.me/5511976862551', false)
-        ->assertDontSee('class="s-ig"', false);
+        ->assertDontSee('class="s-ig"', false)
+        ->assertDontSee('class="s-fb"', false);   // Facebook nasce vazio (doc 44 do Sócrates)
     $this->get('/llms.txt')->assertSee('+55 11 97686-2551');
 });
 
@@ -78,6 +79,25 @@ it('o administrador grava, e o valor aparece em todo lugar', function () {
     $this->get('/privacidade')->assertSee('ola@exemplo.com');
 
     expect(Auditoria::where('auditavel_type', Configuracao::class)->count())->toBeGreaterThan(0);
+});
+
+it('o Facebook preenchido aparece nas redes e no sameAs; vazio some', function () {
+    $admin = contaDoSite(Perfis::ADMINISTRADOR);
+
+    $this->actingAs($admin)->put('/painel/site/configuracoes', ['valores' => [
+        'redes.facebook' => 'https://www.facebook.com/urbisdev',
+    ]])->assertSessionHasNoErrors();
+
+    $this->get('/')->assertOk()
+        ->assertSee('class="s-fb" href="https://www.facebook.com/urbisdev"', false)
+        // sameAs do JSON-LD (barras sem escape): entra depois do YouTube.
+        ->assertSee('"https://www.youtube.com/@urbisDevTech","https://www.facebook.com/urbisdev"', false);
+
+    $this->actingAs($admin)->put('/painel/site/configuracoes', ['valores' => [
+        'redes.facebook' => '',
+    ]])->assertSessionHasNoErrors();
+
+    $this->get('/')->assertDontSee('class="s-fb"', false);
 });
 
 it('recusa WhatsApp fora do formato e endereço sem https', function () {

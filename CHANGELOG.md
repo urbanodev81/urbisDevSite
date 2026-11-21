@@ -15,6 +15,10 @@ lançou. Não crie número de versão nem date release por conta própria.
 ## [Não lançado]
 
 ### Adicionado
+- **Página do Facebook no site** (20/11/2026). Configurações › Redes ganha o
+  campo Facebook: preenchido, o ícone aparece no rodapé e na pilha social e a
+  página entra nos dados que o Google lê. Nasce vazio, porque a página antiga
+  da Focus Media ainda está virando UrbisDev.
 - **Canal do YouTube no site** (20/11/2026). O ícone do canal
   [@urbisDevTech](https://www.youtube.com/@urbisDevTech) aparece no rodapé e na
   pilha social, ao lado do WhatsApp, e o canal entra nos dados que o Google lê.

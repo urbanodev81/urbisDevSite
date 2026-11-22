@@ -213,6 +213,9 @@ lançou. Não crie número de versão nem date release por conta própria.
   não levavam a lugar nenhum. Voltam quando houver perfil.
 
 ### Corrigido
+- Comando digitado errado no terminal do servidor (um `php artisan` que não
+  existe, uma opção inválida) não chega mais como "Erro 500" urgente no
+  Telegram. Comando que roda e quebra continua avisando. (285)
 - **Login e validação do painel em português** (08/11/2026). O idioma era
   `pt_BR`, mas faltava a pasta `lang/`, e o login respondia "These credentials
   do not match our records". Veio a tradução do molde (Duo e WJ), com os nomes

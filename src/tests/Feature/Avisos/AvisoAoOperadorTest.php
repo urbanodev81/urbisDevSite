@@ -23,6 +23,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
+use Symfony\Component\Console\Exception\CommandNotFoundException;
+use Symfony\Component\Console\Exception\InvalidOptionException;
 
 /*
  * Pendência 284 F3 (ADR 0006 do Sócrates): o que o urbisdev conta ao
@@ -91,6 +93,19 @@ test('o 500 vai ao Sócrates uma vez por erro distinto, como nosso, sem e-mail n
         ->and($eventos[0]['titulo'])->not->toContain('joana@')
         ->and($eventos[0]['titulo'])->not->toContain('21946324461')
         ->and($eventos[0]['resumo'])->toContain('RuntimeException');
+});
+
+test('comando digitado errado no terminal não é 500; comando que quebra continua sendo (285)', function () {
+    socratesLigadoNoSite();
+    Mail::fake();
+
+    AlertaDeErro::avisar(new CommandNotFoundException('Command "rotas:lista" is not defined.'));
+    AlertaDeErro::avisar(new InvalidOptionException('The "--forca" option does not exist.'));
+    expect(avisosNaOutbox('erro.500'))->toHaveCount(0);
+    Mail::assertNothingOutgoing();
+
+    AlertaDeErro::avisar(new RuntimeException('O comando agendado quebrou'));
+    expect(avisosNaOutbox('erro.500'))->toHaveCount(1);
 });
 
 test('a outbox entrega em /api/eventos com a chave de idempotência', function () {

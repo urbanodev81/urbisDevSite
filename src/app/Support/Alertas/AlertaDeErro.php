@@ -2,11 +2,11 @@
 
 namespace App\Support\Alertas;
 
-use App\Support\Alertas\EmailFormatado;
 use App\Support\Avisos\AvisoAoOperador;
 use App\Support\Avisos\EventoDoSistema;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\Console\Exception\ExceptionInterface as ErroDeUsoDoTerminal;
 use Throwable;
 
 /**
@@ -25,6 +25,10 @@ use Throwable;
  * - Desde 21/11/2026 (284 F3) vai também ao Sócrates (`erro.500`), ANTES do
  *   e-mail e sem depender dele. O freio de 5 min vale para os dois. O resumo
  *   leva o caminho sem a query string, que pode trazer token de redefinição.
+ * - Erro de USO do terminal (comando que não existe, opção inválida, argumento
+ *   faltando) não avisa: é engano de quem digitou, não defeito. Em 21/11/2026 um
+ *   `php artisan` digitado errado na VPS saiu como 500 urgente no Telegram
+ *   (pendência 285). Comando que roda e quebra continua avisando.
  */
 class AlertaDeErro
 {
@@ -32,6 +36,10 @@ class AlertaDeErro
 
     public static function avisar(Throwable $e): void
     {
+        if ($e instanceof ErroDeUsoDoTerminal) {
+            return;
+        }
+
         try {
             $assinatura = $e::class.'|'.$e->getFile().':'.$e->getLine().'|'.$e->getMessage();
             if (! Cache::add('alerta-erro:'.md5($assinatura), true, now()->addMinutes(self::FREIO_MINUTOS))) {

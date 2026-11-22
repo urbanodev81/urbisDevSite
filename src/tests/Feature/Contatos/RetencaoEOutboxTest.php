@@ -46,7 +46,7 @@ it('o expurgo em simulação não apaga nada', function () {
 
 it('a migration deixa as políticas gravadas', function () {
     expect(\App\Models\PoliticaRetencao::query()->pluck('meses', 'recurso')->all())
-        ->toHaveCount(4)->toMatchArray(['auditoria' => 24, 'contato' => 24, 'comentario' => 24, 'voto' => 24]);
+        ->toHaveCount(5)->toMatchArray(['auditoria' => 24, 'contato' => 24, 'comentario' => 24, 'voto' => 24, 'ips_de_acesso' => 12]);
 });
 
 it('com SOCRATES_LEADS desligado, lead não entra na outbox', function () {

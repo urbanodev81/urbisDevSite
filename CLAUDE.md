@@ -143,7 +143,20 @@ o do molde "site pequeno" (Duo/Girls/WJ), e o painel veio de lá:
   entregue de minuto em minuto pelo `scheduler`. Precisa de `SOCRATES_URL` e
   `SOCRATES_TOKEN`; o tipo `lead.recebido` (→ `/api/site/leads`) só grava com
   `SOCRATES_LEADS=true`, e **só se liga depois que o Sócrates tiver o endpoint**
-  com `Idempotency-Key` (ainda não tem).
+  com `Idempotency-Key` (o Sócrates já tem; falta ligar na prod).
+- **Avisos ao operador (284 F3, 21/11/2026; molde da WJ).** `App\Support\Avisos\`:
+  `AvisoAoOperador` grava `evento.relatado` (→ `/api/eventos`, origem `nosso`,
+  `SOCRATES_ORIGEM`) e liga sozinho com URL e token, sem `SOCRATES_LEADS`. O
+  Sócrates decide pela matriz (`/avisos` lá) se vira push, Telegram ou resumo.
+  Ligados: `erro.500` (`AlertaDeErro`), `seguranca.conta_travada` (Lockout),
+  `rajada_login` e `segundo_fator_em_serie` (`SinaisDoLogin`, contador com
+  janela em cache, `SinalDeAtaque`), `robo_no_formulario` (aqui é **captcha
+  recusado** no contato, na demonstração e no comentário: o site não tem
+  campo-isca) e `acesso_ip_novo` (`IpsDeAcesso`, só administrador, hash HMAC do
+  IP, 12 meses, o primeiro acesso é linha de base). Chave é contrato com o
+  `EventoDeServico` do Sócrates. **Só camada 1**: as contas do painel são da
+  casa, então não há alçada nem "o que você recebe" (molde na WJ, se um dia
+  precisar). Nunca lança nem reporta: é chamado de dentro do `reportable`.
 - **Leitores do blog (bloco 3b, 04/11/2026).** As views moram em
   `resources/views/blog/` e entram pelos `encaixes` do pacote (`config/blog.php`,
   v0.6): `leitores` (ajudou + comentários) no fim do texto, `mais-lidos` na

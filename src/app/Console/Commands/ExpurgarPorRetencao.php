@@ -10,6 +10,7 @@ use App\Models\BlogVoto;
 use App\Models\Contato;
 use App\Models\PoliticaRetencao;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Expurgo por retenção — LGPD art. 15 e 16 (04/11/2026, bloco 2 da 246).
@@ -54,6 +55,8 @@ class ExpurgarPorRetencao extends Command
                     ->where(fn ($q) => $q->where('status', BlogComentario::RECUSADO)->orWhereNotNull('deleted_at')),
 
                 'voto' => BlogVoto::query()->where('created_at', '<', $limite),
+
+                'ips_de_acesso' => DB::table('ips_de_acesso')->where('ultimo_em', '<', $limite),
 
                 default => null,
             };

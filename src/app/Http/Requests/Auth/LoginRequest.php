@@ -5,6 +5,7 @@ namespace App\Http\Requests\Auth;
 use App\Models\User;
 use App\Rules\Captcha;
 use App\Services\Auth\AparelhosConfiaveis;
+use App\Support\Avisos\SinaisDoLogin;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -111,6 +112,7 @@ class LoginRequest extends FormRequest
         if (! $entrou) {
             RateLimiter::hit($this->throttleKey());
             RateLimiter::hit($this->throttleKeyPorIdentidade(), self::DECAY_IDENTIDADE);
+            SinaisDoLogin::falhaDeSenha($this);
 
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
@@ -136,6 +138,7 @@ class LoginRequest extends FormRequest
         }
 
         event(new Lockout($this));
+        SinaisDoLogin::falhaDeSenha($this);
 
         $seconds = max(
             $porIp ? RateLimiter::availableIn($this->throttleKey()) : 0,

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Support\Alertas\EmailFormatado;
 use App\Models\Contato;
 use App\Support\Captcha\Altcha;
+use App\Support\Avisos\SinaisDoLogin;
 use App\Support\Contatos\CaixaDeContatos;
 use App\Support\PergunteAosDados;
 use Illuminate\Http\Request;
@@ -43,6 +44,8 @@ class DemoLeadController extends Controller
         ]);
 
         if (! $captcha->verificar($validated['captcha_token'])) {
+            SinaisDoLogin::roboNoFormulario($request);
+
             return back()->withErrors(['captcha_token' => 'Falha na verificação de segurança. Recarregue a página e tente novamente.'])->withInput();
         }
 

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Models\User;
+use App\Support\Avisos\EventoDoSistema;
+use App\Support\Avisos\IpsDeAcesso;
 use App\Support\Security\AlertaDeSeguranca;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Auth\Events\Login;
@@ -38,7 +40,7 @@ class AppServiceProvider extends ServiceProvider
             $email = Str::lower((string) $e->request->input('email'));
 
             AlertaDeSeguranca::avisar(
-                'login.travado',
+                EventoDoSistema::ContaTravada->value,
                 'Conta travada por excesso de senhas erradas',
                 'Cinco senhas erradas para a mesma conta do painel. Pode ser o dono esquecido — ou força bruta.',
                 [
@@ -56,6 +58,9 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(Login::class, function (Login $evento): void {
             if ($evento->user instanceof User) {
                 $evento->user->registrarAcesso();
+
+                // Administrador vindo de IP nunca visto avisa o operador (284 F3).
+                rescue(fn () => IpsDeAcesso::registrar($evento->user, request()->ip()), report: false);
             }
         });
     }

@@ -21,6 +21,8 @@ use Illuminate\Database\Seeder;
  *   pelo contato, e arquivar o tira do site.
  * - `voto` 24 meses: anônimo, mas o "o que faltou" é texto livre e pode
  *   trazer nome ou contato.
+ * - `ips_de_acesso` 12 meses (284 F3, 21/11/2026): hash do IP de cada
+ *   administrador, para o aviso de "IP nunca visto". Um ano sem uso, sai.
  *
  * Idempotente (`updateOrCreate`): rodar de novo corrige deriva.
  */
@@ -51,6 +53,12 @@ class PoliticasDeRetencao extends Seeder
                 'recurso' => 'voto',
                 'meses' => 24,
                 'justificativa' => 'Respostas do "Este texto ajudou?". Anônimas, mas o "o que faltou" é texto livre.',
+                'nunca_expurgar' => false,
+            ],
+            [
+                'recurso' => 'ips_de_acesso',
+                'meses' => 12,
+                'justificativa' => 'De onde cada administrador já entrou, guardado como hash, para avisar quando a conta é usada de um endereço nunca visto. Passado um ano sem uso, o endereço sai e volta a contar como novo.',
                 'nunca_expurgar' => false,
             ],
         ];

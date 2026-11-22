@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\Auth\AparelhosConfiaveis;
 use App\Services\Auth\TotpService;
+use App\Support\Avisos\SinaisDoLogin;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -78,6 +79,7 @@ class StoreTwoFactorChallengeController extends Controller
 
         if (! $totp->verify($usuario->dois_fatores_segredo, $codigo) && ! $this->gastarCodigoDeRecuperacao($usuario, $codigo)) {
             RateLimiter::hit($balde, self::DECAY_ERROS);
+            SinaisDoLogin::falhaDoSegundoFator($usuario, $request);
 
             throw ValidationException::withMessages([
                 'code' => 'Código inválido ou já usado.',

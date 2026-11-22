@@ -24,6 +24,9 @@
         </include>
     </source>
     <php>
+        <!-- 21/11/2026: com os testes de avisos (284 F3) a suíte passou de 128M no
+             teste de imagem WebP do blog. -->
+        <ini name="memory_limit" value="512M"/>
         <!-- `force="true"` em TODAS (03/11/2026): o contêiner já traz
              APP_ENV=local e DB_DATABASE=urbisdev no ambiente, e sem o force o
              PHPUnit respeita o que já existe — a suíte rodava no banco do site

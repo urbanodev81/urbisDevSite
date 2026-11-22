@@ -15,6 +15,14 @@ lançou. Não crie número de versão nem date release por conta própria.
 ## [Não lançado]
 
 ### Adicionado
+- **Erros e sinais de ataque do site chegam pelo Sócrates** (21/11/2026,
+  pendência 284). Até aqui o aviso de erro e de segurança do site era só
+  e-mail. Agora ele vai também ao Sócrates, que avisa por Telegram e pelo
+  aplicativo dele, conforme a marcação da tela Avisos de lá. Vão: erro 500,
+  conta travada por senha, rajada de tentativas no login, segundo fator errando
+  em série, robô nos formulários (captcha recusado em série) e administrador
+  entrando de um endereço nunca visto. O e-mail de quem escreve pelo site nunca
+  vai junto, e o da conta do painel vai mascarado.
 - **Página do Facebook no site** (20/11/2026). Configurações › Redes ganha o
   campo Facebook: preenchido, o ícone aparece no rodapé e na pilha social e a
   página entra nos dados que o Google lê. Nasce vazio, porque a página antiga

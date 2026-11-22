@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use App\Support\Alertas\EmailFormatado;
 use App\Support\Captcha\Altcha;
+use App\Support\Avisos\SinaisDoLogin;
 use App\Support\Contatos\CaixaDeContatos;
 
 class ContactController extends Controller
@@ -42,6 +43,8 @@ class ContactController extends Controller
         // Altcha auto-hospedado desde 29/09/2026 (era o Turnstile da
         // Cloudflare) — ver App\Support\Captcha\Altcha.
         if (! $captcha->verificar($validated['captcha_token'])) {
+            SinaisDoLogin::roboNoFormulario($request);
+
             return back()->withErrors(['captcha_token' => 'Falha na verificação de segurança. Recarregue a página e tente novamente.'])->withInput();
         }
 

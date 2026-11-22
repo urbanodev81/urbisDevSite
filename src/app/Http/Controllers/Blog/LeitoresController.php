@@ -10,6 +10,7 @@ use App\Models\BlogComentario;
 use App\Models\BlogVoto;
 use App\Support\Alertas\EmailFormatado;
 use App\Support\Captcha\Altcha;
+use App\Support\Avisos\SinaisDoLogin;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -124,6 +125,8 @@ class LeitoresController extends Controller
 
         // O LinkedIn já disse quem é: o captcha só vale para o formulário.
         if ($linkedin === null && ! $captcha->verificar($dados['captcha_token'])) {
+            SinaisDoLogin::roboNoFormulario($request);
+
             return redirect()->to($volta)->withErrors(['captcha_token' => 'Falha na verificação de segurança. Recarregue a página e tente novamente.'], 'comentario')->withInput();
         }
 

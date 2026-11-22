@@ -3,12 +3,14 @@
 namespace App\Support\Alertas;
 
 use App\Support\Alertas\EmailFormatado;
+use App\Support\Avisos\AvisoAoOperador;
+use App\Support\Avisos\EventoDoSistema;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
 /**
- * Avisa o OPERADOR de um erro não tratado (o "500"), por e-mail.
+ * Avisa o OPERADOR de um erro não tratado (o "500"): pelo Sócrates e por e-mail.
  *
  * Existe porque, até 29/09/2026, a tela de erro dizia que a equipe tinha sido
  * avisada e nenhum aviso saía: sem Sentry configurado e sem `report`, o erro
@@ -20,6 +22,9 @@ use Throwable;
  * - Freio de 5 min por erro DISTINTO: um defeito numa rota movimentada não
  *   pode virar centenas de e-mails — a caixa que recebe tudo é a que ninguém lê.
  * - Nunca lança: quem avisa do erro não pode ser o segundo erro.
+ * - Desde 21/11/2026 (284 F3) vai também ao Sócrates (`erro.500`), ANTES do
+ *   e-mail e sem depender dele. O freio de 5 min vale para os dois. O resumo
+ *   leva o caminho sem a query string, que pode trazer token de redefinição.
  */
 class AlertaDeErro
 {
@@ -32,6 +37,13 @@ class AlertaDeErro
             if (! Cache::add('alerta-erro:'.md5($assinatura), true, now()->addMinutes(self::FREIO_MINUTOS))) {
                 return;
             }
+
+            AvisoAoOperador::relatar(
+                EventoDoSistema::Erro500,
+                'Erro 500: '.mb_strimwidth($e->getMessage() ?: $e::class, 0, 80, '…'),
+                class_basename($e).' em '.basename($e->getFile()).':'.$e->getLine()
+                    .' · '.(app()->runningInConsole() ? 'cli' : request()->method().' /'.ltrim(request()->path(), '/')),
+            );
 
             $destino = config('security_alerts.alert_email');
             if (! $destino) {

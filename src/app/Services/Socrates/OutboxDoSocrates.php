@@ -24,9 +24,13 @@ class OutboxDoSocrates
 {
     public const LEAD_RECEBIDO = 'lead.recebido';
 
+    /** Aviso ao operador (284 F3): erro 500 e sinais de ataque. */
+    public const EVENTO_RELATADO = 'evento.relatado';
+
     /** Tipo → endpoint. Tipo novo só entra depois que o Sócrates aceitar a chave nele. */
     private const ENDPOINTS = [
         self::LEAD_RECEBIDO => '/api/site/leads',
+        self::EVENTO_RELATADO => '/api/eventos',
     ];
 
     /** Minutos até a próxima tentativa, pela ordem; a última vale para todas as seguintes. */

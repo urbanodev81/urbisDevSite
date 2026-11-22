@@ -16,4 +16,10 @@ return [
     // fica no painel daqui e no e-mail, e nada vai para a outbox.
     'leads' => (bool) env('SOCRATES_LEADS', false),
 
+    // Avisos ao operador (284 F3, 21/11/2026): erro 500 e sinais de ataque vão
+    // como `evento.relatado` (→ /api/eventos). `nosso` = o site é da casa: pela
+    // matriz do Sócrates, chega mais do que chegaria de um cliente. Liga sozinho
+    // quando URL e token existem, porque o endpoint já existe dos dois lados.
+    'origem' => env('SOCRATES_ORIGEM', 'nosso'),
+
 ];

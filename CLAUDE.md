@@ -48,6 +48,9 @@ do USI (`usi/public/img/galeria/`) ou ficha de lançamento. Trocou um print?
 Mesmo nome, mesmo tamanho; o `TopoComMovimentoTest` acusa nome sem arquivo. A
 lista `PALAVRAS` é a mesma da vitrine do urbanodev.com.br
 (`sistemas/urbanodev-com-br/web/vitrine.js`): mudou lá, muda aqui.
+"Reduzir movimento" ligado = **modo calmo**, não página parada (25/11/2026):
+nada se desloca, mas palavras acendem, o selo pulsa e os prints trocam
+esmaecendo. O Windows com animações desligadas liga esse pedido no Chrome.
 
 **Demonstrações (desde 11/10/2026).** `/demonstracoes` lista páginas de
 exemplo com dado INVENTADO, para o visitante mexer. A lista mora em

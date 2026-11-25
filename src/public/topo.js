@@ -13,7 +13,10 @@
  *     e fichas de lançamento) passando devagar. Carregam DEPOIS do `load`, para
  *     não pesar na primeira pintura. Só em tela larga (>= 880 px).
  *
- * "Reduzir movimento" ligado: nada se mexe, os prints ficam parados.
+ * "Reduzir movimento" ligado = modo calmo (25/11/2026, mesma regra da vitrine):
+ * nada se desloca, mas as palavras acendem, o selo pulsa e os prints trocam no
+ * lugar, esmaecendo. Parado de todo, a página parecia quebrada para quem tem as
+ * animações do Windows desligadas (o Chrome repassa isso como "reduzir").
  * O laço de quadro para quando o topo sai da tela ou a aba fica escondida.
  */
 (function () {
@@ -202,47 +205,65 @@
         var fundo = document.createElement('div');
         fundo.className = 'layouts';
         fundo.setAttribute('aria-hidden', 'true');
+        fundo.className = 'layouts' + (parado ? ' calmo' : '');
+        var vagas = [];
         var meio = Math.ceil(PRINTS.length / 2);
         [PRINTS.slice(0, meio), PRINTS.slice(meio)].forEach(function (fila, n) {
             var trilho = document.createElement('div');
             trilho.className = 'layouts-trilho' + (n ? ' volta' : '');
             /* a fila vai duas vezes: quando a primeira sai, a segunda está no lugar dela */
-            fila.concat(fila).forEach(function (nome) {
+            (parado ? fila : fila.concat(fila)).forEach(function (nome) {
                 var img = new Image(240, 135);
                 img.alt = '';
                 img.decoding = 'async';
                 img.src = '/img/vitrine/' + nome + '.webp';
                 trilho.appendChild(img);
+                vagas.push(img);
             });
             fundo.appendChild(trilho);
         });
         hero.insertBefore(fundo, hero.firstChild);
         requestAnimationFrame(function () { fundo.classList.add('pronto'); });
+        if (!parado) { return; }
+        /* modo calmo: troca uma imagem por vez, esmaecendo, sem mover nada */
+        var proxima = 0;
+        setInterval(function () {
+            if (!visivel || document.hidden) { return; }
+            var img = vagas[Math.floor(Math.random() * vagas.length)];
+            img.classList.add('trocando');
+            setTimeout(function () {
+                var atual = img.src.split('/').pop().replace('.webp', '');
+                var nome = PRINTS[proxima++ % PRINTS.length];
+                if (nome === atual) { nome = PRINTS[proxima++ % PRINTS.length]; }
+                img.src = '/img/vitrine/' + nome + '.webp';
+                img.classList.remove('trocando');
+            }, 900);
+        }, 2600);
     }
     if (document.readyState === 'complete') { montaFundo(); }
     else { addEventListener('load', montaFundo); }
 
-    if (!parado) {
-        new IntersectionObserver(function (e) {
-            visivel = e[0].isIntersecting;
-            hero.classList.toggle('fora', !visivel);
-            if (visivel) { liga(); }
-        }).observe(hero);
-        document.addEventListener('visibilitychange', liga);
-        liga();
+    /* Observador e "acender" valem também no modo calmo: cor e brilho não são
+       deslocamento. O laço de quadro (liga) é que não roda com `parado`. */
+    new IntersectionObserver(function (e) {
+        visivel = e[0].isIntersecting;
+        hero.classList.toggle('fora', !visivel);
+        if (visivel) { liga(); }
+    }).observe(hero);
+    document.addEventListener('visibilitychange', liga);
+    liga();
 
-        /* uma ação "acende", e o selo do cabeçalho responde */
-        setInterval(function () {
-            if (!visivel || document.hidden || !corpos.length) { return; }
-            var c = corpos[Math.floor(Math.random() * corpos.length)];
-            c.el.classList.remove('viva');
-            void c.el.offsetWidth;
-            c.el.classList.add('viva');
-            if (selo && scrollY < 40) {
-                selo.classList.remove('pulsa');
-                void selo.offsetWidth;
-                selo.classList.add('pulsa');
-            }
-        }, 1600);
-    }
+    /* uma ação "acende", e o selo do cabeçalho responde */
+    setInterval(function () {
+        if (!visivel || document.hidden || !corpos.length) { return; }
+        var c = corpos[Math.floor(Math.random() * corpos.length)];
+        c.el.classList.remove('viva');
+        void c.el.offsetWidth;
+        c.el.classList.add('viva');
+        if (selo && scrollY < 40) {
+            selo.classList.remove('pulsa');
+            void selo.offsetWidth;
+            selo.classList.add('pulsa');
+        }
+    }, 1600);
 })();

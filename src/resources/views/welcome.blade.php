@@ -72,6 +72,9 @@
         @media (min-width: 880px) { .layouts-trilho img { width: 320px; height: 180px; } }
         @keyframes passar { to { transform: translateX(-50%); } }
         .hero.fora .layouts-trilho { animation-play-state: paused; }
+        .layouts-trilho img { transition: opacity .9s ease; }
+        .layouts-trilho img.trocando { opacity: 0; }
+        .layouts.calmo .layouts-trilho { animation: none; margin-left: 0; }
 
         .nuvem { position: absolute; inset: 0; pointer-events: none; }
         .palavra { position: absolute; white-space: nowrap; will-change: transform;
@@ -83,6 +86,8 @@
         .palavra.viva { animation: acender 1.6s ease-out; }
         @keyframes surgir { from { opacity: 0; filter: blur(8px); } }
         @keyframes acender { 18% { scale: 1.22; color: var(--accent); opacity: 1; text-shadow: 0 0 2px var(--accent); } }
+        @keyframes acender-calmo { 25% { color: var(--accent); opacity: 1; text-shadow: 0 0 2px var(--accent); } }
+        @keyframes calmo-surgir { from { opacity: 0; filter: blur(6px); } }
 
         .topo-vivo .hero h1 .termo { display: inline-block; animation: termo .9s cubic-bezier(.2, .8, .2, 1) var(--d) backwards; }
         @keyframes termo { from { opacity: 0; transform: translateY(.35em); filter: blur(8px); } }
@@ -99,11 +104,12 @@
         .brand-mark.pulsa { animation: pulsa 1.2s ease-out; }
         @keyframes pulsa { 20% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 28%, transparent), 0 0 16px color-mix(in srgb, var(--accent) 55%, transparent); } }
 
+        /* Modo calmo (25/11/2026): nada se desloca; cor, brilho, esmaecer e o
+           traço do selo crescendo no lugar continuam. Mesma regra da vitrine. */
         @media (prefers-reduced-motion: reduce) {
-            .layouts-trilho, .palavra, .topo-vivo .hero h1 .termo, .logo-entra .brand-name .letra, .selo-traco, .brand-mark.pulsa { animation: none !important; }
-            .selo-traco { display: none; }
-            .logo-entra .brand-mark { border-color: var(--accent); animation: none; }
-            .layouts { transition: none; }
+            .palavra:not(.viva) { animation: none; }
+            .palavra.viva { animation: acender-calmo 1.6s ease-out; }
+            .topo-vivo .hero h1 .termo, .logo-entra .brand-name .letra { animation-name: calmo-surgir; }
         }
 
         /* ---------- banner de lançamentos ---------- */

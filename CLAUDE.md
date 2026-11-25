@@ -39,6 +39,16 @@ noite" é identidade, não modo. Cor literal existe em **um** arquivo:
 `python3 ../socrates/docs/urbis-design/contraste.py` — e leia o CORE antes
 (`../socrates/docs/urbis-design/CORE.md`).
 
+**Topo da home com movimento (desde 24/11/2026).** `public/topo.js`, só na
+home: palavras de ação sobre a grade de janelas, logo do cabeçalho que se
+desenha, título palavra a palavra e duas fileiras de prints ao fundo
+(`public/img/vitrine/`, webp 480×270; a lista `PRINTS` no script). Só entra
+print de layout **novo e aberto ao público**: site de cliente sem trava, modelo
+do USI (`usi/public/img/galeria/`) ou ficha de lançamento. Trocou um print?
+Mesmo nome, mesmo tamanho; o `TopoComMovimentoTest` acusa nome sem arquivo. A
+lista `PALAVRAS` é a mesma da vitrine do urbanodev.com.br
+(`sistemas/urbanodev-com-br/web/vitrine.js`): mudou lá, muda aqui.
+
 **Demonstrações (desde 11/10/2026).** `/demonstracoes` lista páginas de
 exemplo com dado INVENTADO, para o visitante mexer. A lista mora em
 `src/config/demonstracoes.php` (o slug do endereço só escolhe uma entrada de

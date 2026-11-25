@@ -13,17 +13,22 @@
  *     e fichas de lançamento) passando devagar. Carregam DEPOIS do `load`, para
  *     não pesar na primeira pintura. Só em tela larga (>= 880 px).
  *
- * "Reduzir movimento" ligado = modo calmo (25/11/2026, mesma regra da vitrine):
- * nada se desloca, mas as palavras acendem, o selo pulsa e os prints trocam no
- * lugar, esmaecendo. Parado de todo, a página parecia quebrada para quem tem as
- * animações do Windows desligadas (o Chrome repassa isso como "reduzir").
+ * Modo calmo = opção "Reduzir movimento" do widget de acessibilidade (classe
+ * `a11y-calmo` no <html>; "Pausar animações" também conta). Desde 25/11/2026
+ * NÃO é mais o `prefers-reduced-motion` do sistema que decide: com as animações
+ * do Windows desligadas o Chrome pede "reduzir" e o topo ficava calmo para quem
+ * nem sabia da opção. No modo calmo nada se desloca, mas as palavras acendem, o
+ * selo pulsa e os prints trocam no lugar, esmaecendo. Troca ao vivo: um
+ * MutationObserver no <html> percebe o clique no widget.
  * O laço de quadro para quando o topo sai da tela ou a aba fica escondida.
  */
 (function () {
     'use strict';
     var hero = document.querySelector('.hero');
     if (!hero) { return; }
-    var parado = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var raiz = document.documentElement;
+    function querCalma() { return raiz.classList.contains('a11y-calmo') || raiz.classList.contains('a11y-pause'); }
+    var parado = querCalma();
     var mouseFino = matchMedia('(pointer: fine)').matches;
     var texto = hero.querySelector('.hero-inner');
     var selo = document.querySelector('header .brand-mark');
@@ -124,11 +129,11 @@
             nuvem.appendChild(el);
             var ew = el.offsetWidth, eh = el.offsetHeight, x, y, ok = false;
             for (var t = 0; t < 80 && !ok; t++) {
-                /* margem de 56 px: a deriva e a paralaxe somam até ~50 px */
-                x = Math.random() * (w - ew - 112) + 56;
+                /* margem de 90 px: a deriva e a paralaxe somam até ~90 px */
+                x = Math.random() * (w - ew - 180) + 90;
                 y = Math.random() * (h - eh - 64) + 32;
                 ok = postas.every(function (r) {
-                    return x + ew + 40 < r[0] || x > r[0] + r[2] + 40 || y + eh + 26 < r[1] || y > r[1] + r[3] + 26;
+                    return x + ew + 64 < r[0] || x > r[0] + r[2] + 64 || y + eh + 36 < r[1] || y > r[1] + r[3] + 36;
                 });
             }
             if (!ok) { el.remove(); return; }
@@ -137,8 +142,8 @@
             el.style.top = y + 'px';
             corpos.push({
                 el: el, bx: x + ew / 2, by: y + eh / 2, prof: prof,
-                fx: .00018 + Math.random() * .00022, fy: .00015 + Math.random() * .0002,
-                ax: 8 + Math.random() * 18, ay: 6 + Math.random() * 12,
+                fx: .00032 + Math.random() * .00036, fy: .00028 + Math.random() * .0003,
+                ax: 20 + Math.random() * 34, ay: 12 + Math.random() * 20, giro: 2 + Math.random() * 4,
                 fase: Math.random() * 6.28, px: 0, py: 0
             });
         });
@@ -181,12 +186,13 @@
             var ex = 0, ey = 0;
             if (cursor.dentro) {
                 var dx = c.bx + c.px - cursor.x, dy = c.by + c.py - cursor.y;
-                var d = Math.sqrt(dx * dx + dy * dy) || 1, R = 170;
-                if (d < R) { var f = Math.pow(1 - d / R, 2) * 80 * (.5 + c.prof); ex = dx / d * f; ey = dy / d * f; }
+                var d = Math.sqrt(dx * dx + dy * dy) || 1, R = 220;
+                if (d < R) { var f = Math.pow(1 - d / R, 2) * 130 * (.5 + c.prof); ex = dx / d * f; ey = dy / d * f; }
             }
             c.px = lerp(c.px, ex, .08); c.py = lerp(c.py, ey, .08);
-            var x = vx + c.px - mx * 60 * c.prof, y = vy + c.py - my * 40 * c.prof;
-            c.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0)';
+            var x = vx + c.px - mx * 110 * c.prof, y = vy + c.py - my * 72 * c.prof;
+            var giro = Math.sin(t * c.fx * 1.4 + c.fase) * c.giro;
+            c.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) rotate(' + giro.toFixed(2) + 'deg)';
         }
         quadro = requestAnimationFrame(passo);
     }
@@ -198,12 +204,14 @@
         'usi-signature', 'usi-alameda', 'cliente-taveira', 'ficha-classic', 'usi-costa',
         'usi-metropole', 'ficha-brochure', 'usi-radar', 'ficha-minimal'
     ];
+    var fundo = null, trocaCalma = 0, carregou = document.readyState === 'complete';
     function montaFundo() {
         /* celular: o texto ocupa a largura toda e os prints atrapalhariam a
            leitura. Nem baixa as imagens. */
         if (innerWidth < 880) { return; }
-        var fundo = document.createElement('div');
-        fundo.className = 'layouts';
+        if (fundo) { fundo.remove(); }
+        clearInterval(trocaCalma);
+        fundo = document.createElement('div');
         fundo.setAttribute('aria-hidden', 'true');
         fundo.className = 'layouts' + (parado ? ' calmo' : '');
         var vagas = [];
@@ -227,7 +235,7 @@
         if (!parado) { return; }
         /* modo calmo: troca uma imagem por vez, esmaecendo, sem mover nada */
         var proxima = 0;
-        setInterval(function () {
+        trocaCalma = setInterval(function () {
             if (!visivel || document.hidden) { return; }
             var img = vagas[Math.floor(Math.random() * vagas.length)];
             img.classList.add('trocando');
@@ -240,8 +248,18 @@
             }, 900);
         }, 2600);
     }
-    if (document.readyState === 'complete') { montaFundo(); }
-    else { addEventListener('load', montaFundo); }
+    if (carregou) { montaFundo(); }
+    else { addEventListener('load', function () { carregou = true; montaFundo(); }); }
+
+    /* o widget de acessibilidade troca a classe no <html>: troca de modo na hora */
+    new MutationObserver(function () {
+        var agora = querCalma();
+        if (agora === parado) { return; }
+        parado = agora;
+        if (parado) { corpos.forEach(function (c) { c.el.style.transform = ''; c.px = c.py = 0; }); }
+        else { liga(); }
+        if (carregou) { montaFundo(); }
+    }).observe(raiz, { attributes: true, attributeFilter: ['class'] });
 
     /* Observador e "acender" valem também no modo calmo: cor e brilho não são
        deslocamento. O laço de quadro (liga) é que não roda com `parado`. */
@@ -265,5 +283,5 @@
             void selo.offsetWidth;
             selo.classList.add('pulsa');
         }
-    }, 1600);
+    }, 1100);
 })();

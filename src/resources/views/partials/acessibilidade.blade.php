@@ -41,6 +41,7 @@
 
         <button type="button" class="a11y-opt" data-a11y-opt="underline" aria-pressed="false">Sublinhar links</button>
         <button type="button" class="a11y-opt" data-a11y-opt="spacing" aria-pressed="false">Espaçamento de texto</button>
+        <button type="button" class="a11y-opt" data-a11y-opt="calmo" aria-pressed="false">Reduzir movimento</button>
         <button type="button" class="a11y-opt" data-a11y-opt="pause" aria-pressed="false">Pausar animações</button>
     </div>
     <button type="button" class="a11y-fab" id="a11yFab" aria-label="Opções de acessibilidade" aria-expanded="false" aria-controls="a11yPanel">
@@ -56,7 +57,7 @@
         var fab = document.getElementById('a11yFab');
         var panel = document.getElementById('a11yPanel');
         var widget = document.getElementById('a11yWidget');
-        var state = { font: 0, underline: false, spacing: false, pause: false };
+        var state = { font: 0, underline: false, spacing: false, calmo: false, pause: false };
 
         try {
             var saved = JSON.parse(localStorage.getItem(KEY));
@@ -65,6 +66,7 @@
                 state.underline = !!saved.underline;
                 state.spacing = !!saved.spacing;
                 state.pause = !!saved.pause;
+                state.calmo = !!saved.calmo;
             }
         } catch (e) { /* localStorage indisponível: segue sem persistência */ }
 
@@ -113,6 +115,11 @@
             root.classList.toggle('a11y-underline', state.underline);
             root.classList.toggle('a11y-spacing', state.spacing);
             root.classList.toggle('a11y-pause', state.pause);
+            // "Reduzir movimento" (25/11/2026): o topo da home deixa de se
+            // deslocar e só acende. É escolha daqui, não do sistema — com as
+            // animações do Windows desligadas o Chrome pede "reduzir" e o topo
+            // ficava parado para quem nem sabia disso. O `topo.js` observa a classe.
+            root.classList.toggle('a11y-calmo', state.calmo);
             panel.querySelectorAll('[data-a11y-font]').forEach(function (b) {
                 b.setAttribute('aria-pressed', String(Number(b.getAttribute('data-a11y-font')) === state.font));
             });
@@ -136,7 +143,7 @@
             });
         });
         document.getElementById('a11yReset').addEventListener('click', function () {
-            state = { font: 0, underline: false, spacing: false, pause: false };
+            state = { font: 0, underline: false, spacing: false, calmo: false, pause: false };
             try { localStorage.removeItem(KEY_TEMA); } catch (e) { /* noop */ }
             apply();
             aplicarTema();

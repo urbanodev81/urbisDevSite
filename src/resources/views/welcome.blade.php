@@ -64,10 +64,10 @@
             -webkit-mask-composite: source-in;
             mask-image: linear-gradient(90deg, transparent 38%, #000 82%), linear-gradient(180deg, transparent, #000 25%, #000 75%, transparent);
             mask-composite: intersect; }
-        .layouts.pronto { opacity: .22; }
-        .claro .layouts.pronto { opacity: .16; }
-        .layouts-trilho { display: flex; gap: 22px; width: max-content; animation: passar 110s linear infinite; }
-        .layouts-trilho.volta { animation-duration: 140s; animation-direction: reverse; margin-left: -180px; }
+        .layouts.pronto { opacity: .3; }
+        .claro .layouts.pronto { opacity: .2; }
+        .layouts-trilho { display: flex; gap: 22px; width: max-content; animation: passar 50s linear infinite; }
+        .layouts-trilho.volta { animation-duration: 64s; animation-direction: reverse; margin-left: -180px; }
         .layouts-trilho img { width: 240px; height: 135px; border-radius: 10px; border: 1px solid var(--line); object-fit: cover; object-position: top; filter: saturate(.55); }
         @media (min-width: 880px) { .layouts-trilho img { width: 320px; height: 180px; } }
         @keyframes passar { to { transform: translateX(-50%); } }
@@ -85,7 +85,7 @@
         /* `scale` é propriedade própria: não briga com o transform do JS */
         .palavra.viva { animation: acender 1.6s ease-out; }
         @keyframes surgir { from { opacity: 0; filter: blur(8px); } }
-        @keyframes acender { 18% { scale: 1.22; color: var(--accent); opacity: 1; text-shadow: 0 0 2px var(--accent); } }
+        @keyframes acender { 18% { scale: 1.4; color: var(--accent); opacity: 1; text-shadow: 0 0 2px var(--accent); } }
         @keyframes acender-calmo { 25% { color: var(--accent); opacity: 1; text-shadow: 0 0 2px var(--accent); } }
         @keyframes calmo-surgir { from { opacity: 0; filter: blur(6px); } }
 
@@ -105,12 +105,12 @@
         @keyframes pulsa { 20% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 28%, transparent), 0 0 16px color-mix(in srgb, var(--accent) 55%, transparent); } }
 
         /* Modo calmo (25/11/2026): nada se desloca; cor, brilho, esmaecer e o
-           traço do selo crescendo no lugar continuam. Mesma regra da vitrine. */
-        @media (prefers-reduced-motion: reduce) {
-            .palavra:not(.viva) { animation: none; }
-            .palavra.viva { animation: acender-calmo 1.6s ease-out; }
-            .topo-vivo .hero h1 .termo, .logo-entra .brand-name .letra { animation-name: calmo-surgir; }
-        }
+           traço do selo crescendo no lugar continuam. Mesma regra da vitrine.
+           Liga pela opção "Reduzir movimento" do widget, não pelo sistema. */
+        html.a11y-calmo .palavra:not(.viva) { animation: none; }
+        html.a11y-calmo .palavra { transform: none !important; }
+        html.a11y-calmo .palavra.viva { animation: acender-calmo 1.6s ease-out; }
+        html.a11y-calmo.topo-vivo .hero h1 .termo, html.a11y-calmo .logo-entra .brand-name .letra { animation-name: calmo-surgir; }
 
         /* ---------- banner de lançamentos ---------- */
         .lancamentos { position: relative; background: var(--ink-800); border-block: 1px solid var(--line); }

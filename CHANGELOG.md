@@ -22,8 +22,12 @@ lançou. Não crie número de versão nem date release por conta própria.
   o título entra palavra a palavra. Ao fundo, à direita do texto, passam
   devagar os layouts novos: os sites da Jacob, da J.A. Taveira e da WJ, os
   sete modelos do USI e as cinco fichas de lançamento. No celular os prints
-  não aparecem (nem são baixados). Com "reduzir movimento" ligado, tudo fica
-  parado.
+  não aparecem (nem são baixados). Em 25/11 o movimento ficou mais amplo e
+  rápido, e quem prefere menos movimento liga **"Reduzir movimento"** no botão
+  de acessibilidade (canto inferior esquerdo): as palavras param no lugar e só
+  acendem, e os layouts trocam sem rolar. A escolha fica salva e vale na hora.
+  O ajuste do sistema operacional não decide mais sozinho, porque com as
+  animações do Windows desligadas o topo ficava parado sem a pessoa saber.
 - **Erros e sinais de ataque do site chegam pelo Sócrates** (21/11/2026,
   pendência 284). Até aqui o aviso de erro e de segurança do site era só
   e-mail. Agora ele vai também ao Sócrates, que avisa por Telegram e pelo

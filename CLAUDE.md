@@ -39,15 +39,22 @@ noite" é identidade, não modo. Cor literal existe em **um** arquivo:
 `python3 ../socrates/docs/urbis-design/contraste.py` — e leia o CORE antes
 (`../socrates/docs/urbis-design/CORE.md`).
 
-**Topo da home com movimento (desde 24/11/2026).** `public/topo.js`, só na
-home: palavras de ação sobre a grade de janelas, logo do cabeçalho que se
-desenha, título palavra a palavra e duas fileiras de prints ao fundo
-(`public/img/vitrine/`, webp 480×270; a lista `PRINTS` no script). Só entra
-print de layout **novo e aberto ao público**: site de cliente sem trava, modelo
-do USI (`usi/public/img/galeria/`) ou ficha de lançamento. Trocou um print?
-Mesmo nome, mesmo tamanho; o `TopoComMovimentoTest` acusa nome sem arquivo. A
-lista `PALAVRAS` é a mesma da vitrine do urbanodev.com.br
-(`sistemas/urbanodev-com-br/web/vitrine.js`): mudou lá, muda aqui.
+**Topo da home = o palco da vitrine (desde 25/11/2026; movimento desde 24/11).**
+O mesmo palco do urbanodev.com.br (`sistemas/urbanodev-com-br/web`): logo "UD
+urbisDev" grande no centro (selo e letras animados em CSS puro, os `<span>` vêm
+do Blade), o título do painel (`home.hero_titulo`, rótulo "Topo: lema") como
+`<h1>` sob o logo e os dois botões, "Fale conosco" cheio e "Veja funcionando"
+contorno. A etiqueta e o texto do topo antigo saíram do painel. `public/topo.js`
+é a parte 1 do `vitrine.js` de lá: palavras de ação em volta e duas fileiras de
+prints ao fundo, também no celular (`public/img/vitrine/`, webp 480×270; a
+lista `PRINTS` no script). **O palco é escuro nos dois temas** pela classe
+`.sempre-escuro`, que entra no MESMO seletor do `:root` em
+`partials/tokens.blade.php` (e no dos apelidos): nenhum hex repetido. A grade de
+janelas saiu do topo. Só entra print de layout **novo e aberto ao público**:
+site de cliente sem trava, modelo do USI (`usi/public/img/galeria/`) ou ficha
+de lançamento. Trocou um print? Mesmo nome, mesmo tamanho; o
+`TopoComMovimentoTest` acusa nome sem arquivo. A lista `PALAVRAS` é a mesma da
+vitrine (`web/vitrine.js`): mudou lá, muda aqui.
 "Reduzir movimento" ligado = **modo calmo**, não página parada (25/11/2026):
 nada se desloca, mas palavras acendem, o selo pulsa e os prints trocam
 esmaecendo. O Windows com animações desligadas liga esse pedido no Chrome.

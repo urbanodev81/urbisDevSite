@@ -51,6 +51,61 @@
         .hero-meta span { display: inline-flex; align-items: center; gap: 8px; }
         .hero-meta svg { color: var(--amber-500); }
 
+        /* ---------- topo com movimento (24/11/2026, `public/topo.js`) ----------
+           A linguagem da vitrine do urbanodev.com.br: layouts passando ao fundo,
+           palavras com física por cima da grade e o logo que se desenha. Ordem
+           de empilhamento = ordem no HTML: prints, grade, palavras, texto. */
+        .layouts { position: absolute; inset: -12% -10%; display: flex; flex-direction: column; justify-content: center; gap: 22px; pointer-events: none;
+            transform: rotate(-7deg); opacity: 0; transition: opacity 1.6s ease-out;
+            /* Mesma ressalva da grade: `#000` em máscara é "opaco", não cor. Os
+               prints somem sob o texto e aparecem só à direita dele. No
+               celular o texto ocupa a largura toda: lá o `topo.js` nem os monta. */
+            -webkit-mask-image: linear-gradient(90deg, transparent 38%, #000 82%), linear-gradient(180deg, transparent, #000 25%, #000 75%, transparent);
+            -webkit-mask-composite: source-in;
+            mask-image: linear-gradient(90deg, transparent 38%, #000 82%), linear-gradient(180deg, transparent, #000 25%, #000 75%, transparent);
+            mask-composite: intersect; }
+        .layouts.pronto { opacity: .22; }
+        .claro .layouts.pronto { opacity: .16; }
+        .layouts-trilho { display: flex; gap: 22px; width: max-content; animation: passar 110s linear infinite; }
+        .layouts-trilho.volta { animation-duration: 140s; animation-direction: reverse; margin-left: -180px; }
+        .layouts-trilho img { width: 240px; height: 135px; border-radius: 10px; border: 1px solid var(--line); object-fit: cover; object-position: top; filter: saturate(.55); }
+        @media (min-width: 880px) { .layouts-trilho img { width: 320px; height: 180px; } }
+        @keyframes passar { to { transform: translateX(-50%); } }
+        .hero.fora .layouts-trilho { animation-play-state: paused; }
+
+        .nuvem { position: absolute; inset: 0; pointer-events: none; }
+        .palavra { position: absolute; white-space: nowrap; will-change: transform;
+            font: 500 calc(.72rem + var(--prof) * .45rem) var(--font-mono);
+            color: var(--fg-subtle); opacity: calc(.3 + var(--prof) * .55);
+            animation: surgir 1.1s ease-out var(--surge) backwards; }
+        .palavra.quente { color: var(--accent); }
+        /* `scale` é propriedade própria: não briga com o transform do JS */
+        .palavra.viva { animation: acender 1.6s ease-out; }
+        @keyframes surgir { from { opacity: 0; filter: blur(8px); } }
+        @keyframes acender { 18% { scale: 1.22; color: var(--accent); opacity: 1; text-shadow: 0 0 2px var(--accent); } }
+
+        .topo-vivo .hero h1 .termo { display: inline-block; animation: termo .9s cubic-bezier(.2, .8, .2, 1) var(--d) backwards; }
+        @keyframes termo { from { opacity: 0; transform: translateY(.35em); filter: blur(8px); } }
+
+        /* logo do cabeçalho: o selo se desenha e o nome sobe (só na home) */
+        .logo-entra .brand-mark { position: relative; border-color: transparent; animation: selo-borda 0s linear 1.4s forwards; }
+        @keyframes selo-borda { to { border-color: var(--accent); } }
+        .selo-traco { position: absolute; inset: -1.5px; width: calc(100% + 3px); height: calc(100% + 3px); overflow: visible; pointer-events: none; }
+        .selo-traco rect { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 1; stroke-dashoffset: 1; animation: desenhar 1.2s cubic-bezier(.65, 0, .35, 1) .15s forwards, sumir 0s linear 1.4s forwards; }
+        @keyframes desenhar { to { stroke-dashoffset: 0; } }
+        @keyframes sumir { to { opacity: 0; } }
+        .logo-entra .brand-name .letra { display: inline-block; animation: letra .8s cubic-bezier(.2, .8, .2, 1) var(--d) backwards; }
+        @keyframes letra { from { opacity: 0; transform: translateY(.45em) rotate(8deg); filter: blur(6px); } }
+        .brand-mark.pulsa { animation: pulsa 1.2s ease-out; }
+        @keyframes pulsa { 20% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 28%, transparent), 0 0 16px color-mix(in srgb, var(--accent) 55%, transparent); } }
+
+        @media (prefers-reduced-motion: reduce) {
+            .layouts-trilho, .palavra, .topo-vivo .hero h1 .termo, .logo-entra .brand-name .letra, .selo-traco, .brand-mark.pulsa { animation: none !important; }
+            .selo-traco { display: none; }
+            .logo-entra .brand-mark { border-color: var(--accent); animation: none; }
+            .layouts { transition: none; }
+        }
+
         /* ---------- banner de lançamentos ---------- */
         .lancamentos { position: relative; background: var(--ink-800); border-block: 1px solid var(--line); }
         .lancamentos::before { content: ""; position: absolute; top: -1px; left: 0; right: 0; height: 3px; background: var(--d-urb); }
@@ -384,6 +439,7 @@
 
 @push('scripts')
 <script src="/lancamentos.js" defer></script>
+<script src="/topo.js" defer></script>
 <script nonce="{{ $cspNonce ?? '' }}">
         // Grade de janelas acesas (assinatura da marca)
         (function () {

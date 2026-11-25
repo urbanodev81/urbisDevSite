@@ -15,6 +15,15 @@ lançou. Não crie número de versão nem date release por conta própria.
 ## [Não lançado]
 
 ### Adicionado
+- **O topo da home ganhou movimento** (24/11/2026). As ações dos nossos
+  projetos ("anunciar imóvel", "receber por PIX", "votar em assembleia"…)
+  flutuam sobre a grade de janelas, fogem do cursor, e uma delas acende a cada
+  instante. O selo "UD" do cabeçalho se desenha, o nome sobe letra a letra e
+  o título entra palavra a palavra. Ao fundo, à direita do texto, passam
+  devagar os layouts novos: os sites da Jacob, da J.A. Taveira e da WJ, os
+  sete modelos do USI e as cinco fichas de lançamento. No celular os prints
+  não aparecem (nem são baixados). Com "reduzir movimento" ligado, tudo fica
+  parado.
 - **Erros e sinais de ataque do site chegam pelo Sócrates** (21/11/2026,
   pendência 284). Até aqui o aviso de erro e de segurança do site era só
   e-mail. Agora ele vai também ao Sócrates, que avisa por Telegram e pelo

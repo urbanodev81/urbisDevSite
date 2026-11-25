@@ -110,24 +110,14 @@ final class ConfiguracaoDoSite
         ],
 
         // ------------------------------------------------------------- home
-        'home.hero_etiqueta' => [
-            'grupo' => 'home', 'tipo' => 'texto', 'rotulo' => 'Topo: etiqueta',
-            'ajuda' => 'A linha pequena acima do título. Até 50 letras.',
-            'padrao' => 'Sites · Sistemas · Aplicativos',
-            'regras' => ['required', 'string', 'max:50'],
-        ],
         'home.hero_titulo' => [
-            'grupo' => 'home', 'tipo' => 'texto', 'rotulo' => 'Topo: título',
-            'ajuda' => 'O título grande da home. Ponha entre *asteriscos* o trecho que fica em destaque. Até 60 letras.',
+            // Desde 25/11/2026 o topo é o palco (logo no centro): este título vira
+            // o lema sob o logo, e a etiqueta e o texto do topo antigo saíram.
+            'grupo' => 'home', 'tipo' => 'texto', 'rotulo' => 'Topo: lema',
+            'ajuda' => 'A frase sob o logo, no topo da home. Ponha entre *asteriscos* o trecho que fica em destaque. Até 60 letras.',
             'padrao' => 'Software que resolve *problemas reais*.',
             'regras' => ['required', 'string', 'max:60'],
             'enfase' => true,
-        ],
-        'home.hero_texto' => [
-            'grupo' => 'home', 'tipo' => 'texto_longo', 'rotulo' => 'Topo: texto',
-            'ajuda' => 'A frase embaixo do título. Até 200 letras.',
-            'padrao' => 'Sites com painel próprio e sistemas de gestão para imobiliárias, clínicas, sindicatos, oficinas e artistas — do primeiro esboço ao app no celular.',
-            'regras' => ['required', 'string', 'max:200'],
         ],
         'home.fazemos_etiqueta' => [
             'grupo' => 'secoes', 'tipo' => 'texto', 'rotulo' => 'O que fazemos: etiqueta',

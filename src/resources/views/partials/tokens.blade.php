@@ -37,7 +37,20 @@
     O apelido também conserta uma armadilha: no tema claro, "amber-400" é mais
     ESCURO que "amber-500", porque em fundo claro o hover escurece em vez de
     clarear. O número no nome vira mentira; o papel (`--accent-hover`) não.
+
+    ────────────────────────────────────────────────────────────────────────
+    `.sempre-escuro` (25/11/2026)
+
+    O palco do topo da home é escuro nos DOIS temas (decisão dele: é a
+    "cidade à noite" em primeiro plano). Em vez de repetir os hex do escuro
+    noutro bloco, o elemento entra no MESMO seletor do `:root`: declara os
+    valores escuros em si mesmo e os filhos herdam dele, com a página em
+    volta no claro. Os apelidos lá embaixo precisam do seletor também, senão
+    `--text-hi` chegaria resolvido no claro, herdado do `<html>`.
+    `.sempre-escuro` vem ANTES de `:root` de propósito: o gerador do painel
+    e o `TokensDoPainelTest` procuram `:root {`.
 --}}
+.sempre-escuro,
 :root {
     color-scheme: dark;
 
@@ -168,7 +181,7 @@ html.claro {
 }
 
 /* ---- Apelidos do CSS antigo (ver o cabeçalho deste arquivo) ---- */
-:root, html.claro {
+:root, html.claro, .sempre-escuro {
     --ink-900:   var(--bg);
     --ink-800:   var(--surface);
     --ink-700:   var(--surface-raised);

@@ -15,6 +15,14 @@ lançou. Não crie número de versão nem date release por conta própria.
 ## [Não lançado]
 
 ### Adicionado
+- **O topo da home virou o palco da vitrine** (25/11/2026), o mesmo do
+  urbanodev.com.br: o logo "UD urbisDev" grande no centro, com o selo que se
+  desenha e as letras que entram uma a uma; embaixo, a frase do painel e os
+  dois botões ("Fale conosco" cheio, "Veja funcionando" só contorno). As ações
+  dos nossos projetos flutuam em volta, e os layouts passam em duas faixas, em
+  cima e embaixo, agora também no celular. O palco é **escuro nos dois temas**;
+  o resto da página segue o tema escolhido. A grade de janelas saiu do topo.
+  "Reduzir movimento" continua valendo do mesmo jeito.
 - **O topo da home ganhou movimento** (24/11/2026). As ações dos nossos
   projetos ("anunciar imóvel", "receber por PIX", "votar em assembleia"…)
   flutuam sobre a grade de janelas, fogem do cursor, e uma delas acende a cada
@@ -220,6 +228,9 @@ lançou. Não crie número de versão nem date release por conta própria.
   sindicatos (em construção); "Blogs & Conteúdo" saiu.
 
 ### Removido
+- No painel, em Configurações, a **etiqueta** e o **texto** do topo
+  (25/11/2026). O palco novo mostra só a frase sob o logo, que segue editável
+  como "Topo: lema".
 - **"Próximos passos"** saiu da home e do menu: anunciava como planejadas as
   plataformas com a marca do cliente, que já estão no ar.
 - **Instagram e LinkedIn** saíram do rodapé e dos botões flutuantes: os dois

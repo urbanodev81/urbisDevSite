@@ -3,7 +3,8 @@
 
     O casco (head, header, rodapé, acessibilidade, flutuantes, rolagem suave)
     saiu daqui em 23/08/2026 para `layouts/site.blade.php`. Ficou o que é
-    DESTA página: a grade de janelas acesas, os distritos (as frentes) e o
+    DESTA página: o palco do topo (desde 25/11/2026; até ali, a grade de
+    janelas acesas), os distritos (as frentes) e o
     formulário de contato. "Próximos passos" saiu em 18/10/2026: anunciava como
     planejado o white-label que já estava no ar.
 
@@ -30,87 +31,91 @@
 @push('estilos')
 @include('partials.trabalho-estilos')
 <style>
-        /* ---------- hero + grade de janelas ---------- */
-        .hero { position: relative; overflow: hidden; padding-block: clamp(88px, 12vw, 150px); }
-        /* O `#000` das duas linhas de máscara abaixo NÃO é cor: `mask-image` lê
-           só o canal alfa, e ali o preto significa "opaco". Tokenizar faria a
-           máscara depender do tema sem nenhum motivo. */
-        .citygrid { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(26px, 1fr)); grid-auto-rows: 26px; gap: 0; opacity: .9; pointer-events: none;
-            -webkit-mask-image: radial-gradient(ellipse 90% 85% at 50% 20%, #000 30%, transparent 78%);
-            mask-image: radial-gradient(ellipse 90% 85% at 50% 20%, #000 30%, transparent 78%); }
-        .citygrid i { border-right: 1px solid var(--grid-line); border-bottom: 1px solid var(--grid-line); }
-        .citygrid i.lit { position: relative; }
-        .citygrid i.lit::after { content: ""; position: absolute; inset: 9px; background: var(--amber-500); opacity: 0; animation: window var(--dur, 7s) ease-in-out var(--delay, 0s) infinite; }
-        @keyframes window { 0%, 100% { opacity: 0; } 12% { opacity: .85; } 55% { opacity: .5; } 70% { opacity: 0; } }
-        .hero-inner { position: relative; max-width: 820px; }
-        .hero h1 { margin: 20px 0 22px; }
-        .hero h1 em { font-style: normal; color: var(--amber-500); }
-        .hero p { max-width: 56ch; font-size: 1.15rem; }
         .hero-ctas { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 36px; }
-        .hero-meta { margin-top: 56px; display: flex; flex-wrap: wrap; gap: 12px 32px; font-family: var(--font-mono); font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; color: var(--text-low); }
-        .hero-meta span { display: inline-flex; align-items: center; gap: 8px; }
-        .hero-meta svg { color: var(--amber-500); }
 
-        /* ---------- topo com movimento (24/11/2026, `public/topo.js`) ----------
-           A linguagem da vitrine do urbanodev.com.br: layouts passando ao fundo,
-           palavras com física por cima da grade e o logo que se desenha. Ordem
-           de empilhamento = ordem no HTML: prints, grade, palavras, texto. */
-        .layouts { position: absolute; inset: -12% -10%; display: flex; flex-direction: column; justify-content: center; gap: 22px; pointer-events: none;
-            transform: rotate(-7deg); opacity: 0; transition: opacity 1.6s ease-out;
-            /* Mesma ressalva da grade: `#000` em máscara é "opaco", não cor. Os
-               prints somem sob o texto e aparecem só à direita dele. No
-               celular o texto ocupa a largura toda: lá o `topo.js` nem os monta. */
-            -webkit-mask-image: linear-gradient(90deg, transparent 38%, #000 82%), linear-gradient(180deg, transparent, #000 25%, #000 75%, transparent);
-            -webkit-mask-composite: source-in;
-            mask-image: linear-gradient(90deg, transparent 38%, #000 82%), linear-gradient(180deg, transparent, #000 25%, #000 75%, transparent);
-            mask-composite: intersect; }
-        .layouts.pronto { opacity: .3; }
-        .claro .layouts.pronto { opacity: .2; }
-        .layouts-trilho { display: flex; gap: 22px; width: max-content; animation: passar 50s linear infinite; }
-        .layouts-trilho.volta { animation-duration: 64s; animation-direction: reverse; margin-left: -180px; }
-        .layouts-trilho img { width: 240px; height: 135px; border-radius: 10px; border: 1px solid var(--line); object-fit: cover; object-position: top; filter: saturate(.55); }
-        @media (min-width: 880px) { .layouts-trilho img { width: 320px; height: 180px; } }
-        @keyframes passar { to { transform: translateX(-50%); } }
-        .hero.fora .layouts-trilho { animation-play-state: paused; }
-        .layouts-trilho img { transition: opacity .9s ease; }
-        .layouts-trilho img.trocando { opacity: 0; }
-        .layouts.calmo .layouts-trilho { animation: none; margin-left: 0; }
-
-        .nuvem { position: absolute; inset: 0; pointer-events: none; }
-        .palavra { position: absolute; white-space: nowrap; will-change: transform;
-            font: 500 calc(.72rem + var(--prof) * .45rem) var(--font-mono);
-            color: var(--fg-subtle); opacity: calc(.3 + var(--prof) * .55);
+        /* ---------- palco do topo (25/11/2026, `public/topo.js`) ----------
+           Veio da vitrine do urbanodev.com.br (`sistemas/urbanodev-com-br/web`,
+           commit 264d073): o logo grande no centro, o título do painel como lema,
+           ações reais dos nossos projetos vagando em volta e layouts nossos
+           passando ao fundo. ESCURO NOS DOIS TEMAS (`.sempre-escuro`, ver
+           `partials/tokens.blade.php`); o resto da página segue o tema.
+           Ordem de empilhamento: layouts (-2), palavras (-1), centro. */
+        .palco { position: relative; min-height: clamp(540px, 80vh, 860px); min-height: clamp(540px, 80svh, 860px); display: grid; place-items: center; overflow: hidden; isolation: isolate;
+            background-color: var(--bg); color: var(--fg-muted);
+            background-image:
+                radial-gradient(circle 420px at var(--gx, 50%) var(--gy, 50%), color-mix(in srgb, var(--accent) 7%, transparent), transparent 70%),
+                radial-gradient(ellipse 50% 38% at 50% 50%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%); }
+        .nuvem { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+        .palavra { position: absolute; white-space: nowrap; pointer-events: none; will-change: transform;
+            font: 500 calc(.78rem + var(--prof) * .55rem) var(--font-mono);
+            color: var(--fg-subtle); opacity: calc(.28 + var(--prof) * .62);
             animation: surgir 1.1s ease-out var(--surge) backwards; }
         .palavra.quente { color: var(--accent); }
-        /* `scale` é propriedade própria: não briga com o transform do JS */
+        /* "acender": a ação acontecendo agora. `scale` é propriedade própria, não briga com o transform do JS */
         .palavra.viva { animation: acender 1.6s ease-out; }
         @keyframes surgir { from { opacity: 0; filter: blur(8px); } }
-        @keyframes acender { 18% { scale: 1.4; color: var(--accent); opacity: 1; text-shadow: 0 0 2px var(--accent); } }
-        @keyframes acender-calmo { 25% { color: var(--accent); opacity: 1; text-shadow: 0 0 2px var(--accent); } }
-        @keyframes calmo-surgir { from { opacity: 0; filter: blur(6px); } }
+        @keyframes acender {
+            0%   { scale: 1; }
+            18%  { scale: 1.45; color: var(--accent); opacity: 1; text-shadow: 0 0 18px color-mix(in srgb, var(--accent) 16%, transparent), 0 0 2px var(--accent); }
+            100% { scale: 1; }
+        }
+        @keyframes acender-calmo { 25% { color: var(--accent); opacity: 1; text-shadow: 0 0 18px color-mix(in srgb, var(--accent) 16%, transparent), 0 0 2px var(--accent); } }
+        @keyframes letra-calma { from { opacity: 0; filter: blur(10px); } }
 
-        .topo-vivo .hero h1 .termo { display: inline-block; animation: termo .9s cubic-bezier(.2, .8, .2, 1) var(--d) backwards; }
-        @keyframes termo { from { opacity: 0; transform: translateY(.35em); filter: blur(8px); } }
+        /* Layouts nossos ao fundo, montados pelo topo.js depois do `load`. Faixas
+           em cima e embaixo; somem no centro, onde mora o logo. O `#000` da
+           máscara NÃO é cor: `mask-image` lê só o alfa, e preto é "opaco". */
+        .layouts { position: absolute; inset: -6% -8%; z-index: -2; display: flex; flex-direction: column; justify-content: space-between; padding: 4vh 0;
+            pointer-events: none; transform: rotate(-6deg); opacity: 0; transition: opacity 1.6s ease-out;
+            -webkit-mask-image: radial-gradient(ellipse 46% 34% at 50% 50%, transparent 55%, #000 100%);
+            mask-image: radial-gradient(ellipse 46% 34% at 50% 50%, transparent 55%, #000 100%); }
+        .layouts.pronto { opacity: .28; }
+        .layouts-trilho { display: flex; gap: 22px; width: max-content; animation: passar 50s linear infinite; }
+        .layouts-trilho.volta { animation-duration: 64s; animation-direction: reverse; margin-left: -180px; }
+        .layouts-trilho img { width: 320px; height: 180px; border-radius: 10px; border: 1px solid var(--border); object-fit: cover; object-position: top; filter: saturate(.55); transition: opacity .9s ease; }
+        .layouts-trilho img.trocando { opacity: 0; }
+        @keyframes passar { to { transform: translateX(-50%); } }
+        .palco.fora .layouts-trilho { animation-play-state: paused; }
+        /* modo calmo: as fileiras ficam paradas e centradas; as imagens trocam esmaecendo */
+        .layouts.calmo .layouts-trilho { animation: none; margin-left: 0; align-self: center; }
+        @media (max-width: 700px) { .layouts-trilho img { width: 200px; height: 113px; } }
 
-        /* logo do cabeçalho: o selo se desenha e o nome sobe (só na home) */
-        .logo-entra .brand-mark { position: relative; border-color: transparent; animation: selo-borda 0s linear 1.4s forwards; }
-        @keyframes selo-borda { to { border-color: var(--accent); } }
-        .selo-traco { position: absolute; inset: -1.5px; width: calc(100% + 3px); height: calc(100% + 3px); overflow: visible; pointer-events: none; }
-        .selo-traco rect { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 1; stroke-dashoffset: 1; animation: desenhar 1.2s cubic-bezier(.65, 0, .35, 1) .15s forwards, sumir 0s linear 1.4s forwards; }
-        @keyframes desenhar { to { stroke-dashoffset: 0; } }
-        @keyframes sumir { to { opacity: 0; } }
-        .logo-entra .brand-name .letra { display: inline-block; animation: letra .8s cubic-bezier(.2, .8, .2, 1) var(--d) backwards; }
-        @keyframes letra { from { opacity: 0; transform: translateY(.45em) rotate(8deg); filter: blur(6px); } }
-        .brand-mark.pulsa { animation: pulsa 1.2s ease-out; }
-        @keyframes pulsa { 20% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 28%, transparent), 0 0 16px color-mix(in srgb, var(--accent) 55%, transparent); } }
+        /* o logo: o selo se desenha, as letras entram uma a uma (spans no Blade) */
+        .palco-centro { text-align: center; padding: 0 20px; }
+        .palco-logo { display: inline-flex; align-items: center; gap: clamp(14px, 2.4vw, 28px); }
+        .palco-selo { width: clamp(56px, 9vw, 108px); height: auto; aspect-ratio: 1; overflow: visible; }
+        .palco-selo rect { fill: none; stroke: var(--accent); stroke-width: 3.5; stroke-dasharray: 1; animation: desenhar 1.3s cubic-bezier(.65, 0, .35, 1) .1s backwards; }
+        .palco-selo text { fill: var(--accent); font: 500 30px var(--font-mono); animation: surgir .8s ease-out 1s backwards; }
+        @keyframes desenhar { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+        /* o selo brilha quando uma palavra acende (brilho, não deslocamento) */
+        .palco-selo.pulsa { animation: brilho-selo 1.3s ease-out; }
+        @keyframes brilho-selo { 25% { filter: drop-shadow(0 0 14px var(--accent)) drop-shadow(0 0 3px var(--accent)); } }
+        .palco-nome { font: 800 clamp(3.2rem, 11vw, 8.6rem)/1 var(--font-display); letter-spacing: -.04em; color: var(--fg); }
+        .palco-nome .dev { color: var(--accent); }
+        .palco-nome .letra { display: inline-block; animation: letra 1s cubic-bezier(.2, .8, .2, 1) calc(var(--k) * 55ms + 250ms) backwards; }
+        @keyframes letra { from { opacity: 0; transform: translateY(.45em) rotate(8deg); filter: blur(10px); } }
+        /* o lema é o título do painel e é o h1 da página (o logo já está no cabeçalho) */
+        .palco .lema { margin: 18px auto 0; max-width: 44ch; font: 500 clamp(1.05rem, 2vw, 1.3rem)/1.5 var(--font-body); letter-spacing: 0; color: var(--fg-muted); }
+        .palco .lema em { font-style: normal; color: var(--accent); }
+        .palco .hero-ctas { justify-content: center; margin-top: 28px; }
+        .palco .btn-primary { min-height: 48px; padding-inline: 26px; transition: background .18s ease-out, transform .35s cubic-bezier(.2, .8, .2, 1); }
+        .palco .lema, .palco .hero-ctas { animation: subir .9s cubic-bezier(.2, .7, .2, 1) .9s backwards; }
+        .palco .hero-ctas { animation-delay: 1.05s; }
+        @keyframes subir { from { opacity: 0; transform: translateY(18px); } }
+        .descer { position: absolute; bottom: 24px; left: 50%; translate: -50% 0; width: 44px; height: 44px; display: grid; place-items: center; color: var(--fg-subtle); animation: quicar 2.4s ease-in-out infinite; }
+        .descer:hover { color: var(--accent); }
+        @keyframes quicar { 50% { transform: translateY(6px); } }
+        /* em tela baixa (celular deitado) a seta encostaria nos botões */
+        @media (max-height: 620px) { .descer { display: none; } }
 
-        /* Modo calmo (25/11/2026): nada se desloca; cor, brilho, esmaecer e o
-           traço do selo crescendo no lugar continuam. Mesma regra da vitrine.
-           Liga pela opção "Reduzir movimento" do widget, não pelo sistema. */
-        html.a11y-calmo .palavra:not(.viva) { animation: none; }
+        /* Modo calmo (25/11/2026): opção "Reduzir movimento" do widget, não o
+           sistema. Nada se desloca; cor, brilho, esmaecer e o traço do selo
+           crescendo no lugar continuam. Mesma regra da vitrine. */
+        html.a11y-calmo .palavra:not(.viva), html.a11y-calmo .descer, html.a11y-calmo .palco .lema, html.a11y-calmo .palco .hero-ctas { animation: none; }
         html.a11y-calmo .palavra { transform: none !important; }
         html.a11y-calmo .palavra.viva { animation: acender-calmo 1.6s ease-out; }
-        html.a11y-calmo.topo-vivo .hero h1 .termo, html.a11y-calmo .logo-entra .brand-name .letra { animation-name: calmo-surgir; }
+        html.a11y-calmo .palco-nome .letra { animation-name: letra-calma; }
+        html.a11y-calmo .palco .btn-primary { transform: none !important; }
 
         /* ---------- banner de lançamentos ---------- */
         .lancamentos { position: relative; background: var(--ink-800); border-block: 1px solid var(--line); }
@@ -200,28 +205,36 @@
 
 @section('conteudo')
 
-        {{-- Hero --}}
-        <section class="hero" aria-label="Apresentação">
-            <div class="citygrid" id="citygrid" aria-hidden="true"></div>
-            <div class="container hero-inner">
-                {{-- Os textos da home vêm do painel, Configurações (bloco 4a, 06/11/2026). --}}
-                <span class="eyebrow">{{ $site('home.hero_etiqueta') }}</span>
-                <h1>{!! \App\Support\ConfiguracaoDoSite::comEnfase('home.hero_titulo') !!}</h1>
-                <p>{{ $site('home.hero_texto') }}</p>
+        @php($lancamentos = \App\Support\LancamentosDoSite::lista())
+        {{-- Palco (25/11/2026): logo no centro, título do painel como lema, os dois
+             botões. Escuro nos dois temas. Palavras e layouts são do topo.js. --}}
+        <section class="palco sempre-escuro" id="palco" aria-labelledby="lema">
+            <div class="palco-centro">
+                <div class="palco-logo" aria-hidden="true">
+                    <svg class="palco-selo" viewBox="0 0 100 100">
+                        <rect x="4" y="4" width="92" height="92" rx="22" pathLength="1"/>
+                        <text x="50" y="62" text-anchor="middle">UD</text>
+                    </svg>
+                    <span class="palco-nome"><span class="letra" style="--k:0">u</span><span class="letra" style="--k:1">r</span><span class="letra" style="--k:2">b</span><span class="letra" style="--k:3">i</span><span class="letra" style="--k:4">s</span><span class="dev"><span class="letra" style="--k:5">D</span><span class="letra" style="--k:6">e</span><span class="letra" style="--k:7">v</span></span></span>
+                </div>
+                {{-- O título vem do painel, Configurações (bloco 4a, 06/11/2026); *asteriscos* viram o destaque. --}}
+                <h1 class="lema" id="lema">{!! \App\Support\ConfiguracaoDoSite::comEnfase('home.hero_titulo') !!}</h1>
                 <div class="hero-ctas">
                     <a class="btn btn-primary" href="#contato">Fale conosco
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                     </a>
                     <a class="btn btn-ghost" href="#demonstracoes">Veja funcionando</a>
                 </div>
             </div>
+            <a class="descer" href="{{ $lancamentos ? '#lancamentos' : '#fazemos' }}" aria-label="Rolar para baixo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+            </a>
         </section>
 
         {{-- Banner de lançamentos, logo depois do hero (30/10/2026): o que a casa já
              lançou e tem endereço público. Os slides vêm de Site › Lançamentos
              (App\Support\LancamentosDoSite, bloco 4c, 06/11/2026); nenhum ativo, o
              banner some. A passagem mora em `public/lancamentos.js`. --}}
-        @php($lancamentos = \App\Support\LancamentosDoSite::lista())
         @if ($lancamentos)
         <section id="lancamentos" class="lancamentos" aria-label="Lançamentos" aria-roledescription="carrossel">
             <div class="container">
@@ -447,25 +460,6 @@
 <script src="/lancamentos.js" defer></script>
 <script src="/topo.js" defer></script>
 <script nonce="{{ $cspNonce ?? '' }}">
-        // Grade de janelas acesas (assinatura da marca)
-        (function () {
-            var grid = document.getElementById('citygrid');
-            var cols = Math.ceil(window.innerWidth / 26) + 1;
-            var rows = Math.ceil(Math.min(window.innerHeight, 720) / 26) + 1;
-            var total = cols * rows;
-            var frag = document.createDocumentFragment();
-            for (var i = 0; i < total; i++) {
-                var cell = document.createElement('i');
-                if (Math.random() < 0.045) { // ~4,5% das janelas acendem
-                    cell.className = 'lit';
-                    cell.style.setProperty('--delay', (Math.random() * 12).toFixed(1) + 's');
-                    cell.style.setProperty('--dur', (6 + Math.random() * 8).toFixed(1) + 's');
-                }
-                frag.appendChild(cell);
-            }
-            grid.appendChild(frag);
-        })();
-
         // Máscara de telefone
         var phone = document.getElementById('phone');
         phone.addEventListener('input', function (e) {

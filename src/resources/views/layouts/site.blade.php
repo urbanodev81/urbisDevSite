@@ -231,7 +231,6 @@
         html.a11y-underline a { text-decoration: underline !important; }
         html.a11y-spacing :is(p, li, a, span, label, h1, h2, h3, button, input, textarea, strong, b, em) { letter-spacing: .12em !important; word-spacing: .16em !important; line-height: 1.8 !important; }
         html.a11y-pause *, html.a11y-pause *::before, html.a11y-pause *::after { transition-duration: 0s !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
-        html.a11y-pause .citygrid i.lit::after { animation: none !important; opacity: .35; }
 
         /* ---------- reveal + reduced motion ---------- */
         /* Scroll de âncora/topo fica suave SEMPRE (regra da casa): reduced-motion
@@ -244,7 +243,6 @@
            animações" do widget. */
         @media (prefers-reduced-motion: reduce) {
             .reveal { transform: none; transition: opacity .6s ease-out; }
-            .citygrid i.lit::after { animation: none; opacity: .35; }
             .mobile-menu, .mobile-menu.open, .nav-toggle svg { transition: none; }
         }
     </style>

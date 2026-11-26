@@ -252,9 +252,18 @@ o do molde "site pequeno" (Duo/Girls/WJ), e o painel veio de lá:
   `financeiro:avisar` às 08:00 (`--dry-run` para conferir à mão): uma vez por
   vencimento ao entrar na janela (`financeiro.vencimento_proximo`, normal) e,
   atrasado, no 1º dia e a cada 7 (`financeiro.vencimento_atrasado`, urgente).
-  As duas chaves **ainda não estão no catálogo do Sócrates**: lá são aceitas
-  e vale a `severidade` que vai no corpo (`EventoDoSistema::severidade()`).
-  As travas `aviso_*` se gravam por consulta, fora da trilha.
+  As duas chaves estão no catálogo do Sócrates (`c41647d`). As travas
+  `aviso_*` se gravam por consulta, fora da trilha.
+  **Desde 26/11 (noite) a regra mora no pacote `urbanodev/financeiro`**
+  (`config/financeiro.php`; README em `vendor/urbanodev/financeiro`). Os models
+  do app só estendem os do pacote para pôr o `Auditable`; o comando é o do
+  pacote, e o `App\Support\Financeiro\AvisadorDoSite` liga o aviso à outbox.
+  `carregar_migrations` = false (as tabelas são daqui, com as mesmas colunas).
+  **PIX:** compromisso a receber com valor mostra QR + copia e cola
+  (`FINANCEIRO_PIX_CHAVE/_NOME/_CIDADE`; conta = telefone dele, decidido em
+  26/11). Estático: não avisa que caiu, registra-se o pagamento à mão. Sem as
+  três variáveis, a tela não mostra PIX. ⚠️ Em prod as variáveis ainda não
+  estão no `.env` (que é root: `docker exec -u 0 urbisdev-site`).
 - **Idioma:** `lang/pt_BR` (desde 08/11/2026, veio do molde). Campo novo com
   nome de coluna feio? Ponha a linha em `attributes` de `lang/pt_BR/validation.php`.
 - Por blocos (6.4 do estudo): 1 Fundação ✅ · 2 Contatos ✅ (lado do Sócrates

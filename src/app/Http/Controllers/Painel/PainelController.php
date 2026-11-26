@@ -65,7 +65,7 @@ class PainelController extends Controller
                         'id' => $c->id,
                         'nome' => $c->nome,
                         'sentido' => $c->sentido->rotulo(),
-                        'valor' => \App\Support\Financeiro\Dinheiro::formatar($c->valor_centavos),
+                        'valor' => \UrbanoDev\Financeiro\Dinheiro::formatar($c->valor_centavos),
                         'vencimento' => $c->proximo_vencimento->format('d/m'),
                         'situacao' => $c->situacao(),
                     ])->all()

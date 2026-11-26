@@ -1,7 +1,7 @@
 <script setup>
 import { Head, router, useForm } from '@inertiajs/vue3';
 import { computed, nextTick, ref } from 'vue';
-import { History, Plus } from 'lucide-vue-next';
+import { Copy, History, Plus, QrCode } from 'lucide-vue-next';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 import EstadoVazio from '@/Components/EstadoVazio.vue';
@@ -110,6 +110,17 @@ function registrarPagamento(c) {
         preserveScroll: true,
         onSuccess: () => { pagando.value = null; },
     });
+}
+
+// PIX da mensalidade (pacote urbanodev/financeiro): QR + copia e cola para
+// mandar ao cliente. Estático: não avisa que caiu; confere-se no extrato.
+const pixAberto = ref({});
+const alternarPix = (c) => { pixAberto.value[c.id] = ! pixAberto.value[c.id]; };
+const copiado = ref(null);
+async function copiarPix(c) {
+    await navigator.clipboard.writeText(c.pix.copiaECola);
+    copiado.value = c.id;
+    setTimeout(() => { if (copiado.value === c.id) copiado.value = null; }, 3000);
 }
 
 const historico = ref({});
@@ -317,8 +328,39 @@ const campoClasse = 'w-full rounded-md border-line-input bg-surface text-sm text
                     >
                         <History class="h-4 w-4" aria-hidden="true" />Histórico ({{ c.pagamentos.length }})
                     </SecondaryButton>
+                    <SecondaryButton
+                        v-if="c.pix"
+                        type="button"
+                        :aria-expanded="pixAberto[c.id] ? 'true' : 'false'"
+                        :aria-controls="`pix-${c.id}`"
+                        @click="alternarPix(c)"
+                    >
+                        <QrCode class="h-4 w-4" aria-hidden="true" />Cobrar por PIX
+                    </SecondaryButton>
                     <TwoStepConfirm v-if="! c.arquivado" :nome="c.nome" rotulo="Arquivar" verbo="Arquivar" @confirmar="arquivar(c)" />
                     <SecondaryButton v-else type="button" @click="reativar(c)">Reativar</SecondaryButton>
+                </div>
+
+                <div v-if="c.pix && pixAberto[c.id]" :id="`pix-${c.id}`" class="mt-4 flex flex-wrap items-start gap-5 rounded-md border border-line bg-surface-sunken p-4">
+                    <!-- SVG gerado no servidor pelo pacote (sem texto de usuário dentro). -->
+                    <div class="shrink-0 rounded bg-white p-1" v-html="c.pix.svg" />
+                    <div class="min-w-0 flex-1 space-y-3 text-sm">
+                        <p class="text-fg">
+                            PIX de <strong class="tabular-nums">{{ c.valorFormatado }}</strong> referente a
+                            <strong class="tabular-nums">{{ c.proximoVencimentoFormatado }}</strong>. Mande o QR ou o copia e cola ao cliente.
+                        </p>
+                        <div>
+                            <InputLabel :for="`pix-cc-${c.id}`" value="Copia e cola" />
+                            <textarea :id="`pix-cc-${c.id}`" readonly rows="3" :value="c.pix.copiaECola" :class="[campoClasse, 'font-mono text-xs']" @focus="$event.target.select()" />
+                        </div>
+                        <SecondaryButton type="button" @click="copiarPix(c)">
+                            <Copy class="h-4 w-4" aria-hidden="true" />{{ copiado === c.id ? 'Copiado' : 'Copiar' }}
+                        </SecondaryButton>
+                        <p class="text-fg-subtle" aria-live="polite">
+                            O PIX cai direto na conta e <strong>não avisa o painel</strong>. Achou no extrato (identificador
+                            <span class="font-mono">{{ c.pix.txid }}</span>)? Use “Registrar pagamento”.
+                        </p>
+                    </div>
                 </div>
 
                 <div v-if="historico[c.id]" :id="`historico-${c.id}`" class="relative mt-4 overflow-x-auto">

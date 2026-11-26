@@ -15,6 +15,18 @@ lançou. Não crie número de versão nem date release por conta própria.
 ## [Não lançado]
 
 ### Adicionado
+- **PIX na mensalidade** (26/11/2026). Compromisso a receber com valor ganha o
+  botão "Cobrar por PIX": QR e copia e cola com o valor e um identificador
+  (`C<id>V<vencimento>`) para achar no extrato. O dinheiro cai direto na conta
+  (telefone do Ricardo); o PIX não avisa o painel, então o pagamento continua
+  sendo registrado à mão. Liga com `FINANCEIRO_PIX_CHAVE`, `_NOME` e `_CIDADE`.
+
+### Mudado
+- **O Financeiro passa a usar o pacote `urbanodev/financeiro` 0.1** (26/11/2026),
+  em vez das classes próprias: mesma tela, mesmas tabelas (nada migrado),
+  mesmo aviso das 08:00. Entram semanal e quinzenal nas periodicidades, e o
+  total "por mês" passa a arredondar cada compromisso ao centavo.
+
 - **Financeiro no painel** (26/11/2026). Um lugar para guardar o que vence:
   hospedagem, domínio, mensalidade de cliente ou um simples lembrete, com
   valor, se repete (mensal, trimestral, semestral, anual ou uma vez só) e

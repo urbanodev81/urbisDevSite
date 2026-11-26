@@ -12,6 +12,7 @@
         "symfony/html-sanitizer": "^7.3 || ^8.0",
         "tightenco/ziggy": "^2.0",
         "urbanodev/blog": "^0.7",
+        "urbanodev/financeiro": "^0.1",
         "urbanodev/midia": "^0.2.3",
         "urbanodev/visitas": "^0.1"
     },
@@ -40,6 +41,11 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "repositories": [
+        {
+            "name": "financeiro",
+            "type": "vcs",
+            "url": "https://github.com/urbanodev81/financeiro"
+        },
         {
             "name": "visitas",
             "type": "vcs",

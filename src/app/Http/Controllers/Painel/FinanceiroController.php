@@ -7,11 +7,6 @@ namespace App\Http\Controllers\Painel;
 use App\Http\Controllers\Controller;
 use App\Models\Compromisso;
 use App\Models\PagamentoDeCompromisso;
-use App\Support\Financeiro\Dinheiro;
-use App\Support\Financeiro\FormaDePagamento;
-use App\Support\Financeiro\Periodicidade;
-use App\Support\Financeiro\Sentido;
-use App\Support\Financeiro\TipoDeCompromisso;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -19,11 +14,18 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use UrbanoDev\Financeiro\Dinheiro;
+use UrbanoDev\Financeiro\Enums\FormaDePagamento;
+use UrbanoDev\Financeiro\Enums\Periodicidade;
+use UrbanoDev\Financeiro\Enums\Sentido;
+use UrbanoDev\Financeiro\Pix\Pix;
+use UrbanoDev\Financeiro\Pix\PixRecusado;
+use UrbanoDev\Financeiro\Tipos;
 
 /**
  * Financeiro (26/11/2026): o que vence, quanto, de quanto em quanto tempo, e
- * o histórico de cada pagamento. Desenho em
- * `Arquivos/analise/em-voo/urbisdev-financeiro.md`.
+ * o histórico de cada pagamento. A regra mora no pacote `urbanodev/financeiro`
+ * (desde 26/11, noite); aqui ficam a tela, a validação e o PIX da mensalidade.
  *
  * Nada se apaga daqui: arquivar tira dos avisos e da lista principal;
  * pagamento errado se estorna. O aviso diário é o `financeiro:avisar`.
@@ -36,11 +38,11 @@ class FinanceiroController extends Controller
         $todos = Compromisso::query()->with('pagamentos')->orderBy('proximo_vencimento')->orderBy('id')->get();
         $ativos = $todos->filter(fn (Compromisso $c) => ! $c->arquivado());
 
-        // "Por mês": cada recorrente dividido pelos meses do período. A uma
-        // vez só não entra (não é custo de todo mês).
-        $porMes = fn (Sentido $s) => (int) round($ativos
-            ->filter(fn (Compromisso $c) => $c->sentido === $s && $c->valor_centavos && $c->periodicidade->meses())
-            ->sum(fn (Compromisso $c) => $c->valor_centavos / $c->periodicidade->meses()));
+        // "Por mês": o peso mensal de cada recorrente. A uma vez só não entra
+        // (não é custo de todo mês).
+        $porMes = fn (Sentido $s) => (int) $ativos
+            ->filter(fn (Compromisso $c) => $c->sentido === $s && $c->valor_centavos)
+            ->sum(fn (Compromisso $c) => $c->periodicidade->centavosPorMes($c->valor_centavos) ?? 0);
 
         $em30 = $ativos->filter(fn (Compromisso $c) => $c->diasAteVencer($hoje) <= 30);
 
@@ -54,7 +56,7 @@ class FinanceiroController extends Controller
                 'receber30' => Dinheiro::formatar((int) $em30->where('sentido', Sentido::Receber)->sum('valor_centavos')),
             ],
             'opcoes' => [
-                'tipos' => TipoDeCompromisso::opcoes(),
+                'tipos' => Tipos::opcoes(),
                 'sentidos' => Sentido::opcoes(),
                 'periodicidades' => Periodicidade::opcoes(),
                 'formas' => FormaDePagamento::opcoes(),
@@ -85,17 +87,14 @@ class FinanceiroController extends Controller
 
     public function arquivar(Compromisso $compromisso): RedirectResponse
     {
-        $compromisso->arquivado_em = now()->toImmutable();
-        $compromisso->save();
+        $compromisso->arquivar();
 
         return back()->with('sucesso', 'Arquivado. Não avisa mais; o histórico continua aqui.');
     }
 
     public function reativar(Compromisso $compromisso): RedirectResponse
     {
-        $compromisso->arquivado_em = null;
-        $compromisso->save();
-        $compromisso->zerarAvisos();
+        $compromisso->desarquivar();
 
         return back()->with('sucesso', 'Reativado. Confira a data do próximo vencimento.');
     }
@@ -140,8 +139,8 @@ class FinanceiroController extends Controller
     {
         return [
             'id' => $c->id,
-            'tipo' => $c->tipo->value,
-            'tipoRotulo' => $c->tipo->rotulo(),
+            'tipo' => $c->tipo,
+            'tipoRotulo' => $c->tipoRotulo(),
             'sentido' => $c->sentido->value,
             'sentidoRotulo' => $c->sentido->rotulo(),
             'nome' => $c->nome,
@@ -157,6 +156,7 @@ class FinanceiroController extends Controller
             'arquivado' => $c->arquivado(),
             'situacao' => $c->situacao($hoje),
             'dias' => $c->diasAteVencer($hoje),
+            'pix' => $this->pix($c),
             'pagamentos' => $c->pagamentos->map(fn (PagamentoDeCompromisso $p) => [
                 'id' => $p->id,
                 'referenteA' => $p->referente_a->format('d/m/Y'),
@@ -169,11 +169,37 @@ class FinanceiroController extends Controller
         ];
     }
 
+    /**
+     * PIX da cobrança: só no que é A RECEBER, ativo e com valor. O txid leva o
+     * id e o vencimento (C12V20261205), para achar o pagamento no extrato. PIX
+     * estático não avisa que caiu: quem confere o extrato registra o pagamento.
+     *
+     * @return array{copiaECola: string, svg: string, txid: string}|null
+     */
+    private function pix(Compromisso $c): ?array
+    {
+        if ($c->sentido !== Sentido::Receber || $c->arquivado() || ! $c->valor_centavos || ! Pix::configurado()) {
+            return null;
+        }
+
+        $txid = Pix::txid('C', (string) $c->id, 'V', $c->proximo_vencimento->format('Ymd'));
+
+        try {
+            $pix = Pix::cobranca($c->valor_centavos, $txid);
+        } catch (PixRecusado $e) {
+            report($e); // config errada: a tela segue sem PIX, o log diz por quê
+
+            return null;
+        }
+
+        return ['copiaECola' => $pix['copia_e_cola'], 'svg' => $pix['svg'], 'txid' => $txid];
+    }
+
     /** @return array<string, mixed> */
     private function validar(Request $request): array
     {
         $dados = $request->validate([
-            'tipo' => ['required', Rule::enum(TipoDeCompromisso::class)],
+            'tipo' => ['required', Rule::in(Tipos::chaves())],
             'sentido' => ['required', Rule::enum(Sentido::class)],
             'nome' => ['required', 'string', 'max:120'],
             'contraparte' => ['nullable', 'string', 'max:120'],

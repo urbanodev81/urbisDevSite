@@ -2,18 +2,20 @@
 
 declare(strict_types=1);
 
-use App\Console\Commands\AvisarVencimentos;
 use App\Models\Auditoria;
 use App\Models\Compromisso;
 use App\Models\SocratesOutbox;
 use App\Models\User;
 use App\Services\Socrates\ClienteDoSocrates;
 use App\Support\Avisos\EventoDoSistema;
-use App\Support\Financeiro\Dinheiro;
 use App\Support\Perfis;
 use Carbon\CarbonImmutable;
 use Database\Seeders\PerfisESeguranca;
 use Illuminate\Support\Facades\Queue;
+use UrbanoDev\Financeiro\Avisos\Aviso;
+use UrbanoDev\Financeiro\Avisos\RegraDeAviso;
+use UrbanoDev\Financeiro\Dinheiro;
+use UrbanoDev\Financeiro\Pix\BrCode;
 
 /**
  * Financeiro (26/11/2026). O que se prova: só o administrador entra; cadastra
@@ -164,17 +166,17 @@ it('avisa uma vez por vencimento, com a severidade, pela outbox', function () {
 
 it('atrasado avisa no primeiro dia e de novo a cada 7, como urgente', function () {
     $c = compromisso(['proximo_vencimento' => '2026-11-25']);
-    $comando = app(AvisarVencimentos::class);
     $hoje = CarbonImmutable::today();
 
-    expect($comando->eventoDoDia($c, $hoje))->toBe(EventoDoSistema::VencimentoAtrasado);
+    expect(RegraDeAviso::doDia($c, $hoje))->toBe(Aviso::Atrasado);
 
     $this->artisan('financeiro:avisar')->expectsOutputToContain('1 avisados.')->run();
     expect(SocratesOutbox::sole()->payload['severidade'])->toBe('urgente');
 
     $c->refresh();
-    expect($comando->eventoDoDia($c, $hoje->addDays(6)))->toBeNull()
-        ->and($comando->eventoDoDia($c, $hoje->addDays(7)))->toBe(EventoDoSistema::VencimentoAtrasado);
+    expect(RegraDeAviso::doDia($c, $hoje->addDays(6)))->toBeNull()
+        ->and(RegraDeAviso::doDia($c, $hoje->addDays(7)))->toBe(Aviso::Atrasado);
+    expect(SocratesOutbox::sole()->payload['chave'])->toBe(EventoDoSistema::VencimentoAtrasado->value);
 });
 
 it('arquivado não avisa, e reativar volta a avisar; nada tem rota de apagar', function () {
@@ -199,4 +201,41 @@ it('o Início mostra o que vence em 30 dias só para quem gerencia', function ()
 
     $this->actingAs(contaDoFinanceiro(Perfis::REDACAO))->get('/painel')
         ->assertInertia(fn ($p) => $p->where('financeiro', null));
+});
+
+it('mensalidade a receber mostra o PIX com valor e txid; a pagar e sem config não', function () {
+    $admin = contaDoFinanceiro(Perfis::ADMINISTRADOR);
+    $receber = compromisso(['tipo' => 'mensalidade', 'sentido' => 'receber', 'nome' => 'Site Garden', 'valor_centavos' => 12800, 'periodicidade' => 'mensal']);
+    compromisso(); // a pagar
+
+    config(['financeiro.pix' => ['chave' => null, 'nome' => null, 'cidade' => null]]);
+    $this->actingAs($admin)->get('/painel/financeiro')
+        ->assertInertia(fn ($p) => $p->where('compromissos.0.pix', null)->where('compromissos.1.pix', null));
+
+    config(['financeiro.pix' => ['chave' => '+5511999998888', 'nome' => 'Fulano de Tal', 'cidade' => 'Sao Paulo']]);
+    $this->actingAs($admin)->get('/painel/financeiro')->assertInertia(function ($p) use ($receber) {
+        $linhas = collect($p->toArray()['props']['compromissos'])->keyBy('id');
+        $pix = $linhas[$receber->id]['pix'];
+        $campos = BrCode::ler($pix['copiaECola']);
+
+        expect($campos['54'])->toBe('128.00')
+            ->and($campos['26']['01'])->toBe('+5511999998888')
+            ->and($campos['62']['05'])->toBe("C{$receber->id}V20261205")
+            ->and($pix['txid'])->toBe("C{$receber->id}V20261205")
+            ->and($pix['svg'])->toStartWith('<svg');
+        expect($linhas->where('sentido', 'pagar')->first()['pix'])->toBeNull();
+    });
+
+    // Chave errada na config: a tela segue, sem PIX.
+    config(['financeiro.pix.chave' => '111.111.111-11']);
+    $this->actingAs($admin)->get('/painel/financeiro')->assertOk();
+});
+
+it('o tipo vem da config do pacote e tipo fora da lista é recusado', function () {
+    $this->actingAs(contaDoFinanceiro(Perfis::ADMINISTRADOR))->post('/painel/financeiro', [
+        'tipo' => 'inventado', 'sentido' => 'pagar', 'nome' => 'X', 'periodicidade' => 'mensal',
+        'proximo_vencimento' => '2026-12-01', 'avisar_dias_antes' => 3,
+    ])->assertSessionHasErrors('tipo');
+
+    expect(compromisso()->tipoRotulo())->toBe('Hospedagem');
 });

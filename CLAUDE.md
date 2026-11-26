@@ -124,8 +124,9 @@ JSON no `@php`. A 404 é `errors/404.blade.php`, que estende o layout.
 
 **Guias (desde 31/10/2026)** são o pacote `urbanodev/blog` (`../../pacotes/blog`, público). Cada texto é um `.md` em `src/resources/blog`; o passo a passo está em `_LEIA.md` e dá para publicar texto NOVO pelo github.com, na `prod`. **Texto já importado para o banco (04/11) se revisa no painel**: o banco ganha do `.md` com o mesmo slug, e editar o arquivo não muda o site (custou três revisões em 08/11). Revisão já feita no `.md`: `blog:importar --atualizar=<slug>` (recusa se houver edição do painel, salvo `--forcar`). A configuração mora em `config/blog.php`. Sem texto publicado, o link do menu não existe.
 
-**O painel (desde 03/11/2026, pendência 246; estudo em
-`../../Arquivos/analise/em-voo/urbisdev-admin.md`).** Até aqui o site era, de
+**O painel (desde 03/11/2026, pendência 246, fechada em 26/11/2026; o estudo
+`analise/em-voo/urbisdev-admin.md` foi apagado ao fechar e fica no histórico do
+repo `Arquivos`).** Até aqui o site era, de
 propósito, sem banco, login nem painel; ele decidiu que agora tem. O formato é
 o do molde "site pequeno" (Duo/Girls/WJ), e o painel veio de lá:
 
@@ -162,8 +163,10 @@ o do molde "site pequeno" (Duo/Girls/WJ), e o painel veio de lá:
 - **Outbox ao Sócrates** (do molde): `socrates_outbox` + `OutboxDoSocrates`,
   entregue de minuto em minuto pelo `scheduler`. Precisa de `SOCRATES_URL` e
   `SOCRATES_TOKEN`; o tipo `lead.recebido` (→ `/api/site/leads`) só grava com
-  `SOCRATES_LEADS=true`, e **só se liga depois que o Sócrates tiver o endpoint**
-  com `Idempotency-Key` (o Sócrates já tem; falta ligar na prod).
+  `SOCRATES_LEADS=true`. **Ligado na prod desde 26/11/2026** (`~/site/src/.env`,
+  dono root: escrever pelo contêiner `urbisdev-site`; backup
+  `.env.antes-leads-20261126`). Lead de teste conferido ponta a ponta (card no
+  kanban do Sócrates prod, sem e-mail nem telefone), depois arquivado nos dois lados.
 - **Avisos ao operador (284 F3, 21/11/2026; molde da WJ).** `App\Support\Avisos\`:
   `AvisoAoOperador` grava `evento.relatado` (→ `/api/eventos`, origem `nosso`,
   `SOCRATES_ORIGEM`) e liga sozinho com URL e token, sem `SOCRATES_LEADS`. O

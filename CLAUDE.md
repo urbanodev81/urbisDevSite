@@ -238,6 +238,20 @@ o do molde "site pequeno" (Duo/Girls/WJ), e o painel veio de lá:
   sempre com o banco fora, nenhuma ativa → a seção some). O título conta sozinho
   (`quantasPorExtenso`). **Sem `FAQPage`**, decisão dele de 06/11. Tela em
   Site › Perguntas.
+- **Financeiro (26/11/2026).** Tela Casa › Financeiro (`financeiro.gerenciar`,
+  só administrador): `compromissos` (o que vence: tipo, quem paga, valor em
+  **centavos**, periodicidade, `proximo_vencimento`, `avisar_dias_antes`) e
+  `compromisso_pagamentos` (o histórico). **Nada se apaga** — não há rota de
+  DELETE: compromisso se arquiva, pagamento se estorna (só o último válido, e
+  o vencimento volta). Pagar empurra o vencimento pela `Periodicidade`
+  (`NoOverflow`: 31/01 → 28/02 → 28/03); "uma vez só" vai para arquivado. A
+  situação (em dia, vence em N, atrasado) é calculada, nunca gravada. O aviso é
+  `financeiro:avisar` às 08:00 (`--dry-run` para conferir à mão): uma vez por
+  vencimento ao entrar na janela (`financeiro.vencimento_proximo`, normal) e,
+  atrasado, no 1º dia e a cada 7 (`financeiro.vencimento_atrasado`, urgente).
+  As duas chaves **ainda não estão no catálogo do Sócrates**: lá são aceitas
+  e vale a `severidade` que vai no corpo (`EventoDoSistema::severidade()`).
+  As travas `aviso_*` se gravam por consulta, fora da trilha.
 - **Idioma:** `lang/pt_BR` (desde 08/11/2026, veio do molde). Campo novo com
   nome de coluna feio? Ponha a linha em `attributes` de `lang/pt_BR/validation.php`.
 - Por blocos (6.4 do estudo): 1 Fundação ✅ · 2 Contatos ✅ (lado do Sócrates

@@ -15,6 +15,15 @@ lançou. Não crie número de versão nem date release por conta própria.
 ## [Não lançado]
 
 ### Adicionado
+- **Financeiro no painel** (26/11/2026). Um lugar para guardar o que vence:
+  hospedagem, domínio, mensalidade de cliente ou um simples lembrete, com
+  valor, se repete (mensal, trimestral, semestral, anual ou uma vez só) e
+  quem paga a quem. "Registrar pagamento" guarda o histórico (data, valor,
+  forma) e empurra o próximo vencimento sozinho; pagamento lançado errado se
+  estorna, sem apagar. Todo dia às 08:00 sai mensagem no Telegram para o que
+  entrou na janela de aviso e, se atrasou, de novo a cada 7 dias. Totais a
+  pagar e a receber por mês, e um cartão no Início com o que vence em 30 dias.
+  Só o administrador vê.
 - **O topo da home virou o palco da vitrine** (25/11/2026), o mesmo do
   urbanodev.com.br: o logo "UD urbisDev" grande no centro, com o selo que se
   desenha e as letras que entram uma a uma; embaixo, a frase do painel e os

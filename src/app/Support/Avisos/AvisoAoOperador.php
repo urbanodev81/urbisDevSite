@@ -43,6 +43,7 @@ final class AvisoAoOperador
             $registrado = app(OutboxDoSocrates::class)->registrar(OutboxDoSocrates::EVENTO_RELATADO, array_filter([
                 'chave' => $evento->value,
                 'origem' => (string) config('socrates.origem', 'nosso'),
+                'severidade' => $evento->severidade(),
                 'titulo' => mb_strimwidth(self::semContato($titulo), 0, 120, '…'),
                 'resumo' => $resumo !== null ? mb_strimwidth(self::semContato($resumo), 0, 500, '…') : null,
                 'painel_url' => $painelUrl,

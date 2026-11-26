@@ -41,6 +41,11 @@ class PerfisESeguranca extends Seeder
         'Blog' => [
             'blog.gerenciar',
         ],
+        // Financeiro (26/11/2026): vencimentos e pagamentos da casa. Só o
+        // administrador (pelo '*'); a redação não vê valor de cliente.
+        'Financeiro' => [
+            'financeiro.gerenciar',
+        ],
         'Administração' => [
             'configuracoes.gerenciar',
             'usuarios.ver',

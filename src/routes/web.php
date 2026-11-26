@@ -17,6 +17,7 @@ use App\Http\Controllers\Painel\TextoController;
 use App\Http\Controllers\Painel\ImagensController;
 use App\Http\Controllers\Painel\ContatoController;
 use App\Http\Controllers\Painel\ConfiguracaoController;
+use App\Http\Controllers\Painel\FinanceiroController;
 use App\Http\Controllers\Painel\LancamentoController;
 use App\Http\Controllers\Painel\PerguntaController;
 use App\Http\Controllers\Painel\ServicoController;
@@ -263,6 +264,19 @@ Route::middleware('auth')->prefix('painel')->group(function () {
             ->whereUuid('usuario')->name('usuarios.restaurar');
         Route::delete('usuarios/{usuario}/dois-fatores', [UsuarioController::class, 'desligarSegundoFator'])
             ->middleware('throttle:6,1,desligar-2fa')->name('usuarios.dois-fatores.desligar');
+    });
+
+    // Financeiro (26/11/2026): vencimentos e histórico de pagamentos. Só o
+    // administrador. Nada se apaga: arquivar e estornar.
+    Route::middleware('can:financeiro.gerenciar')->prefix('financeiro')->name('painel.financeiro.')->group(function () {
+        Route::get('/', [FinanceiroController::class, 'index'])->name('index');
+        Route::post('/', [FinanceiroController::class, 'store'])->name('store');
+        Route::put('{compromisso}', [FinanceiroController::class, 'update'])->whereNumber('compromisso')->name('update');
+        Route::post('{compromisso}/arquivar', [FinanceiroController::class, 'arquivar'])->whereNumber('compromisso')->name('arquivar');
+        Route::post('{compromisso}/reativar', [FinanceiroController::class, 'reativar'])->whereNumber('compromisso')->name('reativar');
+        Route::post('{compromisso}/pagamentos', [FinanceiroController::class, 'pagar'])->whereNumber('compromisso')->name('pagar');
+        Route::post('{compromisso}/pagamentos/{pagamento}/estornar', [FinanceiroController::class, 'estornar'])
+            ->whereNumber(['compromisso', 'pagamento'])->name('estornar');
     });
 
     // Configuração do site (bloco 4a, 06/11/2026). Só o administrador.

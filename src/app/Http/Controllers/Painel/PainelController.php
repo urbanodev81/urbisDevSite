@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Painel;
 use App\Http\Controllers\Controller;
 use App\Models\Auditoria;
 use App\Models\BlogComentario;
+use App\Models\Compromisso;
 use App\Models\Contato;
 use App\Support\VisitasDoSite;
 use Illuminate\Http\Request;
@@ -54,6 +55,21 @@ class PainelController extends Controller
 
             // Visitas do site (263, 09/11/2026): a semana contra a anterior.
             'visitas' => $usuario?->can('visitas.ver') ? $visitas->daSemana() : null,
+
+            // Financeiro (26/11/2026): o que vence nos próximos 30 dias e o
+            // que atrasou. Só para quem gerencia; os outros nem recebem a prop.
+            'financeiro' => $usuario?->can('financeiro.gerenciar')
+                ? Compromisso::query()->ativos()->whereDate('proximo_vencimento', '<=', today()->addDays(30))
+                    ->orderBy('proximo_vencimento')->limit(6)->get()
+                    ->map(fn (Compromisso $c) => [
+                        'id' => $c->id,
+                        'nome' => $c->nome,
+                        'sentido' => $c->sentido->rotulo(),
+                        'valor' => \App\Support\Financeiro\Dinheiro::formatar($c->valor_centavos),
+                        'vencimento' => $c->proximo_vencimento->format('d/m'),
+                        'situacao' => $c->situacao(),
+                    ])->all()
+                : null,
 
             'blog' => [
                 'publicados' => count($blog->publicados()),

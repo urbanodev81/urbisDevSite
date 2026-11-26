@@ -69,6 +69,7 @@ class HandleInertiaRequests extends Middleware
                     'usuarios' => (bool) $usuario?->can('usuarios.ver'),
                     'auditoria' => (bool) $usuario?->can('auditoria.ver'),
                     'visitas' => (bool) $usuario?->can('visitas.ver'),
+                    'financeiro' => (bool) $usuario?->can('financeiro.gerenciar'),
                 ],
             ],
 

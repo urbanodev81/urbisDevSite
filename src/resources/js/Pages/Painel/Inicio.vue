@@ -13,6 +13,7 @@ import PageHeader from '@/Components/PageHeader.vue';
 defineProps({
     contatos: { type: Object, default: null },
     visitas: { type: Object, default: null },
+    financeiro: { type: Array, default: null },
     blog: { type: Object, required: true },
     atividade: { type: Array, default: null },
 });
@@ -74,6 +75,26 @@ defineProps({
                 <p v-if="!visitas.desde" class="mt-2 text-sm text-fg-muted">A contagem começa na primeira visita depois da publicação.</p>
 
                 <Link :href="route('painel.visitas')" class="mt-4 inline-block text-sm text-accent underline">Ver dia a dia e as páginas mais abertas</Link>
+            </section>
+
+            <section v-if="financeiro !== null" class="rounded-card border border-line bg-surface p-6" aria-labelledby="titulo-financeiro">
+                <h2 id="titulo-financeiro" class="font-display text-lg font-bold text-fg">Vence nos próximos 30 dias</h2>
+
+                <ul v-if="financeiro.length" class="mt-4 divide-y divide-line">
+                    <li v-for="c in financeiro" :key="c.id" class="flex items-baseline justify-between gap-4 py-2 text-sm">
+                        <span class="min-w-0">
+                            <span class="block truncate font-medium text-fg">{{ c.nome }}</span>
+                            <span class="block truncate text-xs text-fg-subtle">{{ c.sentido }}<template v-if="c.valor"> · {{ c.valor }}</template></span>
+                        </span>
+                        <span class="shrink-0 text-right">
+                            <span class="block font-mono text-xs text-fg-muted">{{ c.vencimento }}</span>
+                            <span class="block text-xs" :class="c.situacao.chave === 'atrasado' ? 'text-danger' : 'text-fg-subtle'">{{ c.situacao.texto }}</span>
+                        </span>
+                    </li>
+                </ul>
+                <p v-else class="mt-2 text-sm text-fg-muted">Nada vence nos próximos 30 dias.</p>
+
+                <Link :href="route('painel.financeiro.index')" class="mt-4 inline-block text-sm text-accent underline">Abrir o Financeiro</Link>
             </section>
 
             <section class="rounded-card border border-line bg-surface p-6" aria-labelledby="titulo-blog">

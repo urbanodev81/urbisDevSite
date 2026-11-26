@@ -2,7 +2,7 @@
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed, reactive } from 'vue';
 import {
-    Briefcase, ChartColumn, ChartLine, ChevronDown, GalleryHorizontal, MessageCircleQuestion, Inbox, LayoutDashboard, MessagesSquare, Newspaper, NotebookPen, UserCog, ScrollText, Settings, X,
+    Briefcase, ChartColumn, Wallet, ChartLine, ChevronDown, GalleryHorizontal, MessageCircleQuestion, Inbox, LayoutDashboard, MessagesSquare, Newspaper, NotebookPen, UserCog, ScrollText, Settings, X,
 } from 'lucide-vue-next';
 
 defineProps({ aberta: Boolean });
@@ -54,6 +54,13 @@ const grupos = [
             { rotulo: 'Serviços', rota: 'painel.servicos.index', icone: Briefcase, permissao: 'configuracoes' },
             { rotulo: 'Lançamentos', rota: 'painel.lancamentos.index', icone: GalleryHorizontal, permissao: 'configuracoes' },
             { rotulo: 'Perguntas', rota: 'painel.perguntas.index', icone: MessageCircleQuestion, permissao: 'configuracoes' },
+        ],
+    },
+    // Financeiro (26/11/2026): vencimentos e histórico de pagamentos.
+    {
+        titulo: 'Casa',
+        itens: [
+            { rotulo: 'Financeiro', rota: 'painel.financeiro.index', icone: Wallet, permissao: 'financeiro' },
         ],
     },
     {

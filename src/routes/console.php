@@ -31,3 +31,10 @@ Schedule::command('socrates:entregar-outbox')
 Schedule::command('lgpd:expurgo')
     ->dailyAt('03:40')
     ->withoutOverlapping();
+
+// Financeiro (26/11/2026): vencimentos próximos e atrasados vão ao Sócrates
+// (→ Telegram). Às 08:00, quando ele já olha o celular; o app está em
+// America/Sao_Paulo, então é 08:00 de Brasília.
+Schedule::command('financeiro:avisar')
+    ->dailyAt('08:00')
+    ->withoutOverlapping();

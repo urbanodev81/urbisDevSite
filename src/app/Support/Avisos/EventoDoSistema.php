@@ -30,9 +30,28 @@ enum EventoDoSistema: string
     case RoboNoFormulario = 'seguranca.robo_no_formulario';
     case AcessoDeIpNovo = 'seguranca.acesso_ip_novo';
 
+    // Financeiro (26/11/2026). Ainda FORA do catálogo do Sócrates: lá a chave
+    // é aceita e vale a `severidade()` daqui (normal → Telegram; urgente →
+    // push + Telegram, pela matriz padrão da origem `nosso`).
+    case VencimentoProximo = 'financeiro.vencimento_proximo';
+    case VencimentoAtrasado = 'financeiro.vencimento_atrasado';
+
     /** Todos vão ao Sócrates. Fica escrito para o dia em que um não for. */
     public function paraOperador(): bool
     {
         return true;
+    }
+
+    /**
+     * A urgência que vai no corpo. O Sócrates só a usa para chave que ele
+     * não conhece; para as do catálogo dele, quem decide é ele. Null = não manda.
+     */
+    public function severidade(): ?string
+    {
+        return match ($this) {
+            self::VencimentoProximo => 'normal',
+            self::VencimentoAtrasado => 'urgente',
+            default => null,
+        };
     }
 }

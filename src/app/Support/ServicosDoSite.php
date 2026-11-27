@@ -58,8 +58,10 @@ final class ServicosDoSite
     ];
 
     /**
-     * Os 4 cartões de 06/11/2026, palavra por palavra. É a semente da migration
-     * e a reserva com o banco fora.
+     * Os 4 cartões de 06/11/2026, palavra por palavra, mais a central de
+     * chamados de 27/11/2026 (HDU 7f). É a semente das migrations e a reserva
+     * com o banco fora. A central entra **sem nome de produto** (decisão de
+     * 22/10 no `DECISOES.md` do BHD: o cliente vê a marca da prestadora).
      *
      * @var list<array<string, string|null>>
      */
@@ -88,6 +90,15 @@ final class ServicosDoSite
             'link_url' => null, 'link_rotulo' => null,
             'nome_no_catalogo' => 'Sistema para sindicatos e associações',
         ],
+        self::CENTRAL_DE_CHAMADOS,
+    ];
+
+    /** O 5º cartão, de 27/11/2026: a migration `semeia_central_de_chamados` o acrescenta onde a tabela já existia. */
+    public const CENTRAL_DE_CHAMADOS = [
+        'titulo' => 'Suporte e manutenção', 'frente' => 'Atendimento', 'icone' => 'ferramenta', 'cor' => 'roxo', 'situacao' => 'no_ar',
+        'texto' => 'Para quem atende chamados de TI, manutenção predial, ar-condicionado ou segurança eletrônica: prazo combinado por contrato, portal para o seu cliente abrir e acompanhar, equipe por fila e a sua marca em tudo.',
+        'link_url' => 'https://urbisdev.tech/demonstracoes/atendimento', 'link_rotulo' => 'Ver a demonstração',
+        'nome_no_catalogo' => 'Central de chamados para empresas de suporte e manutenção',
     ];
 
     /** @return list<array<string, mixed>> os serviços ativos, na ordem, já prontos para a view */

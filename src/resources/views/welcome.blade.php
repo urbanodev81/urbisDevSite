@@ -161,7 +161,7 @@
         .section-head { max-width: 640px; margin-bottom: clamp(40px, 6vw, 64px); }
         .section-head h2 { margin: 16px 0 14px; }
         .districts { display: grid; gap: 20px; }
-        @media (min-width: 720px) { .districts { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 720px) { .districts { grid-template-columns: repeat(2, 1fr); } .district:last-child:nth-child(odd) { grid-column: 1 / -1; } .district:last-child:nth-child(odd) p { max-width: 68ch; } }
         .district { position: relative; background: var(--ink-800); border: 1px solid var(--line); border-radius: var(--r-card); padding: 28px 26px 26px; display: flex; flex-direction: column; gap: 14px; transition: transform .2s ease-out, border-color .2s ease-out; color: var(--text-mid); }
         .district::before { content: ""; position: absolute; top: 0; left: 24px; right: 24px; height: 3px; border-radius: 0 0 3px 3px; background: var(--dc, var(--amber-500)); }
         .district:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--dc, var(--amber-500)) 40%, var(--line)); }

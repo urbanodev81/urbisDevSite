@@ -11,7 +11,8 @@ use Database\Seeders\PerfisESeguranca;
 
 /**
  * Serviços de "O que fazemos" (bloco 4b da 246, 06/11/2026). O que se prova:
- * a migration semeia os 4 de sempre; o que se grava aparece na home, no
+ * a migration semeia os 5 de sempre (os 4 de 06/11 e a central de chamados de
+ * 27/11, que a migration própria acrescenta só onde falta); o que se grava aparece na home, no
  * `OfferCatalog` do JSON-LD e no `llms.txt`; oculto some dos três; a ordem
  * muda; ícone, cor e link fora da regra são recusados; só o administrador
  * mexe; tudo vai para a trilha. O "banco fora" está no fim deste arquivo e no
@@ -53,29 +54,55 @@ function servicoValido(array $troca = []): array
     ];
 }
 
-it('a migration semeia os 4 cartões de sempre, na ordem', function () {
+it('a migration semeia os 5 cartões de sempre, na ordem', function () {
     expect(Servico::orderBy('ordem')->pluck('titulo')->all())->toBe(array_column(ServicosDoSite::PADRAO, 'titulo'));
 
     $this->get('/')->assertOk()->assertSeeInOrder([
         'Frente · <b>Imobiliário</b>', 'Imobiliárias', 'Conhecer o USI&nbsp;&rarr;',
         'Sites que você mesmo atualiza', 'Clínicas de terapia', 'Sindicatos e associações',
+        'Frente · <b>Atendimento</b>', 'Suporte e manutenção', 'Ver a demonstração&nbsp;&rarr;',
     ], false);
     $this->get('/')->assertSee('"name":"USI: site e sistema de gestão para imobiliárias"', false);
     $this->get('/llms.txt')->assertSee('- Imobiliárias (no ar): O USI é o nosso sistema imobiliário', false)
         ->assertSee('[Conhecer o USI](https://usi.urbisdev.tech)', false);
 });
 
+it('a migration da central de chamados só acrescenta onde falta, no fim, sem nome de produto', function () {
+    $migration = require database_path('migrations/2026_11_27_100000_semeia_central_de_chamados.php');
+    $titulo = ServicosDoSite::CENTRAL_DE_CHAMADOS['titulo'];
+
+    // Banco novo: a semente de 06/11 já trouxe o cartão, e a migration não duplica.
+    $migration->up();
+    expect(Servico::where('titulo', $titulo)->count())->toBe(1);
+
+    // Prod de antes de 27/11: tabela sem o cartão, com a ordem mexida pela tela.
+    Servico::where('titulo', $titulo)->delete();
+    Servico::where('titulo', 'Imobiliárias')->update(['ordem' => 9]);
+    $migration->up();
+
+    $central = Servico::where('titulo', $titulo)->sole();
+    expect($central->ordem)->toBe(10)->and($central->ativo)->toBeTrue()
+        ->and(Servico::orderByDesc('ordem')->value('titulo'))->toBe($titulo);
+
+    // Ninguém vê o nome interno nem a marca da Bot, em nenhuma das três saídas.
+    ServicosDoSite::esquecer();
+    foreach (['/', '/llms.txt'] as $caminho) {
+        $this->get($caminho)->assertOk()->assertSee('Suporte e manutenção')
+            ->assertDontSee('HelpDeskUrbis')->assertDontSee('HDU')->assertDontSee('BootHelpDesk')->assertDontSee('Bot ');
+    }
+});
+
 it('o administrador adiciona, e o serviço aparece na home, no JSON-LD e no llms.txt', function () {
     $admin = contaDosServicos(Perfis::ADMINISTRADOR);
 
     $this->actingAs($admin)->get('/painel/site/servicos')->assertOk()
-        ->assertInertia(fn ($p) => $p->component('Painel/Servicos/Index')->has('servicos', 4)->has('icones'));
+        ->assertInertia(fn ($p) => $p->component('Painel/Servicos/Index')->has('servicos', 5)->has('icones'));
 
     $this->actingAs($admin)->post('/painel/site/servicos', servicoValido(['texto' => "Loja d'água <b>forte</b>."]))
         ->assertRedirect()->assertSessionHasNoErrors();
 
     $novo = Servico::where('titulo', 'Lojas virtuais')->firstOrFail();
-    expect($novo->ordem)->toBe(5)->and($novo->link_url)->toBeNull();
+    expect($novo->ordem)->toBe(6)->and($novo->link_url)->toBeNull();
 
     $this->get('/')->assertSee('Frente · <b>Comércio</b>', false)
         ->assertSee('Loja d&#039;água &lt;b&gt;forte&lt;/b&gt;.', false)
@@ -137,7 +164,7 @@ it('recusa ícone, cor e selo fora da lista, e link sem https', function () {
     $this->actingAs($admin)->post('/painel/site/servicos', servicoValido(['link_url' => 'https://exemplo.com']))
         ->assertSessionHasErrors('link_rotulo');
 
-    expect(Servico::count())->toBe(4);
+    expect(Servico::count())->toBe(5);
 });
 
 it('remove de vez, e a trilha guarda', function () {
@@ -146,7 +173,7 @@ it('remove de vez, e a trilha guarda', function () {
 
     $this->actingAs($admin)->delete("/painel/site/servicos/{$ssb->id}")->assertRedirect();
 
-    expect(Servico::count())->toBe(3)
+    expect(Servico::count())->toBe(4)
         ->and(Auditoria::where('auditavel_type', Servico::class)->where('evento', 'removido')->count())->toBe(1);
     $this->get('/')->assertDontSee('Sindicatos e associações');
 });
@@ -162,7 +189,7 @@ it('a redação não abre nem grava serviços', function () {
     $this->actingAs($redacao)->delete("/painel/site/servicos/{$um->id}")->assertForbidden();
 });
 
-it('com o banco fora, a home mostra os 4 de sempre', function () {
+it('com o banco fora, a home mostra os 5 de sempre', function () {
     Servico::where('titulo', 'Imobiliárias')->update(['titulo' => 'Título só do banco']);
     ServicosDoSite::esquecer();
 

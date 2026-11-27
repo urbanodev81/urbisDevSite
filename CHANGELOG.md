@@ -15,6 +15,12 @@ lançou. Não crie número de versão nem date release por conta própria.
 ## [Não lançado]
 
 ### Adicionado
+- **Suporte e manutenção em "O que fazemos"** (27/11/2026). Quinto cartão da
+  home, para empresas que atendem chamados (TI, manutenção predial,
+  ar-condicionado, segurança eletrônica), com link para a demonstração de
+  atendimento. Sem nome de produto: o cliente final vê a marca da prestadora.
+  Entra sozinho no fim da lista e, depois, se edita em Site › Serviços como os
+  outros. Com número ímpar de cartões, o último ocupa a linha inteira.
 - **PIX na mensalidade** (26/11/2026). Compromisso a receber com valor ganha o
   botão "Cobrar por PIX": QR e copia e cola com o valor e um identificador
   (`C<id>V<vencimento>`) para achar no extrato. O dinheiro cai direto na conta
